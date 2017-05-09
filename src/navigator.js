@@ -1,21 +1,31 @@
-import { StackNavigator } from 'react-navigation';
+import { connect } from 'react-redux';
+import { addNavigationHelpers, StackNavigator } from 'react-navigation';
+import React, { PropTypes } from 'react';
 
 import Home from './containers/Home';
 import Counter from './containers/Counter';
-import Login from './containers/Login'
+import Login from './containers/Login';
 
-const AppNavigator = new StackNavigator(
+export const AppNavigator = new StackNavigator(
   {
+    Login: { screen: Login },
     Home: { screen: Home },
     Counter: { screen: Counter },
-    Login: { screen: Login }
   },
   {
-    headerMode: 'screen',
-    navigationOptions: {
-      // header: null
-    }
+    headerMode: 'screen'
   }
 );
 
-export default AppNavigator;
+const AppWithNavigationState = ({ dispatch, nav }) => (
+  <AppNavigator navigation={addNavigationHelpers({ dispatch, state: nav })} />
+);
+
+AppWithNavigationState.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  nav: PropTypes.object.isRequired,
+};
+
+export default connect(state => ({
+  nav: state.nav,
+}))(AppWithNavigationState);

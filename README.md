@@ -21,7 +21,7 @@
 - planned containers: login, register, account, about, feed-edit, available-plugins, home
 - api (proper async loading)
 - component/container styles i.e. make it pretty
-  - [React Native Elements](https://react-native-training.github.io/react-native-elements/)
-  - utilize an icons package, probably react-native-vector-icons
+  - [React Native Elements???](https://react-native-training.github.io/react-native-elements/)
+  - [React Native Vector Icons](https://github.com/oblador/react-native-vector-icons)
   - material design?
   - android AND iOS support?

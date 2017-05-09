@@ -1,5 +1,7 @@
 import React, { Component, PropTypes } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, Button } from 'react-native';
+import { NavigationActions } from 'react-navigation';
+import { connect } from 'react-redux';
 
 const styles = StyleSheet.create({
   container: {
@@ -21,12 +23,28 @@ const styles = StyleSheet.create({
 });
 
 class Home extends Component {
+
   static propTypes = {
-    navigation: PropTypes.object.isRequired
+    navigation: PropTypes.object.isRequired,
+    isLoggedIn: PropTypes.bool
   };
 
   static navigationOptions = {
     title: 'Home'
+  };
+
+  componentWillMount() {
+    if (!this.props.isLoggedIn) {
+      const resetAction = NavigationActions.reset({
+        index: 0,
+        actions: [NavigationActions.navigate({ routeName: 'Login' })],
+      });
+      this.props.navigation.dispatch(resetAction);
+      // this.props.navigation.navigate({
+      //   routeName: 'Login',
+      //   index: 0
+      // });
+    }
   }
 
   toCounter = () => {
@@ -39,9 +57,7 @@ class Home extends Component {
         <Text style={styles.welcome}>
           Hello World!
         </Text>
-        <TouchableOpacity onPress={this.toCounter}>
-          <Text style={styles.instructions}>Navigate to Counter</Text>
-        </TouchableOpacity>
+        <Button title="Go to Counter" onPress={this.toCounter}/>
         {/*<TouchableOpacity onPress={this.toLogin}>
           <Text style={styles.instructions}>Navigate to Login</Text>
         </TouchableOpacity>*/}
@@ -50,4 +66,6 @@ class Home extends Component {
   }
 }
 
-export default Home;
+export default connect(state => ({
+  isLoggedIn: state.user.isLoggedIn
+}))(Home);

@@ -2,6 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import { StyleSheet, View, Text, TouchableOpacity } from 'react-native';
 import { bindActionCreators } from 'redux';
 import { connect } from 'react-redux';
+
 import Counter from '../components/Counter';
 import * as CounterActions from '../actions/counter';
 
@@ -19,6 +20,7 @@ const styles = StyleSheet.create({
 });
 
 class CounterContainer extends Component {
+
   static propTypes = {
     navigation: PropTypes.object.isRequired
   };
@@ -27,24 +29,17 @@ class CounterContainer extends Component {
     title: 'Counter'
   }
 
-  handleBack = () => {
-    this.props.navigation.goBack();
-  };
-
   render() {
     return (
       <View style={styles.container}>
         <Counter {...this.props} />
-        <TouchableOpacity onPress={this.handleBack}>
-          <Text style={styles.back}>Back</Text>
-        </TouchableOpacity>
       </View>
     );
   }
 }
 
 export default connect(
-  (state) => ({
+  state => ({
     counter: state.counter
   }),
   dispatch => bindActionCreators(CounterActions, dispatch)

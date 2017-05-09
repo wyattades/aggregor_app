@@ -7,7 +7,8 @@
     "test": "jest",
     "android": "react-native run-android",
     "emulator": "$ANDROID_HOME/emulator/emulator -avd nexus",
-    "dev": "react-native start > /dev/null 2>&1 & && adb reverse tcp:8081 tcp:8081"
+    "dev": "react-native start > /dev/null 2>&1 & && adb reverse tcp:8081 tcp:8081",
+    "allow-api": "adb reverse tcp:3000 tcp:3000"
   },
   "remotedev": {
     "hostname": "localhost",
@@ -15,19 +16,27 @@
   },
   "dependencies": {
     "immutable": "^3.8.1",
-    "react": "16.0.0-alpha.6",
-    "react-native": "0.44.0",
+    "react": "15.4.1",
+    "react-native": "0.42.0",
+    "react-native-clean-form": "^0.4.1",
+    "react-native-vector-icons": "^4.1.1",
     "react-navigation": "^1.0.0-beta.9",
     "react-redux": "^5.0.4",
     "redux": "^3.6.0",
+    "redux-form": "^6.6.3",
     "redux-thunk": "^2.2.0"
   },
   "devDependencies": {
+    "babel-eslint": "^7.2.3",
     "babel-jest": "19.0.0",
     "babel-preset-react-native": "1.9.1",
+    "eslint": "^3.19.0",
+    "eslint-plugin-react": "^7.0.0",
+    "eslint-plugin-react-native": "^2.3.2",
     "immutable-devtools": "0.0.7",
     "jest": "19.0.2",
-    "react-test-renderer": "16.0.0-alpha.6",
+    "react-native-dotenv": "0.0.4",
+    "react-test-renderer": "15.4.1",
     "redux-persist": "^4.7.1",
     "remote-redux-devtools": "^0.5.7",
     "superagent": "^3.5.2"

@@ -31,7 +31,7 @@ const enhancer = composeEnhancers(
   autoRehydrate()
 );
 
-export default configureStore = (initialState) => {
+export default (initialState) => {
   const store = createStore(reducer, initialState, enhancer);
   
   if (module.hot) {
@@ -48,10 +48,10 @@ export default configureStore = (initialState) => {
   }
 
   // Persist user state
-  persistStore(store, {
-    whitelist: [ 'user' ],
-    storage: AsyncStorage
-  });
+  // persistStore(store, {
+  //   whitelist: [ 'user' ],
+  //   storage: AsyncStorage
+  // });
 
   return store;
 };
