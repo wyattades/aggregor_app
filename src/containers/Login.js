@@ -1,73 +1,44 @@
-import React, { Component, PropTypes } from 'react';
-import { Text, View, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
-// import { Label, Button, Form, FormGroup, ActionsContainer, FieldsContainer, Fieldset } from 'react-native-clean-form';
-// import { Input, Select, Switch } from 'react-native-clean-form/redux-form-immutable'
-import { reduxForm, Field } from 'redux-form';
-// import { connect } from 'react-redux';
-// import { NavigationActons } from 'react-navigation';
+import React, { PropTypes } from 'react';
+import { View, StyleSheet } from 'react-native';
+import { reduxForm, SubmissionError, Field } from 'redux-form';
 
 import { login } from '../actions/api';
-import formStyles from '../styles/form';
-import styles from '../styles/general';
+import { HeaderLink } from '../components/Header';
+import { textField, SubmitButton, FormError } from '../components/Form';
+import { init } from '../actions/navActions';
   
 const onSubmit = (values, dispatch) => {
-  return new Promise((resolve) => {
-    setTimeout(() => {
-      console.log(values);
-      resolve();
-    }, 1500);
-  });
-  // dispatch(login({
-  //   username: 'wades',
-  //   password: 'password123'
-  // }))
-  // .catch(err => {
-
-  // });
+  return dispatch(login(values))
+  .then(
+    () => dispatch(init('Main')), 
+    err => {
+      console.log(err);
+      if (err.code === 401) {
+        throw new SubmissionError({ _error: 'Invalid username or password' });
+      } else if (err.code === 0) {
+        throw new SubmissionError({ _error: 'Failed to connect to the Aggregor server' });
+      }
+    }
+  );
 };
 
-const renderInput = ({ input: { onChange, ...restInput }, meta: { error, submitFailed }, label }) => (
-  <View style={formStyles.inputGroup}>
-    { label ? <Text style={formStyles.label}>{label}</Text> : null }
-    <TextInput 
-      underlineColorAndroid="transparent"
-      style={formStyles.input} 
-      onChangeText={onChange} 
-      {...restInput}/>
-    <Text style={[formStyles.error, (error && submitFailed) ? null : styles.hidden]}>{error}</Text>
+const styles = StyleSheet.create({
+  container: {
+    padding: 40
+  },
+});
+
+const LoginForm = ({ handleSubmit, submitting, error }) => (
+  <View style={styles.container}>
+    {/*<Text style={}>Login</Text>*/}
+    { error ? <FormError error={error}/> : null }
+    <Field label="Username" name="username" component={textField}/>
+    <Field label="Password" secureTextEntry={true} name="password" component={textField}/>
+    <SubmitButton title="Sign In" onPress={handleSubmit(onSubmit)} submitting={submitting}/>
   </View>
 );
 
-class Login extends Component {
-
-  static propTypes = {
-    navigation: PropTypes.object.isRequired
-  };
-
-  static navigationOptions = {
-    title: 'Login'
-  };
-
-  render() {
-
-    const { handleSubmit, submitting } = this.props;
-
-    return (
-      <View style={styles.container}>
-        <View style={formStyles.form}>
-          <Field label="Username" name="username" component={renderInput}/>
-          <Field label="Password" secureTextEntry={true} name="password" component={renderInput}/>
-          <TouchableOpacity style={formStyles.button} onPress={handleSubmit(onSubmit)}>
-            <Text style={formStyles.buttonText}>Login</Text>
-            { submitting ? <Text>Loading</Text> : null }
-          </TouchableOpacity>
-        </View>
-      </View>
-    );
-  }
-}
-
-export default reduxForm({
+const Login = reduxForm({
   form: 'login',
   validate: values => {
     const errors = {};
@@ -82,4 +53,18 @@ export default reduxForm({
 
     return errors;
   }
-})(Login);
+})(LoginForm);
+
+Login.propTypes = {
+  navigation: PropTypes.object.isRequired
+};
+
+Login.navigationOptions = ({ navigation }) => ({
+  title: 'Login',
+  headerLeft: null,
+  headerRight: (
+    <HeaderLink title="Sign Up" onPress={() => navigation.navigate('Register') }/>
+  )
+});
+
+export default Login;

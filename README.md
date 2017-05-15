@@ -25,3 +25,8 @@
   - [React Native Vector Icons](https://github.com/oblador/react-native-vector-icons)
   - material design?
   - android AND iOS support?
+
+## ISSUES
+- form inputs can get covered by keyboard:
+  - add 'android:windowSoftInputMode="adjustResize"' to AndroidManifest.xml ???
+  - use KeyBoardAvoidingView

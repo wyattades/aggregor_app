@@ -81,7 +81,7 @@ const request = (method, route, token, data) =>
 export const login = data => (dispatch, getState) => request('POST', '/user/login', undefined, data).then(
 	({ token }) => {
 		dispatch({ type: 'SET_USER', username: data.username, token });
-		// return Promise.resolve();
+		return Promise.resolve();
 	},
 	error(dispatch)
 );
@@ -94,7 +94,10 @@ export const logout = () => (dispatch, getState) => request('DELETE', '/user/log
 
 // data: username, password, first_name, last_name, email
 export const createUser = data => dispatch => request('POST', '/user', undefined, data).then(
-	({ token }) => dispatch({ type: 'SET_USER', username: data.username, token }),
+	({ token }) => {
+		dispatch({ type: 'SET_USER', username: data.username, token });
+		return Promise.resolve();
+	},
 	error(dispatch)
 );
 

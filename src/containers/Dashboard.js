@@ -22,30 +22,15 @@ const styles = StyleSheet.create({
   }
 });
 
-class Home extends Component {
+class Dashboard extends Component {
 
   static propTypes = {
     navigation: PropTypes.object.isRequired,
-    isLoggedIn: PropTypes.bool
   };
 
   static navigationOptions = {
     title: 'Home'
   };
-
-  componentWillMount() {
-    if (!this.props.isLoggedIn) {
-      const resetAction = NavigationActions.reset({
-        index: 0,
-        actions: [NavigationActions.navigate({ routeName: 'Login' })],
-      });
-      this.props.navigation.dispatch(resetAction);
-      // this.props.navigation.navigate({
-      //   routeName: 'Login',
-      //   index: 0
-      // });
-    }
-  }
 
   toCounter = () => {
     this.props.navigation.navigate('Counter');
@@ -66,6 +51,4 @@ class Home extends Component {
   }
 }
 
-export default connect(state => ({
-  isLoggedIn: state.user.isLoggedIn
-}))(Home);
+export default connect()(Dashboard);

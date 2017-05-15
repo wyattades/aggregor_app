@@ -6,7 +6,7 @@ import thunk from 'redux-thunk';
 import { persistStore, autoRehydrate } from 'redux-persist';
 
 import reducer from './reducers';
-import * as actionCreators from './actions/counter';
+import * as actionCreators from './actions';
 
 let composeEnhancers = compose;
 if (__DEV__) {
@@ -31,27 +31,30 @@ const enhancer = composeEnhancers(
   autoRehydrate()
 );
 
-export default (initialState) => {
-  const store = createStore(reducer, initialState, enhancer);
+const configureStore = (initialState) => {
   
   if (module.hot) {
     // Enable hot module replacement for reducers
-    module.hot.accept('./reducers', () => {
+    module.hot.accept(() => {
       try {
         // eslint-disable-next-line import/newline-after-import
         const reducers = require('./reducers').default;
-        store.replaceReducer(reducers(store.asyncReducers));
+        store.replaceReducer(reducers);
       } catch (error) {
         console.error(`Reducer hot reloading error ${error}`);
       }
     });
   }
 
+  const store = createStore(reducer, initialState || {}, enhancer);
+
   // Persist user state
-  // persistStore(store, {
-  //   whitelist: [ 'user' ],
-  //   storage: AsyncStorage
-  // });
+  persistStore(store, {
+    whitelist: [ 'user' ],
+    storage: AsyncStorage
+  });
 
   return store;
 };
+
+export default configureStore;
