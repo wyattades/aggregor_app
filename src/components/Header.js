@@ -1,7 +1,8 @@
 import React, { PropTypes } from 'react';
-import { Text, TouchableOpacity, StyleSheet, View, Button } from 'react-native';
+import { Text, TouchableNativeFeedback, StyleSheet, View, Button } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import theme from '../styles/theme';
+import theme from '../utils/theme';
 
 export const styles = StyleSheet.create({
   headerLink: {
@@ -18,7 +19,11 @@ export const styles = StyleSheet.create({
   },
   title: {
     color: theme.WHITE
-  }
+  },
+  icon: {
+    marginHorizontal: 10,
+    color: theme.WHITE,
+  },
 });
 
 /*const HeaderLink = ({ onPress, title }) => (
@@ -39,4 +44,19 @@ HeaderLink.propTypes = {
   title: PropTypes.string.isRequired,
 };
 
-export { HeaderLink };
+const ripple = TouchableNativeFeedback.SelectableBackgroundBorderless();
+
+const HeaderButton = ({ onPress, icon }) => (
+  <TouchableNativeFeedback background={ripple} onPress={onPress}>
+    <View>
+      <Icon name={icon} style={styles.icon} size={32}/>
+    </View>
+  </TouchableNativeFeedback>
+);
+
+HeaderButton.propTypes = {
+  icon: PropTypes.string.isRequired,
+  onPress: PropTypes.func.isRequired,
+};
+
+export { HeaderLink, HeaderButton };

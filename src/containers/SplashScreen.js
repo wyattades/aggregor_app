@@ -4,6 +4,8 @@ import { reduxForm } from 'redux-form';
 
 import { HeaderLink } from '../components/Header';
 
+// TODO???
+
 const SplashScreen = () => (
   <View>
     <Text>SplashScreen!!!</Text>

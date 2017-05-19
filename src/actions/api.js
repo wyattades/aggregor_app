@@ -1,53 +1,51 @@
-// import { fetch } from 'react-native';
-
 import { API_KEY, API_URL } from 'react-native-dotenv';
 
 const ADDRESS = __DEV__ ? 'http://localhost:3000' : API_URL,
     TOKEN = API_KEY;
 
 const error = dispatch => err => {
-	const errorType = Math.floor(err.code/100);
-	if (errorType === 5) {
+	// const errorType = Math.floor(err.code / 100);
+	// if (errorType === 5) {
 		dispatch({
 			type: 'API_ERROR',
 			err
 		});
-	} else {
-		throw err;
-	}
+	// } else {
+	// 	throw err;
+	// }
+	// throw err;
 };
 
-const request = (method, route, token, data) => 
-    new Promise((resolve, reject) => {
-        fetch(ADDRESS + route, {
-					method,
-					headers: {
-						'Accept': 'json',
-    				'Content-Type': data ? 'application/json' : undefined,
-						[TOKEN]: token ? token : undefined,
-					},
-					body: data ? JSON.stringify(data) : undefined
-				})
-				.then(res => res.json())
-				.then(res => {
-					if (res.code === 200) {
-						resolve(res);
-					} else {
-						throw res;
-					}
-				})
-				.catch(err => {
-					if (typeof err === 'object' && typeof err.code === 'number') {
-						reject(err);
-					} else {
-						reject({
-							code: 0,
-							msg: 'Error',
-							data: 'Undefined Error'
-						});
-					}
-				});
-    });
+const request = (method, route, token, data) => new Promise((resolve, reject) => {
+	fetch(ADDRESS + route, {
+		method,
+		headers: {
+			'Accept': 'json',
+			'Content-Type': data ? 'application/json' : undefined,
+			[TOKEN]: token ? token : undefined,
+		},
+		body: data ? JSON.stringify(data) : undefined
+	})
+	.then(res => res.json())
+	.then(res => {
+		if (res.code === 200) {
+			resolve(res.data);
+		} else {
+			throw res;
+		}
+	})
+	.catch(err => {
+		if (typeof err === 'object' && typeof err.code === 'number') {
+			reject(err);
+		} else {
+			reject({
+				code: 0,
+				msg: 'Error',
+				data: 'Undefined Error'
+			});
+		}
+	});
+});
 
 // const apiGenerator = (next, type) => (...args) => {
 // 	next({ 
@@ -78,27 +76,21 @@ const request = (method, route, token, data) =>
 // export const fetchPlugin = (feed, id) => requestToStore('SET_ENTRIES', 'GET', `/user/${user}/${feed}/${id}`, true);
 
 
+// NOTE: actions that might return an expected error (such as long login info) do not have 'error(dispatch)'
+
 export const login = data => (dispatch, getState) => request('POST', '/user/login', undefined, data).then(
-	({ token }) => {
-		dispatch({ type: 'SET_USER', username: data.username, token });
-		return Promise.resolve();
-	},
-	error(dispatch)
+	({ token }) => dispatch({ type: 'SET_USER', username: data.username, token })
 );
 
 export const logout = () => (dispatch, getState) => request('DELETE', '/user/logout', getState().user.token).then(
-	() => dispatch({ type: 'UNSET_USER' }), 
+	() => dispatch({ type: 'UNSET_USER' }),
 	error(dispatch)
 );
 
 
 // data: username, password, first_name, last_name, email
 export const createUser = data => dispatch => request('POST', '/user', undefined, data).then(
-	({ token }) => {
-		dispatch({ type: 'SET_USER', username: data.username, token });
-		return Promise.resolve();
-	},
-	error(dispatch)
+	({ token }) => 	dispatch({ type: 'SET_USER', username: data.username, token })
 );
 
 // data: username, password
@@ -109,13 +101,14 @@ export const deleteUser = data => (dispatch, getState) => request('DELETE', '/us
 
 export const fetchFeeds = () => (dispatch, getState) => {
 	const user = getState().user;
-	dispatch({ type: 'SET_FEEDS', status: 'loading' });
+	// dispatch({ type: 'SET_FEEDS', status: 'loading' });
 	return request('GET', `/user/${user.username}/feed`, user.token).then(
-		({ feedNames }) => dispatch({ type: 'SET_FEEDS', status: 'SUCCESS', feedNames }),
-		err => {
-			dispatch({ type: 'SET_FEEDS', status: 'ERROR', err });
-			error(dispatch);
-		}
+		({ feedNames }) => {
+			dispatch({ type: 'SET_FEEDS', status: 'SUCCESS', feedNames });
+			// return Promise.resolve();
+		},
+		error(dispatch)
+		// dispatch({ type: 'SET_FEEDS', status: 'ERROR', err });
 	);
 };
 

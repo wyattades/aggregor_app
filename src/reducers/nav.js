@@ -1,21 +1,30 @@
 import { AppNavigator } from '../navigator';
-// import { NavigationActions } from 'react-navigation';
 
-// const initialState = AppNavigator.router.getStateForAction(NavigationActions.reset({ index: 0, actions: [ NavigationActions.navigate({ routeName: 'Login' }) ] }));
-// const firstAction = AppNavigator.router.getActionForPathAndParams('Home');
-// const initialState = AppNavigator.router.getStateForAction(firstAction);
-// const secondAction = AppNavigator.router.getActionForPathAndParams('Login');
-// const initialState = AppNavigator.router.getStateForAction(secondAction, tempNavState);
+import { init } from '../actions/navActions';
 
 export default (state, action) => {
   let nextState;
   switch (action.type) {
-    // case 'SET_USER':
-    //   nextState = AppNavigator.router.getStateForAction(NavigationActions.navigate({ routeName: 'Dashboard' }), state);
-    //   break;
-    // case 'UNSET_USER':
-    //   nextState = AppNavigator.router.getStateForAction(NavigationActions.navigate({ routeName: 'Login' }), state);
-    //   break;
+    
+    case 'persist/REHYDRATE':
+      const isLoggedIn = action.payload && action.payload.user && action.payload.user.isLoggedIn === true;
+      if (!isLoggedIn) {
+        nextState = AppNavigator.router.getStateForAction(init('Login'));   
+      }
+      break;
+
+    case 'API_ERROR':
+      nextState = AppNavigator.router.getStateForAction(init('Login', { error: action.err }));
+      break;
+
+    case 'UNSET_USER':
+      nextState = AppNavigator.router.getStateForAction(init('Login'));
+      break;
+
+    case 'SET_FEEDS':
+      nextState = AppNavigator.router.getStateForAction(init('Main'));
+      break;
+
     default:
       nextState = AppNavigator.router.getStateForAction(action, state);
       break;
@@ -23,3 +32,5 @@ export default (state, action) => {
 
   return nextState || state;
 };
+
+// TODO: pass params for selected feed in here!

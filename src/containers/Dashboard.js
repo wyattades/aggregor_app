@@ -1,26 +1,27 @@
 import React, { Component, PropTypes } from 'react';
-import { StyleSheet, Text, View, Button } from 'react-native';
-import { NavigationActions } from 'react-navigation';
+import { StyleSheet, View, FlatList } from 'react-native';
 import { connect } from 'react-redux';
+
+import { fetchPlugin } from '../actions/api';
+import Entry from '../components/Entry';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
     backgroundColor: '#F5FCFF'
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5
   }
 });
+
+const exEntries = [
+  {
+    id: 0,
+    title: 'How do you do'
+  },
+  {
+    id: 1,
+    title: 'cows are fun'
+  }
+];
 
 class Dashboard extends Component {
 
@@ -28,27 +29,71 @@ class Dashboard extends Component {
     navigation: PropTypes.object.isRequired,
   };
 
-  static navigationOptions = {
-    title: 'Home'
-  };
+  state = {
+    refreshing: false
+  }
 
-  toCounter = () => {
-    this.props.navigation.navigate('Counter');
-  };
+  componentWillMount() {
+    this._updateTitle(this.props.selectedFeed);
+  }
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.selectedFeed !== this.props.selectedFeed) {
+      this._updateTitle(nextProps.selectedFeed);
+    }
+  }
+
+  componentDidMount() {
+    this._fetchFeed().then(() => {
+
+    });
+  }
+
+  _updateTitle = (feed) => {
+    this.props.navigation.setParams({ feed });
+  }
+
+  _keyExtractor = (item, index) => item.id;
+
+  _fetchFeed = () => {
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve();
+      }, 2000);
+    });
+  }
+
+  _onRefresh = () => {
+    this.setState({ refreshing: true });
+    this._fetchFeed().then(() => {
+      this.setState({ refreshing: false });
+    });
+  }
+
+  _renderItem = ({ item }) => (
+    <Entry {...item}/>
+  );
 
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Hello World!
-        </Text>
-        <Button title="Go to Counter" onPress={this.toCounter}/>
-        {/*<TouchableOpacity onPress={this.toLogin}>
-          <Text style={styles.instructions}>Navigate to Login</Text>
-        </TouchableOpacity>*/}
+        <FlatList
+          onRefresh={this._onRefresh}
+          refreshing={this.state.refreshing}
+          data={this.props.entries}
+          renderItem={this._renderItem}
+          keyExtractor={this._keyExtractor}
+        />
       </View>
     );
   }
 }
 
-export default connect()(Dashboard);
+export default connect(({ feeds, selectedFeed }) => {
+  const feed = feeds.get(selectedFeed);
+  return {
+    entries: feed ? feed.get('entries').toArray() : [],
+    plugins: feed ? feed.get('plugins').toArray() : [],
+    selectedFeed,
+  };
+})(Dashboard);

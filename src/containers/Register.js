@@ -3,23 +3,23 @@ import { View, StyleSheet } from 'react-native';
 import { reduxForm, Field, SubmissionError } from 'redux-form';
 
 import { createUser } from '../actions/api';
-import { HeaderLink } from '../components/Header';
 import format from '../utils/format';
 import { init } from '../actions/navActions';
 import { textField, SubmitButton, FormError } from '../components/Form';
   
 const onSubmit = (values, dispatch) => {
   return dispatch(createUser(values))
-  .then(
-    () => dispatch(init('Main')), 
+  // .then(
+    // () => dispatch(init('Main')), 
+    .catch(
     err => {
       console.log(err);
-      if (err.code === 400) {
-        throw new SubmissionError({ _error: err.data });
-      } else if (err.code === 409) {
+      if (err.code === 409) {
         throw new SubmissionError({ _error: 'Uh oh, this username is already taken!' });
       } else if (err.code === 0) {
         throw new SubmissionError({ _error: 'Failed to connect to the Aggregor server' });
+      } else {
+        throw new SubmissionError({ _error: err.data || 'An unknown error occurred. Please try again later.' });
       }
     }
   );
@@ -73,13 +73,5 @@ const Register = reduxForm({
 Register.propTypes = {
   navigation: PropTypes.object.isRequired
 };
-
-Register.navigationOptions = ({ navigation }) => ({
-  title: 'Sign Up',
-  headerLeft: null,
-  headerRight: (
-    <HeaderLink title="Sign In" onPress={() => navigation.navigate('Login') }/>
-  )
-});
 
 export default Register;

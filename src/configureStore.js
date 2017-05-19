@@ -1,4 +1,3 @@
-/* eslint global-require: 0 */
 import Immutable from 'immutable';
 import { Platform, AsyncStorage } from 'react-native';
 import { createStore, applyMiddleware, compose } from 'redux';
@@ -6,6 +5,7 @@ import thunk from 'redux-thunk';
 import { persistStore, autoRehydrate } from 'redux-persist';
 
 import reducer from './reducers';
+import middleware from './middleware';
 import * as actionCreators from './actions';
 
 let composeEnhancers = compose;
@@ -27,7 +27,7 @@ if (__DEV__) {
 }
 
 const enhancer = composeEnhancers(
-  applyMiddleware(thunk),
+  applyMiddleware(thunk, ...middleware),
   autoRehydrate()
 );
 
@@ -47,7 +47,7 @@ const configureStore = (initialState) => {
   }
 
   const store = createStore(reducer, initialState || {}, enhancer);
-
+  
   // Persist user state
   persistStore(store, {
     whitelist: [ 'user' ],
