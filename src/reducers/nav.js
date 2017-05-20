@@ -14,7 +14,7 @@ export default (state, action) => {
       break;
 
     case 'API_ERROR':
-      nextState = AppNavigator.router.getStateForAction(init('Login', { error: action.err }));
+      nextState = AppNavigator.router.getStateForAction(init('Login', { apiError: action.err }));
       break;
 
     case 'UNSET_USER':

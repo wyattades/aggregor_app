@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 // TODO
 
-const Account = ({  }) => (
+const Account = () => (
   <View>
     <Text>About Page</Text>
   </View>

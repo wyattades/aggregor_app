@@ -33,6 +33,10 @@ class Dashboard extends Component {
     refreshing: false
   }
 
+  _updateTitle = (feed) => {
+    this.props.navigation.setParams({ feed });
+  }
+
   componentWillMount() {
     this._updateTitle(this.props.selectedFeed);
   }
@@ -47,10 +51,6 @@ class Dashboard extends Component {
     this._fetchFeed().then(() => {
 
     });
-  }
-
-  _updateTitle = (feed) => {
-    this.props.navigation.setParams({ feed });
   }
 
   _keyExtractor = (item, index) => item.id;

@@ -31,8 +31,8 @@ const styles = StyleSheet.create({
   },
 });
 
-const LoginForm = ({ handleSubmit, submitting, error, navigation }) => {
-  const _error = error || (navigation.state.params && navigation.state.params.error);
+const LoginForm = ({ handleSubmit, submitting, error, apiError, navigation }) => {
+  const _error = (apiError && apiError.code) || error || (navigation.state.params && navigation.state.params.error);
   return (
     <View style={styles.container}>
       {/*<Text style={}>Login</Text>*/}
@@ -62,7 +62,8 @@ const Login = reduxForm({
 })(LoginForm);
 
 Login.propTypes = {
-  navigation: PropTypes.object.isRequired
+  navigation: PropTypes.object.isRequired,
+  apiError: PropTypes.object
 };
 
 export default Login;
