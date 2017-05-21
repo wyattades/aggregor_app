@@ -36,7 +36,7 @@ const MainPage = (component, title) => {
         headerStyle: headerStyles.header,
         headerTitleStyle: headerStyles.title,
         headerTintColor: 'white',
-        headerLeft: <HeaderButton icon="menu" onPress={()=>{navigation.navigate('DrawerOpen');}}/>
+        headerLeft: <HeaderButton icon="menu" onPress={()=>navigation.navigate('DrawerOpen')}/>
       })
     }
   );
@@ -46,16 +46,16 @@ const HomeNavigator = new StackNavigator(
   {
     Dashboard: { 
       screen : Dashboard,
-      navigationOptions: ({ navigation }) => ({
-        title: 'Home' + (navigation.state.params ? (' > ' + navigation.state.params.feed) : ''),
-        headerLeft: <HeaderButton icon="menu" onPress={()=>{navigation.navigate('DrawerOpen');}}/>,
-        headerRight: <HeaderButton icon="edit" onPress={()=>{navigation.navigate('FeedEdit');}}/>
+      navigationOptions: ({ navigation, screenProps: { selectedFeed, parentNavigation } }) => ({
+        title: 'Home' + (selectedFeed ? `: ${selectedFeed}` : ''),
+        headerLeft: <HeaderButton icon="menu" onPress={()=>parentNavigation.navigate('DrawerOpen')}/>,
+        headerRight: <HeaderButton icon="edit" onPress={()=>navigation.navigate('FeedEdit')}/>
       })
     },
     FeedEdit: {
       screen: FeedEdit,
-      navigationOptions: ({ navigation }) => ({
-        title: 'Edit Feed: ' + (navigation.state.params ? navigation.state.params.feed : 'NULL')
+      navigationOptions: ({ navigation, screenProps: { selectedFeed } }) => ({
+        title: 'Edit: ' + selectedFeed
       })
     }
   }, {
@@ -68,9 +68,15 @@ const HomeNavigator = new StackNavigator(
   }
 );
 
+const HomeNavigatorWrapper = connect(({ selectedFeed }) => ({ 
+  selectedFeed
+}))(({ selectedFeed, navigation }) => (
+  <HomeNavigator screenProps={{ selectedFeed, parentNavigation: navigation }}/>
+));
+
 const MainNavigator = new DrawerNavigator(
   {
-    Home: { screen: HomeNavigator },
+    Home: { screen: HomeNavigatorWrapper },
     Account: { 
       screen: MainPage(Account, 'Account')
     },
@@ -150,11 +156,11 @@ class Navigator extends Component {
 
   componentWillMount() {
     setupStyles();
-    BackHandler.addEventListener('hardwareBackPress', this._handleBack);
+    // BackHandler.addEventListener('hardwareBackPress', this._handleBack);
   }
 
   componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', this._handleBack);
+    // BackHandler.removeEventListener('hardwareBackPress', this._handleBack);
   }
 
   render() {

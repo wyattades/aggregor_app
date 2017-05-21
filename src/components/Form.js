@@ -34,6 +34,9 @@ const styles = StyleSheet.create({
   buttonIcon: {
     color: theme.WHITE
   },
+  disabled: {
+    backgroundColor: theme.SUPPORT
+  },
 
   inputError: {
     borderColor: theme.ERROR,
@@ -79,10 +82,10 @@ textField.propTypes = {
   secureTextEntry: PropTypes.bool,
 };
 
-const SubmitButton = ({ title, onPress, submitting }) => (
-  <TouchableNativeFeedback onPress={onPress}>
-    <View style={styles.button}>
-      { submitting ? <Icon name="cached" style={styles.buttonIcon} size={24}/> : null }
+const SubmitButton = ({ title, onPress, submitting, submitSucceeded, disabled }) => (
+  <TouchableNativeFeedback onPress={disabled ? null : onPress}>
+    <View style={[styles.button, disabled ? styles.disabled : null]}>
+      { (submitting || submitSucceeded) ? <Icon name={submitSucceeded ? 'check' : 'cached'} style={styles.buttonIcon} size={24}/> : null }
       <Text style={styles.buttonText}>{title}</Text>
     </View>
   </TouchableNativeFeedback>
@@ -91,7 +94,9 @@ const SubmitButton = ({ title, onPress, submitting }) => (
 SubmitButton.propTypes = {
   title: PropTypes.string.isRequired,
   onPress: PropTypes.func.isRequired,
-  submitting: PropTypes.any
+  submitSucceeded: PropTypes.bool,
+  submitting: PropTypes.any,
+  disabled: PropTypes.bool
 };
 
 const FormError = ({ error }) => (

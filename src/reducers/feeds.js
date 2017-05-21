@@ -53,6 +53,7 @@ const entries = (state, action) => {
 	case 'DELETE_PLUGIN':
 		return state.filter(entry => entry.feedId !== action.id);
 	case 'SET_PLUGINS':
+	case 'CLEAR_ENTRIES':
 		return List();
 	default:
 		return state;
@@ -99,6 +100,7 @@ const feed = (state, action) => {
 		return state.update('plugins', _plugins => plugins(_plugins, action))
 			.update('entries', _entries => entries(_entries, action));
 	case 'ADD_ENTRIES':
+	case 'CLEAR_ENTRIES':
 		return state.update('entries', _entries => entries(_entries, action));
 	default:
 		return state;
@@ -116,6 +118,7 @@ const feeds = (state = OrderedMap(), action) => {
 	case 'UPDATE_PLUGIN':
 	case 'DELETE_PLUGIN':
 	case 'ADD_ENTRIES':
+	case 'CLEAR_ENTRIES':
 		return state.update(action.feed, _feed => feed(_feed, action));
 	case 'DELETE_FEED':
 		return state.remove(action.feed);

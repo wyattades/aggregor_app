@@ -1,9 +1,18 @@
 import React, { PropTypes } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 
-const Entry = ({ id, title }) => (
-  <View>
-    <Text>{title}</Text>
+const styles = StyleSheet.create({
+  container: {
+    marginBottom: 20,
+  },
+  title: {
+    fontWeight: '500'
+  }
+});
+
+const Entry = ({ title }) => (
+  <View style={styles.container}>
+    <Text style={styles.title}>{title}</Text>
   </View>
 );
 

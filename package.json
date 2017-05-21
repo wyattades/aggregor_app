@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "postinstall": "rimraf ./node_modules/redux-form/node_modules/react",
+    "postinstall": "rm -rf ./node_modules/redux-form/node_modules/react",
     "test": "jest",
     "android": "node node_modules/react-native/local-cli/cli.js run-android",
     "emulator": "$ANDROID_HOME/emulator/emulator -avd nexus",

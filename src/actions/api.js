@@ -4,15 +4,16 @@ const ADDRESS = __DEV__ ? 'http://localhost:3000' : API_URL,
     TOKEN = API_KEY;
 
 const error = dispatch => err => {
-	// const errorType = Math.floor(err.code / 100);
-	// if (errorType === 5) {
+	const errorType = Math.floor(err.code / 100);
+	if (errorType === 5) {
+		console.log(err);
 		dispatch({
 			type: 'API_ERROR',
 			err
 		});
-	// } else {
-	// 	throw err;
-	// }
+	} else {
+		throw err;
+	}
 	// throw err;
 };
 
@@ -87,7 +88,6 @@ export const logout = () => (dispatch, getState) => request('DELETE', '/user/log
 	error(dispatch)
 );
 
-
 // data: username, password, first_name, last_name, email
 export const createUser = data => dispatch => request('POST', '/user', undefined, data).then(
 	({ token }) => 	dispatch({ type: 'SET_USER', username: data.username, token })
@@ -134,18 +134,24 @@ export const deleteFeed = feed => (dispatch, getState) => {
 export const fetchPlugins = feed => (dispatch, getState) => {
 	const user = getState().user;
 	return request('GET', `/user/${user.username}/feed/${feed}`, user.token).then(
-		({ plugins }) => dispatch({ type: 'SET_PLUGINS', feed, plugins }), 
+		({ plugins }) => {
+			dispatch({ type: 'SET_PLUGINS', feed, plugins });
+			return Promise.resolve();
+		}, 
 		error(dispatch)
 	);
 };
 
 export const fetchPlugin = (feed, id) => (dispatch, getState) => {
 	const user = getState().user;
-	dispatch({ type: 'ADD_ENTRIES', status: 'loading', feed, id });
+	// dispatch({ type: 'ADD_ENTRIES', status: 'loading', feed, id });
 	return request('GET', `/user/${user.username}/feed/${feed}/${id}`, user.token).then(
-		({ entries }) => dispatch({ type: 'ADD_ENTRIES', status: 'success', feed, id, entries }), 
+		({ entries }) => {
+			dispatch({ type: 'ADD_ENTRIES', status: 'success', feed, id, entries });
+			return Promise.resolve();
+		}, 
 		err => {
-			dispatch({ type: 'ADD_ENTRIES', status: 'error', err });
+			// dispatch({ type: 'ADD_ENTRIES', status: 'error', err });
 			return error(dispatch)(err);
 		}
 	);

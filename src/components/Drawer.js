@@ -2,11 +2,12 @@ import React, { PropTypes } from 'react';
 import { ScrollView, View, Text, TouchableNativeFeedback, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-// import { NavigationActions } from 'react-navigation';
+import { NavigationActions } from 'react-navigation';
 
 import { setFeed } from '../actions/navActions';
 import theme from '../utils/theme';
 import { logout } from '../actions/api';
+// import { init } from '..actions/navActions';
 
 const styles = StyleSheet.create({
   container: {
@@ -39,7 +40,17 @@ const styles = StyleSheet.create({
     marginRight: 40,
   },
   iconRight: {
-    color: theme.SUPPORT,
+    color: theme.TEXT_SECOND,
+
+  },
+  iconRightWrap: {
+    position: 'absolute',
+    right: 8,
+    top: 8,
+    width: 32,
+    height: 32,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
   itemText: { // FIXME: text should have dynamic width, but still truncate
     color: theme.TEXT,
@@ -80,19 +91,27 @@ const Label = ({ title }) => (
   </View>
 );
 
-const NavItem = ({ title, onPress, iconLeft, iconRight, selected }) => (
-  <TouchableNativeFeedback onPress={onPress}>
-    <View style={[styles.item, selected ? styles.selectedItem : null]}>
-      {iconLeft ? <Icon name={iconLeft} size={24} style={styles.iconLeft}/> : null}
-      <Text style={styles.itemText} numberOfLines={1}>{title}</Text>
-      {iconRight ? <Icon name={iconRight} size={24} style={styles.iconRight}/> : null}
-    </View>
-  </TouchableNativeFeedback>  
+const ripple = TouchableNativeFeedback.SelectableBackgroundBorderless();
+
+const NavItem = ({ title, onPress, iconLeft, iconRight, selected, onIconPress }) => (
+  <View>
+    <TouchableNativeFeedback onPress={onPress}>
+      <View style={[styles.item, selected ? styles.selectedItem : null]}>
+        {iconLeft ? <Icon name={iconLeft} size={24} style={styles.iconLeft}/> : null}
+        <Text style={styles.itemText} numberOfLines={1}>{title}</Text>
+      </View>
+    </TouchableNativeFeedback>
+    {iconRight ? (
+      <TouchableNativeFeedback onPress={onIconPress} background={ripple}>
+        <View style={styles.iconRightWrap}>
+          <Icon name={iconRight} size={24} style={styles.iconRight}/>
+        </View>
+      </TouchableNativeFeedback>
+    ) : null}
+  </View>
 );
 
-const handleLogout = (dispatch) => () => dispatch(logout());
-
-const Drawer = ({ feeds, dispatch, navigation, selectedFeed }) => {
+let Drawer = ({ feeds, navigation, leave, selectedFeed, handleLogout, handleSetFeed }) => {
   const { index, routes } = navigation.state;
   const selected = (routeName) => (index > 0 && routes[index].routeName === routeName);
 
@@ -101,35 +120,42 @@ const Drawer = ({ feeds, dispatch, navigation, selectedFeed }) => {
       <Billboard/>
       <Label title="My Feeds"/>
       {feeds.map((feed) => (
-        <NavItem title={feed} iconLeft="label" selected={index === 0 && feed === selectedFeed} key={feed} onPress={() => {
-          dispatch(setFeed(feed));
-          navigation.navigate('Home');
-        }}/>
+        <NavItem title={feed} iconLeft="label" iconRight="edit" selected={index === 0 && feed === selectedFeed} key={feed} 
+          onPress={() => {
+            handleSetFeed(feed);
+            navigation.navigate('Home');
+            //navigation.dispatch(navigateAction);
+          }}
+          onIconPress={()=>{
+            handleSetFeed(feed);
+            //navigation.navigate('Home', undefined, NavigationActions.reset({ index: 1, actions: [ NavigationActions.navigate({ routeName: 'Dashboard'}), NavigationActions.navigate({ routeName: 'FeedEdit'}) ] }));
+          }}/>
       ))}
       <NavItem title="Create new feed" iconLeft="add" selected={selected('NewFeed')} onPress={() => navigation.navigate('NewFeed')}/>
       <View style={styles.divider}/>
-      <NavItem title="Account" iconLeft="account-circle" selected={selected('Account')} onPress={() => {navigation.navigate('Account');}}/>
-      <NavItem title="About" iconLeft="info" selected={selected('About')} onPress={() => {navigation.navigate('About');}}/>
-      <NavItem title="Logout" iconLeft="exit-to-app" onPress={handleLogout(dispatch)}/>
+      <NavItem title="Account" iconLeft="account-circle" selected={selected('Account')} onPress={() => navigation.navigate('Account')}/>
+      <NavItem title="About" iconLeft="info" selected={selected('About')} onPress={() => navigation.navigate('About')}/>
+      <NavItem title="Logout" iconLeft="exit-to-app" onPress={handleLogout}/>
     </ScrollView>
   );
 };
 
+Drawer = connect(({ feeds, selectedFeed }) => ({
+  feeds: feeds.keySeq().toArray(),
+  selectedFeed
+}), {
+  handleLogout: logout,
+  handleSetFeed: setFeed,
+})(Drawer);
 
 Drawer.propTypes = {
-  feeds: PropTypes.array.isRequired,
-  dispatch: PropTypes.func.isRequired,
   navigation: PropTypes.object.isRequired,
   router: PropTypes.object.isRequired,
   renderIcon: PropTypes.func.isRequired,
   getLabel: PropTypes.func.isRequired,
-  selectedFeed: PropTypes.string
 };
 
-export default connect(({ feeds, selectedFeed }) => ({
-  feeds: feeds.keySeq().toArray(),
-  selectedFeed
-}))(Drawer);
+export default Drawer;
 
 //TODO: map dispatch
 //TODO: selected NavItem based on navigation state

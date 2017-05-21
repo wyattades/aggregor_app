@@ -12,16 +12,17 @@ const styles = StyleSheet.create({
   }
 });
 
-const exEntries = [
-  {
-    id: 0,
-    title: 'How do you do'
-  },
-  {
-    id: 1,
-    title: 'cows are fun'
+const pluginsEqual = (p1, p2) => {
+  if (p1.length !== p2.length) {
+    return false;
   }
-];
+  for (let i = 0; i < p1.length; i++) {
+    if (p1[i].id !== p2[i].id) {
+      return false;
+    }
+  }
+  return true;
+};
 
 class Dashboard extends Component {
 
@@ -33,45 +34,32 @@ class Dashboard extends Component {
     refreshing: false
   }
 
-  _updateTitle = (feed) => {
-    this.props.navigation.setParams({ feed });
-  }
-
-  componentWillMount() {
-    this._updateTitle(this.props.selectedFeed);
-  }
-
   componentWillReceiveProps(nextProps) {
-    if (nextProps.selectedFeed !== this.props.selectedFeed) {
-      this._updateTitle(nextProps.selectedFeed);
+    if (!pluginsEqual(nextProps.plugins, this.props.plugins)) {
+      this._fetchFeed(nextProps);
     }
   }
 
-  componentDidMount() {
-    this._fetchFeed().then(() => {
+  _keyExtractor = (item, index) => index;
 
-    });
-  }
-
-  _keyExtractor = (item, index) => item.id;
-
-  _fetchFeed = () => {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve();
-      }, 2000);
-    });
+  _fetchFeed = (props) => {
+    // TODO: create a store action for this?
+    const { dispatch, selectedFeed, plugins } = props;
+    dispatch({ type: 'CLEAR_ENTRIES', feed: selectedFeed });
+    return Promise.all(plugins.map(
+      plugin => dispatch(fetchPlugin(selectedFeed, plugin.id))
+    ));
   }
 
   _onRefresh = () => {
     this.setState({ refreshing: true });
-    this._fetchFeed().then(() => {
+    this._fetchFeed(this.props).then(() => {
       this.setState({ refreshing: false });
-    });
+    }, console.log);
   }
 
   _renderItem = ({ item }) => (
-    <Entry {...item}/>
+    <Entry {...item.toJS()}/>
   );
 
   render() {
@@ -82,7 +70,7 @@ class Dashboard extends Component {
           refreshing={this.state.refreshing}
           data={this.props.entries}
           renderItem={this._renderItem}
-          keyExtractor={this._keyExtractor}
+          keyExtractor={item => item.id}
         />
       </View>
     );
