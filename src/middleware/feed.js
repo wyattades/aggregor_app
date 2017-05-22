@@ -9,7 +9,9 @@ export default store => next => action => {
     action.payload.user && action.payload.user.isLoggedIn === true) || 
     action.type === 'SET_USER'
   ) {
-    store.dispatch(fetchFeeds()).catch(console.log);
+    store.dispatch(fetchFeeds()).catch(() => {
+      store.dispatch({ type: 'UNSET_USER' });
+    });
 
   } else if (action.type === 'SET_FEEDS') {
     if (action.feedNames.length > 0) {

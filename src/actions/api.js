@@ -1,16 +1,20 @@
-import { API_KEY, API_URL } from 'react-native-dotenv';
+import { API_KEY, API_URL, LEE } from 'react-native-dotenv';
 
-const ADDRESS = __DEV__ ? 'http://localhost:3000' : API_URL,
+const ADDRESS = (LEE !== 'true' && __DEV__) ? 'http://localhost:3000' : API_URL,
     TOKEN = API_KEY;
 
 const error = dispatch => err => {
+	console.log(err);
 	const errorType = Math.floor(err.code / 100);
 	if (errorType === 5) {
-		console.log(err);
 		dispatch({
 			type: 'API_ERROR',
 			err
 		});
+	// } else if (err.code === 401) {
+	// 	dispatch({
+	// 		type: 'API_ERROR'
+	// 	});
 	} else {
 		throw err;
 	}
@@ -133,6 +137,10 @@ export const deleteFeed = feed => (dispatch, getState) => {
 
 export const fetchPlugins = feed => (dispatch, getState) => {
 	const user = getState().user;
+	if (LEE) {
+		dispatch({ type: 'SET_PLUGINS', feed, plugins: [] });
+		return Promise.resolve();
+	}
 	return request('GET', `/user/${user.username}/feed/${feed}`, user.token).then(
 		({ plugins }) => {
 			dispatch({ type: 'SET_PLUGINS', feed, plugins });

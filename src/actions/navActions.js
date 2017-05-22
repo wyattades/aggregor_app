@@ -6,3 +6,5 @@ export const init = (screen, params) => NavigationActions.reset({
 });
  
 export const setFeed = (feed) => ({ type: 'SET_FEED', feed: feed || null });
+
+export const navigate = (screen) => NavigationActions.navigate({ routeName: screen });

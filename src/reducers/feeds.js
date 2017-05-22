@@ -126,6 +126,8 @@ const feeds = (state = OrderedMap(), action) => {
 		return OrderedMap(action.feedNames.map(
 			name => [name, new feedRecord({ name })]
 		));
+	case 'UNSET_USER':
+		return OrderedMap();
 	default:
 		return state;
 	}

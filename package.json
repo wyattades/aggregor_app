@@ -39,8 +39,7 @@
     "react-native-dotenv": "0.0.4",
     "react-test-renderer": "16.0.0-alpha.6",
     "redux-persist": "^4.7.1",
-    "remote-redux-devtools": "^0.5.7",
-    "rimraf": "^2.6.1"
+    "remote-redux-devtools": "^0.5.7"
   },
   "jest": {
     "preset": "react-native"
