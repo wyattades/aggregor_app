@@ -1,9 +1,15 @@
 import React, { Component, PropTypes } from 'react';
-import { StyleSheet, View, FlatList } from 'react-native';
+import { StyleSheet, View, FlatList, Text } from 'react-native';
 import { connect } from 'react-redux';
 
 import { fetchPlugin } from '../actions/api';
 import Entry from '../components/Entry';
+
+const EmptyDashboard = () => (
+  <View>
+    <Text>Empty Dashboard</Text>
+  </View>
+);
 
 const styles = StyleSheet.create({
   container: {
@@ -24,7 +30,7 @@ const pluginsEqual = (p1, p2) => {
   return true;
 };
 
-class Dashboard extends Component {
+class NonemptyDashboard extends Component {
 
   static propTypes = {
     navigation: PropTypes.object.isRequired,
@@ -77,11 +83,19 @@ class Dashboard extends Component {
   }
 }
 
-export default connect(({ feeds, selectedFeed }) => {
+const Dashboard = ({ feeds, selectedFeed }) => {
   const feed = feeds.get(selectedFeed);
-  return {
-    entries: feed ? feed.get('entries').toArray() : [],
-    plugins: feed ? feed.get('plugins').toArray() : [],
-    selectedFeed,
-  };
-})(Dashboard);
+  return feed ? (
+    <NonemptyDashboard 
+      entries={feed.get('entries').toArray()}
+      plugins={feed.get('plugins').toArray()}
+      selectedFeed={selectedFeed}/>
+  ) : (
+    <EmptyDashboard/>
+  );
+};
+
+export default connect(({ feeds, selectedFeed }) => ({
+  feeds,
+  selectedFeed
+}))(Dashboard);

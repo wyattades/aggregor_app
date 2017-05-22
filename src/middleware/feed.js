@@ -9,7 +9,8 @@ export default store => next => action => {
     action.payload.user && action.payload.user.isLoggedIn === true) || 
     action.type === 'SET_USER'
   ) {
-    store.dispatch(fetchFeeds()).catch(() => {
+    store.dispatch(fetchFeeds()).catch(err => {
+      console.log(err);
       store.dispatch({ type: 'UNSET_USER' });
     });
 
@@ -32,6 +33,8 @@ export default store => next => action => {
     store.dispatch(setFeed(action.feed));
 
   } else if (action.type === 'SET_FEED') {
-    store.dispatch(fetchPlugins(action.feed)).catch(console.log);
+    if (action.feed) {
+      store.dispatch(fetchPlugins(action.feed)).catch(console.log);
+    }
   }
 };

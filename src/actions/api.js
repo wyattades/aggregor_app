@@ -94,7 +94,8 @@ export const logout = () => (dispatch, getState) => request('DELETE', '/user/log
 
 // data: username, password, first_name, last_name, email
 export const createUser = data => dispatch => request('POST', '/user', undefined, data).then(
-	({ token }) => 	dispatch({ type: 'SET_USER', username: data.username, token })
+	({ token }) => 	dispatch({ type: 'SET_USER', username: data.username, token }),
+	error(dispatch)
 );
 
 // data: username, password
@@ -108,7 +109,7 @@ export const fetchFeeds = () => (dispatch, getState) => {
 	// dispatch({ type: 'SET_FEEDS', status: 'loading' });
 	return request('GET', `/user/${user.username}/feed`, user.token).then(
 		({ feedNames }) => {
-			dispatch({ type: 'SET_FEEDS', status: 'SUCCESS', feedNames });
+			dispatch({ type: 'SET_FEEDS', feedNames });
 			// return Promise.resolve();
 		},
 		error(dispatch)

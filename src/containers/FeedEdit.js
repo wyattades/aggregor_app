@@ -44,9 +44,15 @@ FeedEdit = reduxForm({
   form: 'feedEdit'
 })(FeedEdit);
 
-FeedEdit = connect(({ feeds, selectedFeed }) => ({
-  plugins: feeds.get(selectedFeed).get('plugins').toArray(),
-  selectedFeed,
-}))(FeedEdit);
+FeedEdit = connect(({ feeds, selectedFeed }) => {
+  const feed = feeds.get(selectedFeed);
+  return feed ? {
+    plugins: feed.get('plugins').toArray(),
+    savePlugin: data => addPlugin(selectedFeed, data)
+  } : {
+    plugins: [],
+    savePlugin: () => {}
+  };
+})(FeedEdit);
 
 export default FeedEdit;
