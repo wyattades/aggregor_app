@@ -8,7 +8,7 @@ const error = dispatch => err => {
 	const errorType = Math.floor(err.code / 100);
 	if (errorType === 5) {
 		dispatch({
-			type: 'API_ERROR',
+			type: 'UNSET_USER',
 			err
 		});
 	// } else if (err.code === 401) {
@@ -19,6 +19,14 @@ const error = dispatch => err => {
 		throw err;
 	}
 	// throw err;
+};
+
+const allErrors = dispatch => err => {
+	console.log(err);
+	dispatch({
+		type: 'UNSET_USER',
+		err
+	});
 };
 
 const request = (method, route, token, data) => new Promise((resolve, reject) => {
@@ -106,14 +114,12 @@ export const deleteUser = data => (dispatch, getState) => request('DELETE', '/us
 
 export const fetchFeeds = () => (dispatch, getState) => {
 	const user = getState().user;
-	// dispatch({ type: 'SET_FEEDS', status: 'loading' });
 	return request('GET', `/user/${user.username}/feed`, user.token).then(
 		({ feedNames }) => {
 			dispatch({ type: 'SET_FEEDS', feedNames });
 			// return Promise.resolve();
 		},
-		error(dispatch)
-		// dispatch({ type: 'SET_FEEDS', status: 'ERROR', err });
+		allErrors(dispatch)
 	);
 };
 
@@ -122,6 +128,7 @@ export const createFeed = feed => (dispatch, getState) => {
 	return request('POST', `/user/${user.username}/feed`, user.token, { name: feed }).then(
 		() => {
 			dispatch({ type: 'ADD_FEED', feed });
+			return Promise.resolve();
 		},
 		error(dispatch)
 	);
@@ -138,10 +145,6 @@ export const deleteFeed = feed => (dispatch, getState) => {
 
 export const fetchPlugins = feed => (dispatch, getState) => {
 	const user = getState().user;
-	if (LEE) {
-		dispatch({ type: 'SET_PLUGINS', feed, plugins: [] });
-		return Promise.resolve();
-	}
 	return request('GET', `/user/${user.username}/feed/${feed}`, user.token).then(
 		({ plugins }) => {
 			dispatch({ type: 'SET_PLUGINS', feed, plugins });
@@ -153,33 +156,44 @@ export const fetchPlugins = feed => (dispatch, getState) => {
 
 export const fetchPlugin = (feed, id) => (dispatch, getState) => {
 	const user = getState().user;
-	// dispatch({ type: 'ADD_ENTRIES', status: 'loading', feed, id });
+
+	// TEMP
+	if (LEE === 'true') {
+		dispatch({ type: 'ADD_ENTRIES', feed, id, entries: [] });
+		return Promise.resolve();
+	}
+
 	return request('GET', `/user/${user.username}/feed/${feed}/${id}`, user.token).then(
 		({ entries }) => {
-			dispatch({ type: 'ADD_ENTRIES', status: 'success', feed, id, entries });
+			dispatch({ type: 'ADD_ENTRIES', feed, id, entries });
 			return Promise.resolve();
 		}, 
-		err => {
-			// dispatch({ type: 'ADD_ENTRIES', status: 'error', err });
-			return error(dispatch)(err);
-		}
+		// TODO: Dont return. handle error and update redux store with error
+		err => error(dispatch)(err).catch(console.log)
 	);
 };
 
-export const addPlugin = (feed, data) => (dispatch, getState) => {
-	const user = getState().user;
-	return request('POST', `/user/${user.username}/feed/${feed}`, user.token, data).then(
-		({ id }) => dispatch({ type: 'ADD_PLUGIN', feed, id, data }), 
-		error(dispatch)
-	);
+export const fetchFeed = feed => (dispatch, getState) => {
+	const plugins = getState().feeds.get(feed).get('plugins').toArray();
+	dispatch({ type: 'CLEAR_ENTRIES', feed });
+	return Promise.all(plugins.map(
+		plugin => dispatch(fetchPlugin(feed, plugin.id))
+	));
 };
 
-export const updatePlugin = (feed, id, data) => (dispatch, getState) => {
+export const savePlugin = (feed, data, pluginId) => (dispatch, getState) => {
 	const user = getState().user;
-	return request('PUT', `/user/${user.username}/feed/${feed}/${id}`, user.token, data).then(
-		() => dispatch({ type: 'UPDATE_PLUGIN', feed, id, data }), 
-		error(dispatch)
-	);
+	if (pluginId) {
+		return request('PUT', `/user/${user.username}/feed/${feed}/${pluginId}`, user.token, data).then(
+			() => dispatch({ type: 'UPDATE_PLUGIN', feed, pluginId, data }), 
+			error(dispatch)
+		);
+	} else {
+		return request('POST', `/user/${user.username}/feed/${feed}`, user.token, data).then(
+			({ id }) => dispatch({ type: 'ADD_PLUGIN', feed, id, data }), 
+			error(dispatch)
+		);
+	}
 };
 
 export const removePlugin = (feed, id) => (dispatch, getState) => {

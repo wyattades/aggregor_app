@@ -4,10 +4,10 @@ import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { NavigationActions } from 'react-navigation';
 
-import { setFeed } from '../actions/navActions';
+// import { setFeed } from '../actions/navActions';
 import theme from '../utils/theme';
 import { logout } from '../actions/api';
-// import { init } from '..actions/navActions';
+import { goHome } from '../actions/navActions';
 
 const styles = StyleSheet.create({
   container: {
@@ -111,27 +111,35 @@ const NavItem = ({ title, onPress, iconLeft, iconRight, selected, onIconPress })
   </View>
 );
 
-let Drawer = ({ feeds, navigation, leave, selectedFeed, handleLogout, handleSetFeed }) => {
+let Drawer = ({ feeds, navigation, handleLogout }) => {
   const { index, routes } = navigation.state;
-  const selected = (routeName) => (index > 0 && routes[index].routeName === routeName);
+  const params = routes[0].routes[routes[0].index].params;
+  const selectedFeed = params && params.selectedFeed;
+  const selected = routeName => (index > 0 && routes[index].routeName === routeName);
 
   return (
     <ScrollView style={styles.container} endFillColor="#444">
       <Billboard/>
       <Label title="My Feeds"/>
-      {feeds.map((feed) => (
+      {feeds.map(feed => (
         <NavItem title={feed} iconLeft="label" iconRight="edit" selected={index === 0 && feed === selectedFeed} key={feed} 
-          onPress={() => {
-            handleSetFeed(feed);
-            navigation.navigate('Home');
-            //navigation.dispatch(navigateAction);
-          }}
-          onIconPress={()=>{
-            handleSetFeed(feed);
-            //navigation.navigate('Home', undefined, NavigationActions.reset({ index: 1, actions: [ NavigationActions.navigate({ routeName: 'Dashboard'}), NavigationActions.navigate({ routeName: 'FeedEdit'}) ] }));
-          }}/>
+          onPress={() => 
+            navigation.dispatch(NavigationActions.navigate({ 
+              routeName: 'Dashboard', 
+              params: { selectedFeed: feed }
+            }))
+          }
+          onIconPress={()=>
+            navigation.dispatch(NavigationActions.reset({
+              index: 1, 
+              actions: [
+                NavigationActions.navigate({ routeName: 'Dashboard', params: { selectedFeed: feed } }),
+                NavigationActions.navigate({ routeName: 'FeedEdit', params: { selectedFeed: feed } }),
+              ]
+            }))
+          }/>
       ))}
-      <NavItem title="Create new feed" iconLeft="add" selected={selected('NewFeed')} onPress={() => navigation.navigate('NewFeed')}/>
+      <NavItem title="Create new feed" iconLeft="add" selected={selected('NewFeed')} onPress={() => navigation.navigate('FeedEdit')}/>
       <View style={styles.divider}/>
       <NavItem title="Account" iconLeft="account-circle" selected={selected('Account')} onPress={() => navigation.navigate('Account')}/>
       <NavItem title="About" iconLeft="info" selected={selected('About')} onPress={() => navigation.navigate('About')}/>
@@ -140,19 +148,17 @@ let Drawer = ({ feeds, navigation, leave, selectedFeed, handleLogout, handleSetF
   );
 };
 
-Drawer = connect(({ feeds, selectedFeed }) => ({
+Drawer = connect(({ feeds }) => ({
   feeds: feeds.keySeq().toArray(),
-  selectedFeed
 }), {
   handleLogout: logout,
-  handleSetFeed: setFeed,
 })(Drawer);
 
 Drawer.propTypes = {
   navigation: PropTypes.object.isRequired,
-  router: PropTypes.object.isRequired,
-  renderIcon: PropTypes.func.isRequired,
-  getLabel: PropTypes.func.isRequired,
+  // router: PropTypes.object.isRequired,
+  // renderIcon: PropTypes.func.isRequired,
+  // getLabel: PropTypes.func.isRequired,
 };
 
 export default Drawer;

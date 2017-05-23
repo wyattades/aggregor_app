@@ -82,8 +82,11 @@ textField.propTypes = {
   secureTextEntry: PropTypes.bool,
 };
 
+const ripple = TouchableNativeFeedback.SelectableBackground(),
+  noRipple = TouchableNativeFeedback.Ripple('transparent');
+
 const SubmitButton = ({ title, onPress, submitting, submitSucceeded, disabled }) => (
-  <TouchableNativeFeedback onPress={disabled ? null : onPress}>
+  <TouchableNativeFeedback onPress={disabled ? null : onPress} background={disabled ? noRipple : ripple}>
     <View style={[styles.button, disabled ? styles.disabled : null]}>
       { (submitting || submitSucceeded) ? <Icon name={submitSucceeded ? 'check' : 'cached'} style={styles.buttonIcon} size={24}/> : null }
       <Text style={styles.buttonText}>{title}</Text>

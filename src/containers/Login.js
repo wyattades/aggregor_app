@@ -4,7 +4,7 @@ import { reduxForm, SubmissionError, Field } from 'redux-form';
 
 import { login } from '../actions/api';
 import { textField, SubmitButton, FormError } from '../components/Form';
-import { init } from '../actions/navActions';
+// import { init } from '../actions/navActions';
   
 const onSubmit = (values, dispatch) => {
   return dispatch(login(values))
@@ -31,15 +31,26 @@ const styles = StyleSheet.create({
   },
 });
 
-const LoginForm = ({ handleSubmit, submitting, error, apiError, navigation }) => {
-  const _error = (apiError && apiError.code) || error || (navigation.state.params && navigation.state.params.error);
+const LoginForm = ({ handleSubmit, submitting, submitSucceeded, error, navigation }) => {
+  let _error;
+  if (error) {
+    _error = error;
+  } else {
+    const apiError = navigation.state.params && navigation.state.params.apiError;
+    if (apiError instanceof Error) {
+      _error = apiError.toString();
+    } else if (typeof apiError === 'object') {
+      _error = apiError.data;
+    }
+  }
+
   return (
     <View style={styles.container}>
       {/*<Text style={}>Login</Text>*/}
       { _error ? <FormError error={_error}/> : null }
       <Field label="Username" name="username" component={textField}/>
       <Field label="Password" secureTextEntry={true} name="password" component={textField}/>
-      <SubmitButton title="Sign In" onPress={handleSubmit(onSubmit)} submitting={submitting}/>
+      <SubmitButton title="Sign In" onPress={handleSubmit(onSubmit)} submitting={submitting} submitSucceeded={submitSucceeded}/>
     </View>
   );
 };

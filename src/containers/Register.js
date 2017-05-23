@@ -31,14 +31,14 @@ const styles = StyleSheet.create({
   }
 });
 
-const RegisterForm = ({ handleSubmit, submitting, error }) => (
+const RegisterForm = ({ handleSubmit, submitting, submitSucceeded, error }) => (
   <View style={styles.container}>
     { error ? <FormError error={error}/> : null }
     <Field label="Username" name="username" component={textField}/>
     <Field label="Email" name="email" component={textField}/>
     <Field label="Password" secureTextEntry={true} name="password" component={textField}/>
     {/*<Field label="Password" secureTextEntry={true} name="passwordConfirm" component={renderInput}/>*/}
-    <SubmitButton title="Sign Up" onPress={handleSubmit(onSubmit)} submitting={submitting}/>
+    <SubmitButton title="Sign Up" onPress={handleSubmit(onSubmit)} submitting={submitting} submitSucceeded={submitSucceeded}/>
   </View>
 );
 

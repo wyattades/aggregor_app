@@ -2,66 +2,53 @@ import React, { Component, PropTypes } from 'react';
 import { StyleSheet, View, FlatList, Text } from 'react-native';
 import { connect } from 'react-redux';
 
-import { fetchPlugin } from '../actions/api';
+import { fetchFeed } from '../actions/api';
 import Entry from '../components/Entry';
+import theme from '../utils/theme';
 
-const EmptyDashboard = () => (
+const NoFeeds = () => (
   <View>
-    <Text>Empty Dashboard</Text>
+    <Text>You don't have any feeds yet! You can manage your feeds in the drawer menu at the top left.</Text>
+  </View>
+);
+
+const NoPlugins = () => (
+  <View>
+    <Text>You don't have any sources in this feed. Click the edit button above to add some!</Text>
   </View>
 );
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5FCFF'
+    backgroundColor: theme.SUPPORT
   }
 });
 
-const pluginsEqual = (p1, p2) => {
-  if (p1.length !== p2.length) {
-    return false;
-  }
-  for (let i = 0; i < p1.length; i++) {
-    if (p1[i].id !== p2[i].id) {
-      return false;
-    }
-  }
-  return true;
-};
+// const pluginsEqual = (p1, p2) => {
+//   if (p1.length !== p2.length) {
+//     return false;
+//   }
+//   for (let i = 0; i < p1.length; i++) {
+//     if (p1[i].id !== p2[i].id) {
+//       return false;
+//     }
+//   }
+//   return true;
+// };
 
 class NonemptyDashboard extends Component {
-
-  static propTypes = {
-    navigation: PropTypes.object.isRequired,
-  };
 
   state = {
     refreshing: false
   }
 
-  componentWillReceiveProps(nextProps) {
-    if (!pluginsEqual(nextProps.plugins, this.props.plugins)) {
-      this._fetchFeed(nextProps);
-    }
-  }
-
-  _keyExtractor = (item, index) => index;
-
-  _fetchFeed = (props) => {
-    // TODO: create a store action for this?
-    const { dispatch, selectedFeed, plugins } = props;
-    dispatch({ type: 'CLEAR_ENTRIES', feed: selectedFeed });
-    return Promise.all(plugins.map(
-      plugin => dispatch(fetchPlugin(selectedFeed, plugin.id))
-    ));
-  }
-
   _onRefresh = () => {
+    const { selectedFeed, dispatch } = this.props;
     this.setState({ refreshing: true });
-    this._fetchFeed(this.props).then(() => {
+    dispatch(fetchFeed(selectedFeed)).then(() => {
       this.setState({ refreshing: false });
-    }, console.log);
+    });
   }
 
   _renderItem = ({ item }) => (
@@ -83,19 +70,42 @@ class NonemptyDashboard extends Component {
   }
 }
 
-const Dashboard = ({ feeds, selectedFeed }) => {
+let Dashboard = ({ feeds, selectedFeed, dispatch }) => {
   const feed = feeds.get(selectedFeed);
-  return feed ? (
-    <NonemptyDashboard 
-      entries={feed.get('entries').toArray()}
-      plugins={feed.get('plugins').toArray()}
-      selectedFeed={selectedFeed}/>
-  ) : (
-    <EmptyDashboard/>
-  );
+
+  if (feed) {
+    const entries = feed.get('entries').toArray(),
+          plugins = feed.get('plugins').toArray();
+
+    return plugins.length === 0 ? (
+      <NoPlugins/>
+    ) : (
+      <NonemptyDashboard 
+        entries={entries}
+        plugins={plugins}
+        dispatch={dispatch}
+        selectedFeed={selectedFeed}/>
+    );
+  } else {
+    return (
+      <NoFeeds/>
+    );
+  }
 };
 
-export default connect(({ feeds, selectedFeed }) => ({
+Dashboard = connect(({ feeds }, { navigation }) => ({
   feeds,
-  selectedFeed
+  selectedFeed: navigation.state.params.selectedFeed,
 }))(Dashboard);
+
+Dashboard.propTypes = {
+  navigation: PropTypes.shape({
+    state: PropTypes.shape({
+      params: PropTypes.shape({
+        selectedFeed: PropTypes.string
+      })
+    })
+  }),
+};
+
+export default Dashboard;

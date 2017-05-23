@@ -7,6 +7,7 @@ import Dashboard from './containers/Dashboard';
 import Login from './containers/Login';
 import Register from './containers/Register';
 import FeedEdit from './containers/FeedEdit';
+import PluginEdit from './containers/PluginEdit';
 import Loading from './containers/Loading';
 import Account from './containers/Account';
 import About from './containers/About';
@@ -46,17 +47,33 @@ const HomeNavigator = new StackNavigator(
   {
     Dashboard: { 
       screen : Dashboard,
-      navigationOptions: ({ navigation, screenProps: { selectedFeed, parentNavigation } }) => ({
-        title: 'Home' + (selectedFeed ? `: ${selectedFeed}` : ''),
-        headerLeft: <HeaderButton icon="menu" onPress={()=>parentNavigation.navigate('DrawerOpen')}/>,
-        headerRight: <HeaderButton icon="edit" onPress={()=>navigation.navigate('FeedEdit')}/>
-      })
+      navigationOptions: ({ navigation }) => {
+        const selectedFeed = navigation.state.params.selectedFeed;
+        return {
+          title: 'Home' + (selectedFeed ? `: ${selectedFeed}` : ''),
+          headerLeft: <HeaderButton icon="menu" onPress={()=>navigation.navigate('DrawerOpen')}/>,
+          headerRight: selectedFeed ? <HeaderButton icon="edit" onPress={()=>navigation.navigate('FeedEdit', { selectedFeed })}/> : null
+        };
+      }
     },
     FeedEdit: {
       screen: FeedEdit,
-      navigationOptions: ({ navigation, screenProps: { selectedFeed } }) => ({
-        title: 'Edit: ' + selectedFeed
-      })
+      navigationOptions: ({ navigation }) => {
+        const selectedFeed = navigation.state.params && navigation.state.params.selectedFeed;
+        return {
+          title: selectedFeed ? 'Edit ' + selectedFeed : 'Create Feed',
+          headerLeft: selectedFeed ? undefined : <HeaderButton icon="close" onPress={()=>navigation.goBack()}/>
+        };
+      }
+    },
+    PluginEdit: {
+      screen: PluginEdit,
+      navigationOptions: ({ navigation }) => {
+        const { selectedFeed, plugin } = navigation.state.params;
+        return {
+          title: (plugin ? 'Edit' : 'Add') + ' Plugin in ' + selectedFeed
+        };
+      }
     }
   }, {
     initialRouteName: 'Dashboard',
@@ -68,27 +85,26 @@ const HomeNavigator = new StackNavigator(
   }
 );
 
-const HomeNavigatorWrapper = connect(({ selectedFeed }) => ({ 
-  selectedFeed
-}))(({ selectedFeed, navigation }) => (
-  <HomeNavigator screenProps={{ selectedFeed, parentNavigation: navigation }}/>
-));
+// const HomeNavigatorWrapper = connect(({ selectedFeed }) => ({ 
+//   selectedFeed
+// }))(({ selectedFeed, navigation }) => (
+//   <HomeNavigator screenProps={{ selectedFeed, parentNavigation: navigation }}/>
+// ));
 
 const MainNavigator = new DrawerNavigator(
   {
-    Home: { screen: HomeNavigatorWrapper },
+    Home: { screen: HomeNavigator },
     Account: { 
       screen: MainPage(Account, 'Account')
     },
     About: { 
       screen: MainPage(About, 'About')
     },
-    NewFeed: { 
-      screen: MainPage(FeedEdit, 'Create new feed')
-    },
+    // NewFeed: { 
+    //   screen: MainPage(FeedEdit, 'Create new feed')
+    // },
   }, {
     initialRouteName: 'Home',
-    // drawerWidth: 250,
     contentComponent: Drawer,
     navigationOptions: {
       header: null
@@ -145,22 +161,23 @@ export const AppNavigator = new StackNavigator(
 class Navigator extends Component {
 
   _handleBack = () => {
-    const { nav, dispatch } = this.props;
-    if (nav.routes.length > 1) {
+    const { nav: { routes }, dispatch } = this.props;
+    if (routes.length > 1 || (routes[0].routes && routes[0].routes.length > 1)) {
       dispatch(NavigationActions.back());
       return true; // do not exit app
-    } else {
+    } else if (routes) {
+
       return false; // exit app
     }
   }
 
   componentWillMount() {
     setupStyles();
-    // BackHandler.addEventListener('hardwareBackPress', this._handleBack);
+    BackHandler.addEventListener('hardwareBackPress', this._handleBack);
   }
 
   componentWillUnmount() {
-    // BackHandler.removeEventListener('hardwareBackPress', this._handleBack);
+    BackHandler.removeEventListener('hardwareBackPress', this._handleBack);
   }
 
   render() {

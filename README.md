@@ -11,9 +11,10 @@
 ### Start Developing:
 - start android emulator or plug in android device
 - <code>npm run android</code>
-  - sometimes you have to perform the below step before this one, idk why
-- <code>npm start</code>, then double tap R in emulator to reload
-- enjoy react-native hot updates when you edit your code!
+- <code>npm start</code>, then double tap R in emulator 
+### Build Producton App to Connected Device:
+- <code>npm run bundle-android</code>
+- <code>npm run android</code>
 
 
 ## TODO

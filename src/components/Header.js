@@ -6,8 +6,7 @@ import theme from '../utils/theme';
 
 export const styles = StyleSheet.create({
   headerLink: {
-    marginRight: 10,
-    
+    marginHorizontal: 10,
   },
   headerLinkText: {
     color: theme.PRIMARY,

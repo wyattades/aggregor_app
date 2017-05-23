@@ -1,6 +1,6 @@
 import { AppNavigator } from '../navigator';
 
-import { init } from '../actions/navActions';
+import { goLogin, goHome } from '../actions/navActions';
 
 export default (state, action) => {
   let nextState;
@@ -9,20 +9,16 @@ export default (state, action) => {
     case 'persist/REHYDRATE':
       const isLoggedIn = action.payload && action.payload.user && action.payload.user.isLoggedIn === true;
       if (!isLoggedIn) {
-        nextState = AppNavigator.router.getStateForAction(init('Login'));   
+        nextState = AppNavigator.router.getStateForAction(goLogin());   
       }
       break;
 
-    case 'API_ERROR':
-      nextState = AppNavigator.router.getStateForAction(init('Login', { apiError: action.err }));
-      break;
-
     case 'UNSET_USER':
-      nextState = AppNavigator.router.getStateForAction(init('Login'));
+      nextState = AppNavigator.router.getStateForAction(goLogin(action.err));
       break;
 
-    case 'SET_FEEDS':
-      nextState = AppNavigator.router.getStateForAction(init('Main'));
+    case 'SET_FEED':
+      nextState = AppNavigator.router.getStateForAction(goHome(action.setFeed));
       break;
 
     default:
@@ -32,5 +28,3 @@ export default (state, action) => {
 
   return nextState || state;
 };
-
-// TODO: pass params for selected feed in here!
