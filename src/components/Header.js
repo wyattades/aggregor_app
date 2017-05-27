@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Text, TouchableNativeFeedback, StyleSheet, View, Button } from 'react-native';
+import { TouchableNativeFeedback, StyleSheet, View, Button } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import theme from '../utils/theme';
@@ -20,8 +20,14 @@ export const styles = StyleSheet.create({
     color: theme.WHITE
   },
   icon: {
-    marginHorizontal: 10,
+    marginHorizontal: 16,
     color: theme.WHITE,
+  },
+  webContentHeader: {
+    backgroundColor: theme.WHITE,
+  },
+  webContentTitle: {
+    color: theme.TEXT,
   },
 });
 
@@ -48,7 +54,7 @@ const ripple = TouchableNativeFeedback.SelectableBackgroundBorderless();
 const HeaderButton = ({ onPress, icon }) => (
   <TouchableNativeFeedback background={ripple} onPress={onPress}>
     <View>
-      <Icon name={icon} style={styles.icon} size={32}/>
+      <Icon name={icon} style={styles.icon} size={24}/>
     </View>
   </TouchableNativeFeedback>
 );

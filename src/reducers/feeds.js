@@ -1,4 +1,4 @@
-import { Record, OrderedMap, List } from 'immutable';
+import { Record, OrderedMap, List, Map } from 'immutable';
 
 // TODO: flatten reducers, ew
 
@@ -12,8 +12,10 @@ const feedRecord = Record({
 });
 
 const pluginRecord = Record({
-	id: '',
+	id: undefined,
 	type: '',
+	status: 'loading',
+	error: undefined,
 	data: {
 		url: '',
 		priority: 0
@@ -24,6 +26,7 @@ const entryRecord = Record({
 	id: '',
 	title: '',
 	author: '',
+	link: '',
 	priority: 0,
 	rating: 0,
 	date: '',
@@ -48,8 +51,8 @@ const entries = (state, action) => {
 	case 'ADD_ENTRIES':
 		return state.concat(action.entries.map(_entry => new entryRecord(_entry)))
 			.sortBy(entry => entry.rating * entry.feedPriority);
-	case 'UPDATE_PLUGIN':
-		return state.sortBy(entry => entry.rating * entry.feedPriority);
+	// case 'UPDATE_PLUGIN':
+	// 	return state.sortBy(entry => entry.rating * entry.feedPriority);
 	case 'DELETE_PLUGIN':
 		return state.filter(entry => entry.feedId !== action.id);
 	case 'SET_PLUGINS':
@@ -63,10 +66,10 @@ const entries = (state, action) => {
 const plugin = (state, action) => {
 	switch (action.type) {
 	case 'ADD_PLUGIN':
-		return new pluginRecord(action);
+		return new pluginRecord(action.data);
 	case 'UPDATE_PLUGIN':
-		return state.merge(Map(action));
-		// return new pluginRecord(action);
+		return state.mergeDeep(action.data);
+		// return new pluginRecord(action.data);
 	default:
 		return state;
 	}

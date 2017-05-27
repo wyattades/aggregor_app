@@ -18,7 +18,7 @@ export default (state, action) => {
       break;
 
     case 'SET_FEED':
-      nextState = AppNavigator.router.getStateForAction(goHome(action.setFeed));
+      nextState = AppNavigator.router.getStateForAction(goHome(action.setFeed, action.goToEdit));
       break;
 
     default:

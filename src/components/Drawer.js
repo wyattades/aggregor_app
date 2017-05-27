@@ -7,7 +7,7 @@ import { NavigationActions } from 'react-navigation';
 // import { setFeed } from '../actions/navActions';
 import theme from '../utils/theme';
 import { logout } from '../actions/api';
-import { goHome } from '../actions/navActions';
+import { setFeed } from '../actions/navActions';
 
 const styles = StyleSheet.create({
   container: {
@@ -111,7 +111,7 @@ const NavItem = ({ title, onPress, iconLeft, iconRight, selected, onIconPress })
   </View>
 );
 
-let Drawer = ({ feeds, navigation, handleLogout }) => {
+let Drawer = ({ feeds, navigation, dispatch }) => {
   const { index, routes } = navigation.state;
   const params = routes[0].routes[routes[0].index].params;
   const selectedFeed = params && params.selectedFeed;
@@ -130,29 +130,32 @@ let Drawer = ({ feeds, navigation, handleLogout }) => {
             }))
           }
           onIconPress={()=>
-            navigation.dispatch(NavigationActions.reset({
+            navigation.dispatch(NavigationActions.navigate({ 
+              routeName: 'Dashboard', 
+              params: { selectedFeed: feed }
+            }))
+            /*dispatch(setFeed(feed, true))*/
+            /*NavigationActions.reset({
               index: 1, 
               actions: [
                 NavigationActions.navigate({ routeName: 'Dashboard', params: { selectedFeed: feed } }),
                 NavigationActions.navigate({ routeName: 'FeedEdit', params: { selectedFeed: feed } }),
               ]
-            }))
+            }))*/
           }/>
       ))}
       <NavItem title="Create new feed" iconLeft="add" selected={selected('NewFeed')} onPress={() => navigation.navigate('FeedEdit')}/>
       <View style={styles.divider}/>
       <NavItem title="Account" iconLeft="account-circle" selected={selected('Account')} onPress={() => navigation.navigate('Account')}/>
       <NavItem title="About" iconLeft="info" selected={selected('About')} onPress={() => navigation.navigate('About')}/>
-      <NavItem title="Logout" iconLeft="exit-to-app" onPress={handleLogout}/>
+      <NavItem title="Logout" iconLeft="exit-to-app" onPress={() => dispatch(logout())}/>
     </ScrollView>
   );
 };
 
 Drawer = connect(({ feeds }) => ({
   feeds: feeds.keySeq().toArray(),
-}), {
-  handleLogout: logout,
-})(Drawer);
+}))(Drawer);
 
 Drawer.propTypes = {
   navigation: PropTypes.object.isRequired,

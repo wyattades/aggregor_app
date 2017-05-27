@@ -11,18 +11,31 @@ const error = dispatch => err => {
 			type: 'UNSET_USER',
 			err
 		});
-	// } else if (err.code === 401) {
-	// 	dispatch({
-	// 		type: 'API_ERROR'
-	// 	});
+		// } else if (err.code === 401) {
+		// 	dispatch({
+		// 		type: 'API_ERROR'
+		// 	});
+	} else if (errorType === 0) {
+		dispatch({
+			type: 'NETWORK_ERROR',
+			err
+		});
 	} else {
-		throw err;
+		return Promise.reject(err);
 	}
 	// throw err;
 };
 
 const allErrors = dispatch => err => {
 	console.log(err);
+	const errorType = Math.floor(err.code / 100);
+	if (errorType === 0) {
+		dispatch({
+			type: 'NETWORK_ERROR',
+			err
+		});
+	}
+
 	dispatch({
 		type: 'UNSET_USER',
 		err
@@ -149,7 +162,7 @@ export const fetchPlugins = feed => (dispatch, getState) => {
 		({ plugins }) => {
 			dispatch({ type: 'SET_PLUGINS', feed, plugins });
 			return Promise.resolve();
-		}, 
+		},
 		error(dispatch)
 	);
 };
@@ -166,10 +179,15 @@ export const fetchPlugin = (feed, id) => (dispatch, getState) => {
 	return request('GET', `/user/${user.username}/feed/${feed}/${id}`, user.token).then(
 		({ entries }) => {
 			dispatch({ type: 'ADD_ENTRIES', feed, id, entries });
+			dispatch({ type: 'UPDATE_PLUGIN', feed, id, data: { status: 'success' }});
 			return Promise.resolve();
 		}, 
 		// TODO: Dont return. handle error and update redux store with error
-		err => error(dispatch)(err).catch(console.log)
+		err => error(dispatch)(err)
+		.catch(err2 => {
+			dispatch({ type: 'UPDATE_PLUGIN', feed, id, data: { status: 'error', error: err2.data }});
+			return Promise.resolve();
+		})
 	);
 };
 
@@ -185,12 +203,21 @@ export const savePlugin = (feed, data, pluginId) => (dispatch, getState) => {
 	const user = getState().user;
 	if (pluginId) {
 		return request('PUT', `/user/${user.username}/feed/${feed}/${pluginId}`, user.token, data).then(
-			() => dispatch({ type: 'UPDATE_PLUGIN', feed, pluginId, data }), 
+			() => {
+				dispatch({ type: 'UPDATE_PLUGIN', feed, id: pluginId, data });
+				dispatch(fetchPlugin(feed, pluginId)).then(() => {});
+				return Promise.resolve();
+			}, 
 			error(dispatch)
 		);
 	} else {
 		return request('POST', `/user/${user.username}/feed/${feed}`, user.token, data).then(
-			({ id }) => dispatch({ type: 'ADD_PLUGIN', feed, id, data }), 
+			({ id }) => {
+				data.id = id;
+				dispatch({ type: 'ADD_PLUGIN', feed, id, data });
+				dispatch(fetchPlugin(feed, id)).then(() => {});
+				return Promise.resolve();
+			}, 
 			error(dispatch)
 		);
 	}

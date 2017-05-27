@@ -59,14 +59,15 @@ const styles = StyleSheet.create({
   },
 });
 
-const textField = ({ input: { onChange, ...restInput }, meta: { error, touched }, label, secureTextEntry }) => {
+const textField = ({ input: { onChange, ...restInput }, meta: { error, touched }, label, secureTextEntry, style = null, inputStyle = null }) => {
   const inputError = error && touched;
   return (
-    <View style={styles.inputGroup}>
+    <View style={[styles.inputGroup, style]}>
       { label ? <Text style={styles.label}>{label}</Text> : null }
       <TextInput 
         underlineColorAndroid="transparent"
-        style={[styles.input, inputError ? styles.inputError : null]} 
+        autoCorrect={false}
+        style={[styles.input, inputError ? styles.inputError : null, inputStyle]} 
         onChangeText={onChange} 
         secureTextEntry={secureTextEntry || false}
         {...restInput}/>
@@ -85,9 +86,9 @@ textField.propTypes = {
 const ripple = TouchableNativeFeedback.SelectableBackground(),
   noRipple = TouchableNativeFeedback.Ripple('transparent');
 
-const SubmitButton = ({ title, onPress, submitting, submitSucceeded, disabled }) => (
+const SubmitButton = ({ title, onPress, submitting, submitSucceeded, disabled, style = null }) => (
   <TouchableNativeFeedback onPress={disabled ? null : onPress} background={disabled ? noRipple : ripple}>
-    <View style={[styles.button, disabled ? styles.disabled : null]}>
+    <View style={[styles.button, disabled ? styles.disabled : null, style]}>
       { (submitting || submitSucceeded) ? <Icon name={submitSucceeded ? 'check' : 'cached'} style={styles.buttonIcon} size={24}/> : null }
       <Text style={styles.buttonText}>{title}</Text>
     </View>

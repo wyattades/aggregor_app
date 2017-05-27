@@ -1,12 +1,23 @@
 import React, { PropTypes, PureComponent } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, TouchableNativeFeedback, Image } from 'react-native';
+
+import theme from '../utils/theme';
 
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 20,
+    height: 256,
+    marginBottom: 8,
+    padding: 16,
+    backgroundColor: theme.WHITE,
   },
   title: {
-    fontWeight: '500'
+    fontWeight: '500',
+    fontSize: 20,
+    color: theme.TEXT,
+  },
+  thumbnail: {
+    width: 64,
+    height: 64,
   }
 });
 
@@ -17,13 +28,22 @@ class Entry extends PureComponent {
   }
 
   render() {
-    const { title } = this.props;
+    const { title, author, date, link, onPress, thumbnailURL } = this.props;
     return (
-      <View style={styles.container}>
-        <Text style={styles.title}>{title}</Text>
-      </View>
+      <TouchableNativeFeedback onPress={onPress}>
+        <View style={styles.container}>
+          {thumbnailURL ? <Image source={{ uri: thumbnailURL }} style={styles.thumbnail}/> : null}
+          <Text style={styles.title}>{title}</Text>
+        </View>
+      </TouchableNativeFeedback>
     );
   }
 }
+
+Entry.propTypes = {
+  onPress: PropTypes.func.isRequired,
+  title: PropTypes.string.isRequired,
+  link: PropTypes.string.isRequired,
+};
 
 export default Entry;

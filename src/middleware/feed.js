@@ -1,18 +1,6 @@
-import { fetchFeeds, fetchPlugins, fetchFeed } from '../actions/api';
-// import { setFeed } from '../actions/navActions';
-
-const setFeed = feed => dispatch => {
-  if (feed) {
-    return dispatch(fetchPlugins(feed)).then(() => {
-      dispatch({ type: 'SET_FEED', setFeed: feed });
-      dispatch(fetchFeed(feed)).then(() => {});
-    }, err => {
-      console.log('fetchPlugins: ', err);
-    });
-  } else {
-    return dispatch({type: 'SET_FEED', setFeed: null});
-  }
-};
+import { fetchFeeds } from '../actions/api';
+import { ToastAndroid } from 'react-native';
+import { setFeed } from '../actions/navActions';
 
 export default store => next => action => {
   next(action);
@@ -37,6 +25,9 @@ export default store => next => action => {
       break;
     case 'ADD_FEED':
       store.dispatch(setFeed(action.feed));
+      break;
+    case 'NETWORK_ERROR':
+      ToastAndroid.show('Failed to connect to Aggregor server', ToastAndroid.SHORT);
       break;
     default:
       break;

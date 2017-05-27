@@ -11,6 +11,7 @@ import PluginEdit from './containers/PluginEdit';
 import Loading from './containers/Loading';
 import Account from './containers/Account';
 import About from './containers/About';
+// import WebContent from './containers/WebContent';
 // import SplashScreen from './containers/SplashScreen';
 
 import { HeaderButton } from './components/Header';
@@ -50,7 +51,7 @@ const HomeNavigator = new StackNavigator(
       navigationOptions: ({ navigation }) => {
         const selectedFeed = navigation.state.params.selectedFeed;
         return {
-          title: 'Home' + (selectedFeed ? `: ${selectedFeed}` : ''),
+          title: 'Home' + (selectedFeed ? `: "${selectedFeed}"` : ''),
           headerLeft: <HeaderButton icon="menu" onPress={()=>navigation.navigate('DrawerOpen')}/>,
           headerRight: selectedFeed ? <HeaderButton icon="edit" onPress={()=>navigation.navigate('FeedEdit', { selectedFeed })}/> : null
         };
@@ -61,7 +62,7 @@ const HomeNavigator = new StackNavigator(
       navigationOptions: ({ navigation }) => {
         const selectedFeed = navigation.state.params && navigation.state.params.selectedFeed;
         return {
-          title: selectedFeed ? 'Edit ' + selectedFeed : 'Create Feed',
+          title: selectedFeed ? `Edit "${selectedFeed}"` : 'Create Feed',
           headerLeft: selectedFeed ? undefined : <HeaderButton icon="close" onPress={()=>navigation.goBack()}/>
         };
       }
@@ -71,10 +72,22 @@ const HomeNavigator = new StackNavigator(
       navigationOptions: ({ navigation }) => {
         const { selectedFeed, plugin } = navigation.state.params;
         return {
-          title: (plugin ? 'Edit' : 'Add') + ' Plugin in ' + selectedFeed
+          title: (plugin ? 'Edit Plugin in "' : 'Add Plugin to "') + selectedFeed + '"'
         };
       }
-    }
+    },
+    // WebContent: {
+    //   screen: WebContent,
+    //   navigationOptions: ({ navigation }) => {
+    //     const { title } = navigation.state.params;
+    //     return {
+    //       title,
+    //       headerStyle: headerStyles.webContentHeader,
+    //       headerTitleStyle: headerStyles.webContentTitle,
+    //       headerTintColor: 'black',
+    //     };
+    //   }
+    // }
   }, {
     initialRouteName: 'Dashboard',
     navigationOptions: {

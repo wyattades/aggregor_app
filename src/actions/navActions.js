@@ -1,31 +1,38 @@
 import { NavigationActions } from 'react-navigation';
 
-// export const init = (screen, params) => NavigationActions.reset({ 
-//   index: 0, 
-//   actions: [ NavigationActions.navigate({ routeName: screen, params: params || undefined }) ] 
-// });
+import { fetchPlugins, fetchFeed } from './api';
 
 export const goLogin = apiError => NavigationActions.reset({ 
   index: 0, 
   actions: [ NavigationActions.navigate({ routeName: 'Login', params: { apiError } }) ] 
 });
 
-export const goHome = (selectedFeed, screen) => NavigationActions.reset({ 
+export const goHome = (selectedFeed, goToEdit) => NavigationActions.reset({ 
   index: 0, 
   actions: [ NavigationActions.navigate({ 
     routeName: 'Main', 
     action: NavigationActions.navigate({
       routeName: 'Home',
       params: { selectedFeed },
-      action: !screen ? undefined : NavigationActions.navigate({
-        routeName: screen
+      action: !goToEdit ? undefined : NavigationActions.navigate({
+        routeName: 'FeedEdit',
+        params: { selectedFeed },
       })
     }) 
   }) ] 
 });
 
-// export const setFeed = feed => (dispatch) => 
+export const setFeed = (feed, goToEdit) => dispatch => {
+  if (feed) {
+    return dispatch(fetchPlugins(feed)).then(() => {
+      dispatch({ type: 'SET_FEED', setFeed: feed, goToEdit });
+      dispatch(fetchFeed(feed)).then(() => {});
+    }, err => {
+      console.log('fetchPlugins: ', err);
+    });
+  } else {
+    return dispatch({type: 'SET_FEED', setFeed: null, goToEdit });
+  }
+};
  
-// export const setFeed = (feed) => ({ type: 'SET_FEED', feed: feed || null });
-
 // export const navigate = (screen) => NavigationActions.navigate({ routeName: screen });

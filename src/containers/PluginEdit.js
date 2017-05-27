@@ -1,36 +1,55 @@
 import React, { PropTypes, Component } from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
-import { reduxForm, SubmissionError } from 'redux-form';
+import { reduxForm, SubmissionError, Field } from 'redux-form';
 
 import { textField, SubmitButton } from '../components/Form'; 
 import { savePlugin } from '../actions/api';
 
 // TODO
+// Add selector for types of plugins???
+
+const styles = StyleSheet.create({
+  container: {
+    padding: 24,
+  }
+});
 
 class PluginEdit extends Component {
 
-  onSubmit = (values) => {
-    const { selectedFeed, dispatch, id } = this.props;
+  _onSubmit = values => {
+    const { selectedFeed, dispatch, id, navigation } = this.props;
 
-    return dispatch(savePlugin(selectedFeed, values, id))
-      .catch(err => {
-        console.log('pluginErr: ', err);
-        throw new SubmissionError({ _error: err.data });
-      });
+    const data = {
+      id,
+      type: values.type,
+      status: 'loading',
+      error: undefined,
+      data: {
+        url: values.url
+      },
+    };
 
+    return dispatch(savePlugin(selectedFeed, data, id))
+      .then(
+        () => navigation.goBack(), 
+        err => {
+          console.log('pluginErr: ', err);
+          throw new SubmissionError({ _error: err.data });
+        }
+      );
   };
 
   render() {
-    const { plugin = {}, handleSubmit, error, pristine, submitting, submitSucceeded } = this.props;
+    const { handleSubmit, error, pristine, submitting, submitSucceeded } = this.props;
     return (
-      <View>
-        <Text>Plugin Edit Page</Text>
-        <Text>{JSON.stringify(plugin)}</Text>
+      <View style={styles.container}>
+        <Field name="type" label="Type" component={textField}/>
+        <Field name="url" label="Url" component={textField}/>
         {error ? <Text>{error}</Text> : null}
         <SubmitButton 
           title="Save" 
-          onPress={handleSubmit(this.onSubmit)}
+          onPress={handleSubmit(this._onSubmit)}
           disabled={pristine}
           submitting={submitting}
           submitSucceeded={submitSucceeded}/>
@@ -43,10 +62,17 @@ PluginEdit = reduxForm({
   form: 'pluginEdit'
 })(PluginEdit);
 
-PluginEdit = connect((state, ownProps) => ({
-  ...ownProps.navigation.state.params,
-  id: ownProps.plugin && ownProps.plugin.id,
-}))(PluginEdit);
+PluginEdit = connect((state, ownProps) => {
+  const { plugin = { data: {} }, selectedFeed } = ownProps.navigation.state.params;
+  return {
+    selectedFeed,
+    id: plugin.id,
+    initialValues: {
+      type: plugin.type || 'raw',
+      url: plugin.data.url,
+    }
+  };
+})(PluginEdit);
 
 PluginEdit.propTypes = {
   navigation: PropTypes.shape({

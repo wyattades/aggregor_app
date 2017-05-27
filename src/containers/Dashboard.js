@@ -1,5 +1,5 @@
 import React, { Component, PropTypes } from 'react';
-import { StyleSheet, View, FlatList, Text } from 'react-native';
+import { StyleSheet, View, FlatList, Text, Linking } from 'react-native';
 import { connect } from 'react-redux';
 
 import { fetchFeed } from '../actions/api';
@@ -25,17 +25,9 @@ const styles = StyleSheet.create({
   }
 });
 
-// const pluginsEqual = (p1, p2) => {
-//   if (p1.length !== p2.length) {
-//     return false;
-//   }
-//   for (let i = 0; i < p1.length; i++) {
-//     if (p1[i].id !== p2[i].id) {
-//       return false;
-//     }
-//   }
-//   return true;
-// };
+// const Divider = () => (
+//   <View/>
+// );
 
 class NonemptyDashboard extends Component {
 
@@ -51,8 +43,28 @@ class NonemptyDashboard extends Component {
     });
   }
 
+  _pressItem = item => () => {
+    
+    // TODO: figure out what to do when opening links
+    // for now, don't use WebContent container
+
+    Linking.canOpenURL(item.link).then(supported => {
+      if (!supported) {
+        console.log('Can\'t handle url: ' + item.link);
+        // this.props.navigation.navigate('WebContent', { 
+        //   source: item.link,
+        //   title: item.title,
+        // });
+      } else {
+        return Linking.openURL(item.link);
+      }
+    }).catch(err => console.error('An error occurred', err));
+  }
+
   _renderItem = ({ item }) => (
-    <Entry {...item.toJS()}/>
+    <Entry 
+      {...item.toObject()} 
+      onPress={this._pressItem(item)}/>
   );
 
   render() {
@@ -70,7 +82,7 @@ class NonemptyDashboard extends Component {
   }
 }
 
-let Dashboard = ({ feeds, selectedFeed, dispatch }) => {
+let Dashboard = ({ feeds, selectedFeed, dispatch, navigation }) => {
   const feed = feeds.get(selectedFeed);
 
   if (feed) {
@@ -84,6 +96,7 @@ let Dashboard = ({ feeds, selectedFeed, dispatch }) => {
         entries={entries}
         plugins={plugins}
         dispatch={dispatch}
+        navigation={navigation}
         selectedFeed={selectedFeed}/>
     );
   } else {
@@ -99,13 +112,7 @@ Dashboard = connect(({ feeds }, { navigation }) => ({
 }))(Dashboard);
 
 Dashboard.propTypes = {
-  navigation: PropTypes.shape({
-    state: PropTypes.shape({
-      params: PropTypes.shape({
-        selectedFeed: PropTypes.string
-      })
-    })
-  }),
+  navigation: PropTypes.object.isRequired,
 };
 
 export default Dashboard;
