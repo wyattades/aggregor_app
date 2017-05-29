@@ -98,8 +98,10 @@ const feed = (state, action) => {
 		return state.set('default', state.get('name') === action.feed);
 	case 'SET_PLUGINS':
 	case 'ADD_PLUGIN':
-	case 'UPDATE_PLUGIN':
 	case 'DELETE_PLUGIN':
+		return state.update('plugins', _plugins => plugins(_plugins, action))
+			.update('entries', _entries => entries(_entries, action));
+	case 'UPDATE_PLUGIN':
 		return state.update('plugins', _plugins => plugins(_plugins, action))
 			.update('entries', _entries => entries(_entries, action));
 	case 'ADD_ENTRIES':

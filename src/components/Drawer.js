@@ -1,13 +1,13 @@
 import React, { PropTypes } from 'react';
-import { ScrollView, View, Text, TouchableNativeFeedback, StyleSheet } from 'react-native';
+import { ScrollView, View, Text, TouchableNativeFeedback, StyleSheet, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { NavigationActions } from 'react-navigation';
 
-// import { setFeed } from '../actions/navActions';
+import { createFeed } from '../actions/api';
 import theme from '../utils/theme';
 import { logout } from '../actions/api';
-import { setFeed } from '../actions/navActions';
+import { prompt } from '../utils/prompt';
 
 const styles = StyleSheet.create({
   container: {
@@ -78,6 +78,23 @@ const styles = StyleSheet.create({
   },
 });
 
+const handleCreateFeed = dispatch => feed => {
+  dispatch(createFeed(feed))
+  .catch(err => {
+    ToastAndroid.show(err.data, ToastAndroid.LONG);
+  });
+};
+
+const promptNewFeed = navigation => () => {
+  navigation.navigate('DrawerClose');
+  navigation.dispatch(prompt({
+    title: 'Create New Feed',
+    placeholder: 'Name',
+    submitText: 'Create',
+    onSubmit: handleCreateFeed(navigation.dispatch)
+  }));
+};
+
 const Billboard = () => (
   <View style={styles.billboard}>
     <Text style={styles.billboardTitle}>Aggregor</Text>
@@ -111,6 +128,21 @@ const NavItem = ({ title, onPress, iconLeft, iconRight, selected, onIconPress })
   </View>
 );
 
+const goToFeed = (selectedFeed, dispatch) => () => dispatch(NavigationActions.reset({
+  index: 0, 
+  actions: [
+    NavigationActions.navigate({ routeName: 'Dashboard', params: { selectedFeed } }),
+  ]
+}));
+
+const goToFeedEdit = (selectedFeed, dispatch) => () => dispatch(NavigationActions.reset({
+  index: 1, 
+  actions: [
+    NavigationActions.navigate({ routeName: 'Dashboard', params: { selectedFeed } }),
+    NavigationActions.navigate({ routeName: 'FeedEdit', params: { selectedFeed } }),
+  ]
+}));
+
 let Drawer = ({ feeds, navigation, dispatch }) => {
   const { index, routes } = navigation.state;
   const params = routes[0].routes[routes[0].index].params;
@@ -123,28 +155,10 @@ let Drawer = ({ feeds, navigation, dispatch }) => {
       <Label title="My Feeds"/>
       {feeds.map(feed => (
         <NavItem title={feed} iconLeft="label" iconRight="edit" selected={index === 0 && feed === selectedFeed} key={feed} 
-          onPress={() => 
-            navigation.dispatch(NavigationActions.navigate({ 
-              routeName: 'Dashboard', 
-              params: { selectedFeed: feed }
-            }))
-          }
-          onIconPress={()=>
-            navigation.dispatch(NavigationActions.navigate({ 
-              routeName: 'Dashboard', 
-              params: { selectedFeed: feed }
-            }))
-            /*dispatch(setFeed(feed, true))*/
-            /*NavigationActions.reset({
-              index: 1, 
-              actions: [
-                NavigationActions.navigate({ routeName: 'Dashboard', params: { selectedFeed: feed } }),
-                NavigationActions.navigate({ routeName: 'FeedEdit', params: { selectedFeed: feed } }),
-              ]
-            }))*/
-          }/>
+          onPress={goToFeed(feed, dispatch)}
+          onIconPress={goToFeedEdit(feed, dispatch)}/>
       ))}
-      <NavItem title="Create new feed" iconLeft="add" selected={selected('NewFeed')} onPress={() => navigation.navigate('FeedEdit')}/>
+      <NavItem title="Create new feed" iconLeft="add" selected={selected('NewFeed')} onPress={promptNewFeed(navigation)}/>
       <View style={styles.divider}/>
       <NavItem title="Account" iconLeft="account-circle" selected={selected('Account')} onPress={() => navigation.navigate('Account')}/>
       <NavItem title="About" iconLeft="info" selected={selected('About')} onPress={() => navigation.navigate('About')}/>

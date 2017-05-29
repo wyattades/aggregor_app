@@ -8,10 +8,7 @@ import { SubmitButton, textField } from '../components/Form';
 import theme from '../utils/theme';
 import { PluginIcon } from '../utils/plugins';
 
-// TODO
-// - make it not ugly (specifically the feed name editor)
-// - change 'add plugin' button
-// - cards instead of list???
+// TODO: use ActionButton from 'react-native-material-ui'???, make list look pretty!
 
 const styles = StyleSheet.create({
   form: {
@@ -143,44 +140,22 @@ class FeedEdit extends Component {
   _keyExtractor = item => item.id;
 
   render() {
-    const { plugins, handleSubmit, pristine, submitting, submitSucceeded, selectedFeed } = this.props;
+    const { plugins } = this.props;
     return (
       <ScrollView>
-        <ListLabel title="Feed Name"/>
-        <View style={styles.form}>
-          <Field name="feed" style={styles.inputGroup} inputStyle={styles.input} component={textField}/>
-          <SubmitButton 
-            title="Save" 
-            disabled={pristine}
-            style={styles.submit}
-            onPress={handleSubmit(this._onSubmit)} 
-            submitting={submitting} 
-            submitSucceeded={submitSucceeded}/>
-        </View>
-        {selectedFeed ? 
-          <View>
-            <ListLabel title="Plugins"/>
-            {plugins.map(this._pluginItem)}
-            <Button style={styles.item} title="Add Plugin" onPress={this._addPlugin}/>
-          </View> : null }
+          {plugins.map(this._pluginItem)}
+          <Button style={styles.item} title="Add Plugin" onPress={this._addPlugin}/>
       </ScrollView>
     );
   }
 }
 
-FeedEdit = reduxForm({
-  form: 'feedEdit'
-})(FeedEdit);
-
 FeedEdit = connect(({ feeds }, { navigation }) => {
-  const selectedFeed = navigation.state.params && navigation.state.params.selectedFeed;
+  const selectedFeed = navigation.state.params.selectedFeed;
   const feed = feeds.get(selectedFeed);
   return {
-    initialValues: {
-      feed: selectedFeed,
-    },
     selectedFeed,
-    plugins: feed ? feed.get('plugins').toArray().map(plugin => plugin.toJS()) : [],
+    plugins: feed.get('plugins').toArray().map(plugin => plugin.toJS()),
   };
 })(FeedEdit);
 
@@ -188,10 +163,10 @@ FeedEdit.propTypes = {
   navigation: PropTypes.shape({
     state: PropTypes.shape({
       params: PropTypes.shape({
-        selectedFeed: PropTypes.string
-      })
-    })
-  }),
+        selectedFeed: PropTypes.string.isRequired
+      }).isRequired
+    }).isRequired
+  }).isRequired
 };
 
 export default FeedEdit;

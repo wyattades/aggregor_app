@@ -1,6 +1,6 @@
 // NOTE: feel free to add or change any of these values
 
-export default {
+const theme = {
   PRIMARY: '#03A9F4',
   STATUS_BAR: '#222',
   PRIMARY_DARK: '#333',
@@ -27,3 +27,12 @@ export default {
 //   ERROR: '#D32F2F',
 //   SUPPORT: '#eee',
 // };
+
+export const uiTheme = {
+  palette: {
+    primaryColor: theme.PRIMARY_DARK,
+    accentColor: theme.WHITE,
+  },
+};
+
+export default theme;

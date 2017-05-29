@@ -6,7 +6,7 @@ import { deleteUser } from '../actions/api';
 
 // TODO
 
-const handleDeleteUser = (dispatch, navigation) => () => {
+const handleDeleteUser = dispatch => () => {
   Alert.alert(
     'Delete Account',
     'This action cannot be undone. Are you sure?',
@@ -21,14 +21,13 @@ const Account = ({ user, dispatch, navigation }) => (
   <View>
     <Text>Account Page</Text>
     <Text>Username: {user.username}</Text>
-    <Button title="Delete Account" onPress={handleDeleteUser(dispatch, navigation)}/>
+    <Button title="Delete Account" onPress={handleDeleteUser(dispatch)}/>
   </View>
 );
 
 Account.propTypes = {
   dispatch: PropTypes.func.isRequired,
   user: PropTypes.object.isRequired,
-  navigation: PropTypes.object.isRequired,
 };
 
 export default connect(state => ({

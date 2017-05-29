@@ -16,10 +16,15 @@
     "hostname": "localhost",
     "port": 5678
   },
+  "rnpm": {
+    "assets": ["./assets/fonts"]
+  },
   "dependencies": {
     "immutable": "^3.8.1",
     "react": "16.0.0-alpha.6",
     "react-native": "0.44.0",
+    "react-native-material-ui": "^1.12.0",
+    "react-native-prompt": "^1.0.0",
     "react-native-vector-icons": "^4.1.1",
     "react-navigation": "^1.0.0-beta.9",
     "react-redux": "^5.0.4",

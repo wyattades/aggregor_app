@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import { addNavigationHelpers, StackNavigator, DrawerNavigator, NavigationActions } from 'react-navigation';
 import React, { Component, PropTypes } from 'react';
-import { BackHandler } from 'react-native';
+import { BackHandler, View } from 'react-native';
 
 import Dashboard from './containers/Dashboard';
 import Login from './containers/Login';
@@ -14,67 +14,37 @@ import About from './containers/About';
 // import WebContent from './containers/WebContent';
 // import SplashScreen from './containers/SplashScreen';
 
-import { HeaderButton } from './components/Header';
 import Drawer from './components/Drawer';
-import { HeaderLink } from './components/Header';
-import { styles as headerStyles } from './components/Header';
+import { styles as headerStyles, HeaderLink, DashboardHeader, FeedEditHeader, PluginEditHeader, MainHeader } from './components/Header';
 
-import setupStyles from './utils/setupStyles';
-
-const MainPage = (component, title) => {
-  const label = 'Static-' + title;
-  return new StackNavigator(
-    {
-      [label]: {
-        screen: component,
-        navigationOptions: {
-          title
-        }
-      }
-    }, {
-      initialRouteName: label,
-      navigationOptions: ({ navigation }) => ({
-        title,
-        headerStyle: headerStyles.header,
-        headerTitleStyle: headerStyles.title,
-        headerTintColor: 'white',
-        headerLeft: <HeaderButton icon="menu" onPress={()=>navigation.navigate('DrawerOpen')}/>
-      })
+const MainPage = (Content, title) => (
+  class extends Component {
+    render() {
+      return (
+        <View style={{ flex: 1 }}>
+          <MainHeader 
+            navigation={this.props.navigation}
+            title={title}/>
+          <Content/>
+        </View>
+      );
     }
-  );
-};
+  }
+);
 
 const HomeNavigator = new StackNavigator(
   {
     Dashboard: { 
       screen : Dashboard,
-      navigationOptions: ({ navigation }) => {
-        const selectedFeed = navigation.state.params.selectedFeed;
-        return {
-          title: 'Home' + (selectedFeed ? `: "${selectedFeed}"` : ''),
-          headerLeft: <HeaderButton icon="menu" onPress={()=>navigation.navigate('DrawerOpen')}/>,
-          headerRight: selectedFeed ? <HeaderButton icon="edit" onPress={()=>navigation.navigate('FeedEdit', { selectedFeed })}/> : null
-        };
-      }
+      navigationOptions: { header: DashboardHeader }
     },
     FeedEdit: {
       screen: FeedEdit,
-      navigationOptions: ({ navigation }) => {
-        const selectedFeed = navigation.state.params && navigation.state.params.selectedFeed;
-        return {
-          title: selectedFeed ? `Edit "${selectedFeed}"` : 'Create Feed',
-          headerLeft: selectedFeed ? undefined : <HeaderButton icon="close" onPress={()=>navigation.goBack()}/>
-        };
-      }
+      navigationOptions: { header: FeedEditHeader }
     },
     PluginEdit: {
       screen: PluginEdit,
-      navigationOptions: ({ navigation }) => {
-        const { selectedFeed, plugin } = navigation.state.params;
-        return {
-          title: (plugin ? 'Edit Plugin in "' : 'Add Plugin to "') + selectedFeed + '"'
-        };
-      }
+      navigationOptions: { header: PluginEditHeader },
     },
     // WebContent: {
     //   screen: WebContent,
@@ -90,41 +60,21 @@ const HomeNavigator = new StackNavigator(
     // }
   }, {
     initialRouteName: 'Dashboard',
-    navigationOptions: {
-      headerStyle: headerStyles.header,
-      headerTitleStyle: headerStyles.title,
-      headerTintColor: 'white',
-    }
   }
 );
-
-// const HomeNavigatorWrapper = connect(({ selectedFeed }) => ({ 
-//   selectedFeed
-// }))(({ selectedFeed, navigation }) => (
-//   <HomeNavigator screenProps={{ selectedFeed, parentNavigation: navigation }}/>
-// ));
 
 const MainNavigator = new DrawerNavigator(
   {
     Home: { screen: HomeNavigator },
-    Account: { 
-      screen: MainPage(Account, 'Account')
-    },
-    About: { 
-      screen: MainPage(About, 'About')
-    },
-    // NewFeed: { 
-    //   screen: MainPage(FeedEdit, 'Create new feed')
-    // },
+    Account: { screen: MainPage(Account, 'Account') },
+    About: { screen: MainPage(About, 'About') },
   }, {
     initialRouteName: 'Home',
     contentComponent: Drawer,
-    navigationOptions: {
-      header: null
-    }
   }
 );
 
+// TODO: remove headers for login and register page, make it look more modern
 export const AppNavigator = new StackNavigator(
   {
     // SplashScreen: { screen: SplashScreen },
@@ -150,15 +100,11 @@ export const AppNavigator = new StackNavigator(
     },
     Main: { 
       screen: MainNavigator,
-      navigationOptions: {
-        header: null
-      }
+      navigationOptions: { header: null }
     },
     Loading: { 
       screen: Loading,
-      navigationOptions: {
-        header: null
-      }
+      navigationOptions: { header: null }
     },
   }, {
     headerMode: 'screen',
@@ -185,7 +131,6 @@ class Navigator extends Component {
   }
 
   componentWillMount() {
-    setupStyles();
     BackHandler.addEventListener('hardwareBackPress', this._handleBack);
   }
 

@@ -4,7 +4,6 @@ const ADDRESS = (LEE !== 'true' && __DEV__) ? 'http://localhost:3000' : API_URL,
     TOKEN = API_KEY;
 
 const error = dispatch => err => {
-	console.log(err);
 	const errorType = Math.floor(err.code / 100);
 	if (errorType === 5) {
 		dispatch({
@@ -27,19 +26,18 @@ const error = dispatch => err => {
 };
 
 const allErrors = dispatch => err => {
-	console.log(err);
 	const errorType = Math.floor(err.code / 100);
 	if (errorType === 0) {
 		dispatch({
 			type: 'NETWORK_ERROR',
 			err
 		});
+	} else {
+		dispatch({
+			type: 'UNSET_USER',
+			err
+		});
 	}
-
-	dispatch({
-		type: 'UNSET_USER',
-		err
-	});
 };
 
 const request = (method, route, token, data) => new Promise((resolve, reject) => {
@@ -151,8 +149,11 @@ export const createFeed = feed => (dispatch, getState) => {
 export const deleteFeed = feed => (dispatch, getState) => {
 	const user = getState().user;
 	return request('DELETE', `/user/${user.username}/feed/${feed}`, user.token).then(
-		() => dispatch({ type: 'DELETE_FEED', feed }),
-		error(dispatch)
+		() => {
+			dispatch({ type: 'DELETE_FEED', feed });
+			return Promise.resolve();
+		},
+		allErrors(dispatch)
 	);
 };
 
