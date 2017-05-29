@@ -6,24 +6,31 @@ import { fetchFeed } from '../actions/api';
 import Entry from '../components/Entry';
 import theme from '../utils/theme';
 
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: theme.SUPPORT
+  }, 
+  NoDisplay: {
+    fontSize: 20,
+    marginHorizontal: 40,
+    paddingTop: 40
+  }
+});
+
 const NoFeeds = () => (
   <View>
-    <Text>You don't have any feeds yet! You can manage your feeds in the drawer menu at the top left.</Text>
+    <Text style={styles.NoDisplay}>You don't have any feeds yet!</Text>
+    <Text style={styles.NoDisplay}>You can manage your feeds in the drawer menu at the top left.</Text>
   </View>
 );
 
 const NoPlugins = () => (
   <View>
-    <Text>You don't have any sources in this feed. Click the edit button above to add some!</Text>
+    <Text style={styles.NoDisplay}>You don't have any sources in this feed.</Text>
+    <Text style={styles.NoDisplay}>Click the edit button above to add some!</Text>
   </View>
 );
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: theme.SUPPORT
-  }
-});
 
 // const Divider = () => (
 //   <View/>

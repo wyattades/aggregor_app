@@ -1,10 +1,24 @@
 import React, { PropTypes } from 'react';
-import { View, Text, Button, Alert } from 'react-native';
+import { View, Text, Button, Alert, StyleSheet} from 'react-native';
 import { connect } from 'react-redux';
 
 import { deleteUser } from '../actions/api';
 
-// TODO
+const styles = StyleSheet.create({
+  AccountDisplay:{
+    marginHorizontal: 15
+  },
+  header:{
+    fontSize: 25,
+    fontWeight: 'bold',
+    padding: 15
+  },
+  normalText:{
+    fontSize: 20,
+    paddingLeft: 15,
+    paddingBottom: 40
+  }
+});
 
 const handleDeleteUser = dispatch => () => {
   Alert.alert(
@@ -18,9 +32,9 @@ const handleDeleteUser = dispatch => () => {
 };
 
 const Account = ({ user, dispatch, navigation }) => (
-  <View>
-    <Text>Account Page</Text>
-    <Text>Username: {user.username}</Text>
+  <View style={styles.AccountDisplay}>
+    <Text style={styles.header}>Account Page</Text>
+    <Text style={styles.normalText}>Username: {user.username}</Text>
     <Button title="Delete Account" onPress={handleDeleteUser(dispatch)}/>
   </View>
 );
