@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { addNavigationHelpers, StackNavigator, DrawerNavigator, NavigationActions } from 'react-navigation';
+import { addNavigationHelpers, StackNavigator, DrawerNavigator, NavigationActions, NavigationTransitionProps } from 'react-navigation';
 import React, { Component, PropTypes } from 'react';
 import { BackHandler, View } from 'react-native';
 
@@ -12,10 +12,9 @@ import Loading from './containers/Loading';
 import Account from './containers/Account';
 import About from './containers/About';
 // import WebContent from './containers/WebContent';
-// import SplashScreen from './containers/SplashScreen';
 
 import Drawer from './components/Drawer';
-import { styles as headerStyles, HeaderLink, DashboardHeader, FeedEditHeader, PluginEditHeader, MainHeader } from './components/Header';
+import { DashboardHeader, FeedEditHeader, PluginEditHeader, MainHeader } from './components/Header';
 
 const MainPage = (Content, title) => (
   class extends Component {
@@ -65,9 +64,15 @@ const HomeNavigator = new StackNavigator(
 
 const MainNavigator = new DrawerNavigator(
   {
-    Home: { screen: HomeNavigator },
-    Account: { screen: MainPage(Account, 'Account') },
-    About: { screen: MainPage(About, 'About') },
+    Home: { 
+      screen: HomeNavigator
+    },
+    Account: { 
+      screen: MainPage(Account, 'Account') 
+    },
+    About: { 
+      screen: MainPage(About, 'About') 
+    },
   }, {
     initialRouteName: 'Home',
     contentComponent: Drawer,
@@ -77,43 +82,24 @@ const MainNavigator = new DrawerNavigator(
 // TODO: remove headers for login and register page, make it look more modern
 export const AppNavigator = new StackNavigator(
   {
-    // SplashScreen: { screen: SplashScreen },
     Register: { 
-      screen: Register,
-      navigationOptions: ({ navigation }) => ({
-        title: 'Register',
-        headerLeft: null,
-        headerRight: (
-          <HeaderLink title="Sign In" onPress={() => navigation.navigate('Login') }/>
-        )
-      })
+      screen: Register
     },
     Login: { 
-      screen: Login,
-      navigationOptions: ({ navigation }) => ({
-        title: 'Login',
-        headerLeft: null,
-        headerRight: (
-          <HeaderLink title="Sign Up" onPress={() => navigation.navigate('Register') }/>
-        )
-      })
+      screen: Login
     },
     Main: { 
-      screen: MainNavigator,
-      navigationOptions: { header: null }
+      screen: MainNavigator
     },
     Loading: { 
-      screen: Loading,
-      navigationOptions: { header: null }
+      screen: Loading
     },
   }, {
-    headerMode: 'screen',
+    headerMode: 'none',
+    transitionConfig: () => ({
+
+    }),
     initialRouteName: 'Loading',
-    navigationOptions: {
-      headerStyle: headerStyles.header,
-      headerTitleStyle: headerStyles.title,
-      headerTintColor: 'white'
-    },
   }
 );
 

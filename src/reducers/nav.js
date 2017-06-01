@@ -9,12 +9,12 @@ export default (state, action) => {
     case 'persist/REHYDRATE':
       const isLoggedIn = action.payload && action.payload.user && action.payload.user.isLoggedIn === true;
       if (!isLoggedIn) {
-        nextState = AppNavigator.router.getStateForAction(goLogin());   
+        nextState = AppNavigator.router.getStateForAction(goLogin({ init: true }));   
       }
       break;
 
     case 'UNSET_USER':
-      nextState = AppNavigator.router.getStateForAction(goLogin(action.err));
+      nextState = AppNavigator.router.getStateForAction(goLogin({ apiError: action.err }));
       break;
 
     case 'SET_FEED':

@@ -10,7 +10,7 @@ const theme = {
   TEXT_SECOND: '#737373',
   WHITE: '#FFF',
   DIVIDER: '#BDBDBD',
-  ERROR: '#D32F2F',
+  ERROR: '#ff3333',
   SUPPORT: '#DDD',
 };
 

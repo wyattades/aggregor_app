@@ -2,9 +2,9 @@ import { NavigationActions } from 'react-navigation';
 
 import { fetchPlugins, fetchFeed } from './api';
 
-export const goLogin = apiError => NavigationActions.reset({ 
+export const goLogin = params => NavigationActions.reset({ 
   index: 0, 
-  actions: [ NavigationActions.navigate({ routeName: 'Login', params: { apiError } }) ] 
+  actions: [ NavigationActions.navigate({ routeName: 'Login', params }) ] 
 });
 
 export const goHome = (selectedFeed, goToEdit) => NavigationActions.reset({ 

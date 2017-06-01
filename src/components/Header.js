@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import {  StyleSheet, View, Button, ToastAndroid } from 'react-native';
+import { Text, StyleSheet, View, Button, ToastAndroid } from 'react-native';
 import { Toolbar } from 'react-native-material-ui';
 import { NavigationActions } from 'react-navigation';
 
@@ -7,67 +7,38 @@ import theme from '../utils/theme';
 import { prompt } from '../utils/prompt';
 import { deleteFeed } from '../actions/api';
 
-// TODO: change header titles for Home headers i.e. make look pretty and intuitive
-
 export const styles = StyleSheet.create({
-  headerLink: {
-    marginHorizontal: 10,
-  },
-  headerLinkText: {
-    color: theme.PRIMARY,
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  header: {
-    backgroundColor: theme.PRIMARY_DARK,
-  },
-  title: {
-    color: theme.WHITE
-  },
-  icon: {
-    marginHorizontal: 16,
-    color: theme.WHITE,
-  },
   webContentHeader: {
     backgroundColor: theme.WHITE,
   },
   webContentTitle: {
     color: theme.TEXT,
   },
+
+  headerText: {
+    fontSize: 18,
+    fontWeight: '500',
+    color: theme.WHITE,
+    marginRight: 8,
+  },
+  headerTextContainer: {
+    flexDirection: 'row',
+    alignItems: 'flex-start'
+  },
+  highlight: {
+    color: theme.ACCENT,
+  },
 });
 
-/*const HeaderLink = ({ onPress, title }) => (
-  <TouchableOpacity onPress={onPress} style={styles.headerLink}>
-    <Text style={styles.headerLinkText}>{title}</Text>
-  </TouchableOpacity>
-);*/
-
-// TODO: button or link style?
-export const HeaderLink = ({ onPress, title }) => (
-  <View style={styles.headerLink}>
-    <Button onPress={onPress} color={theme.ACCENT} title={title}/>
-  </View>
-);
-
-HeaderLink.propTypes = {
-  onPress: PropTypes.func.isRequired,
-  title: PropTypes.string.isRequired,
-};
-
-/*const ripple = TouchableNativeFeedback.SelectableBackgroundBorderless();
-
-export const HeaderButton = ({ onPress, icon }) => (
-  <TouchableNativeFeedback background={ripple} onPress={onPress}>
-    <View>
-      <Icon name={icon} style={styles.icon} size={24}/>
+const HeaderTitle = ({ texts }) => {
+  return (
+    <View style={styles.headerTextContainer}>
+      {texts.map(({ title, highlight }) => (
+        <Text key={title} style={[ styles.headerText, highlight ? styles.highlight : null ]}>{title}</Text>
+      ))}
     </View>
-  </TouchableNativeFeedback>
-);
-
-HeaderButton.propTypes = {
-  icon: PropTypes.string.isRequired,
-  onPress: PropTypes.func.isRequired,
-};*/
+  );
+};
 
 const renameFeed = (oldName, newName) => dispatch => {
   // TEMP
@@ -113,7 +84,12 @@ export const DashboardHeader = ({ navigation, scene }) => {
     <Toolbar
       leftElement="menu"
       onLeftElementPress={openDrawer(navigation)}
-      centerElement={'Home' + (selectedFeed ? `: "${selectedFeed}"` : '')}
+      centerElement={<HeaderTitle texts={[
+        {
+          title: selectedFeed || 'Home',
+          highlight: !!selectedFeed
+        }
+      ]}/>}
       rightElement={{ 
         actions: [ 'edit' ],
         menu: {
@@ -135,7 +111,18 @@ export const FeedEditHeader = ({ navigation, scene }) => {
     <Toolbar
       leftElement={selectedFeed ? 'arrow-back' : 'close'}
       onLeftElementPress={goBack(navigation)}
-      centerElement={selectedFeed ? `Edit "${selectedFeed}"` : 'Create Feed'}/>
+      centerElement={<HeaderTitle texts={selectedFeed ? [
+        {
+          title: 'Edit',
+        }, {
+          title: selectedFeed,
+          highlight: true
+        }
+      ] : [
+        {
+          title: 'Create Feed'
+        }
+      ]}/>}/>
   );
 };
 
@@ -146,7 +133,14 @@ export const PluginEditHeader = ({ navigation, scene }) => {
     <Toolbar
       leftElement="arrow-back"
       onLeftElementPress={goBack(navigation)}
-      centerElement={(plugin ? 'Edit Plugin in "' : 'Add Plugin to "') + selectedFeed + '"'}/>
+      centerElement={<HeaderTitle texts={[
+        {
+          title: plugin ? 'Edit Plugin in' : 'Add Plugin to',
+        }, {
+          title: selectedFeed,
+          highlight: true
+        }
+       ]}/>}/>
   );
 };
 

@@ -6,30 +6,38 @@ import theme from '../utils/theme';
 
 const styles = StyleSheet.create({
   inputGroup: {
-    // marginHorizontal: 15,
+    // marginHorizontal: 15
+    marginBottom: 16,
   },
   input: {
-    padding: 10,
-    backgroundColor: '#FFF',
-    borderWidth: 1,
-    borderColor: theme.DIVIDER,
+    padding: 8,
+    color: theme.WHITE,
+    fontSize: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.TEXT_SECOND,
+    // backgroundColor: theme.WHITE,
+    // borderWidth: 1,
+    // borderColor: 'black',
   },
   label: {
     fontWeight: 'bold',
     padding: 10,
+    color: theme.WHITE,
   },
 
   button: {
-    marginTop: 25,
-    backgroundColor: theme.PRIMARY,
+    marginVertical: 16,
+    backgroundColor: theme.ACCENT,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
+    borderRadius: 1,
   },
-  buttonText: { // unused
-    fontSize: 18,
-    padding: 15,
-    color: theme.WHITE
+  buttonText: {
+    fontSize: 16,
+    padding: 12,
+    color: theme.WHITE,
+    fontWeight: '500',
   },
   buttonIcon: {
     color: theme.WHITE
@@ -49,26 +57,40 @@ const styles = StyleSheet.create({
 
   mainErrorText: {
     color: theme.ERROR,
-    alignSelf: 'center',
-    fontWeight: 'bold',
+    // fontWeight: 'bold',
+    textAlign: 'center',
+    fontSize: 18,
   },
   mainErrorView: {
     padding: 12,
     borderWidth: 1,
     borderColor: theme.ERROR,
+    marginVertical: 16,
   },
+
+  formLinkContainer: {
+    alignSelf: 'center',
+    // marginBottom: 40,
+  },
+  formLink: {
+    color: theme.WHITE,
+    // fontWeight: '500',
+    fontSize: 16,
+  }
 });
 
 const textField = ({ input: { onChange, ...restInput }, meta: { error, touched }, label, secureTextEntry, style = null, inputStyle = null }) => {
   const inputError = error && touched;
   return (
     <View style={[styles.inputGroup, style]}>
-      { label ? <Text style={styles.label}>{label}</Text> : null }
+      {/*{ label ? <Text style={styles.label}>{label}</Text> : null }*/}
       <TextInput 
         underlineColorAndroid="transparent"
         autoCorrect={false}
         style={[styles.input, inputError ? styles.inputError : null, inputStyle]} 
+        placeholderTextColor={theme.TEXT_SECOND}
         onChangeText={onChange} 
+        placeholder={label}
         secureTextEntry={secureTextEntry || false}
         {...restInput}/>
       { inputError ? <Text style={styles.errorText}>{error}</Text> : null }
@@ -113,4 +135,17 @@ FormError.propTypes = {
   error: PropTypes.string.isRequired
 };
 
-export { textField, SubmitButton, FormError };
+const FormLink = ({ title, onPress }) => (
+  <TouchableNativeFeedback onPress={onPress}>
+    <View style={styles.formLinkContainer}>
+      <Text style={styles.formLink}>{title}</Text>
+    </View>
+  </TouchableNativeFeedback>
+);
+
+FormLink.propTypes = {
+  title: PropTypes.string.isRequired,
+  onPress: PropTypes.func,
+};
+
+export { textField, SubmitButton, FormError, FormLink };

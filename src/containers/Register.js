@@ -1,11 +1,11 @@
 import React, { PropTypes } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet } from 'react-native';
 import { reduxForm, Field, SubmissionError } from 'redux-form';
 
 import { createUser } from '../actions/api';
 import format from '../utils/format';
-import { init } from '../actions/navActions';
-import { textField, SubmitButton, FormError } from '../components/Form';
+import { textField, SubmitButton, FormError, FormLink } from '../components/Form';
+import theme from '../utils/theme';
   
 const onSubmit = (values, dispatch) => {
   return dispatch(createUser(values))
@@ -27,18 +27,42 @@ const onSubmit = (values, dispatch) => {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 40
+    flex: 1,
+    justifyContent: 'space-between',
+    backgroundColor: theme.PRIMARY_DARK,
+    paddingVertical: 80,
+    paddingHorizontal: 40,
+  },
+  title: {
+    alignSelf: 'center',
+    fontSize: 50,
+    fontWeight: 'bold',
+    color: theme.WHITE,
+  },
+  subtitle: {
+    fontSize: 24,
+    color: theme.TEXT_SECOND,
+    marginBottom: -8
   }
 });
 
-const RegisterForm = ({ handleSubmit, submitting, submitSucceeded, error }) => (
+const goToLogin = navigation => () => navigation.navigate('Login');
+
+const RegisterForm = ({ handleSubmit, submitting, submitSucceeded, error, navigation }) => (
   <View style={styles.container}>
-    { error ? <FormError error={error}/> : null }
-    <Field label="Username" name="username" component={textField}/>
-    <Field label="Email" name="email" component={textField}/>
-    <Field label="Password" secureTextEntry={true} name="password" component={textField}/>
-    {/*<Field label="Password" secureTextEntry={true} name="passwordConfirm" component={renderInput}/>*/}
-    <SubmitButton title="Sign Up" onPress={handleSubmit(onSubmit)} submitting={submitting} submitSucceeded={submitSucceeded}/>
+    <View>
+      <Text style={[styles.title, styles.subtitle]}>Sign up</Text>
+      <Text style={styles.title}>Aggregor</Text>
+    </View>
+    <View>
+      { error ? <FormError error={error}/> : null }
+      <Field label="Username" name="username" component={textField}/>
+      <Field label="Email" name="email" component={textField}/>
+      <Field label="Password" secureTextEntry={true} name="password" component={textField}/>
+      {/*<Field label="Password" secureTextEntry={true} name="passwordConfirm" component={renderInput}/>*/}
+      <SubmitButton title="SIGN UP" onPress={handleSubmit(onSubmit)} submitting={submitting} submitSucceeded={submitSucceeded}/>
+    </View>
+    <FormLink title="Sign in to Aggregor" onPress={goToLogin(navigation)}/>
   </View>
 );
 
