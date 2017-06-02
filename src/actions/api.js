@@ -173,7 +173,8 @@ export const fetchPlugin = (feed, id) => (dispatch, getState) => {
 
 	// TEMP
 	if (LEE === 'true') {
-		dispatch({ type: 'ADD_ENTRIES', feed, id, entries: [] });
+		const entries = require("../tests/sample-data").default;
+		dispatch({ type: 'ADD_ENTRIES', feed, id, entries });
 		return Promise.resolve();
 	}
 
