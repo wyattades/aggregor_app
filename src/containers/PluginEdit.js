@@ -3,11 +3,11 @@ import { View, Text, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { reduxForm, SubmissionError, Field } from 'redux-form';
 
-import { textField, SubmitButton } from '../components/Form'; 
+import { textField, sliderField, SubmitButton } from '../components/Form'; 
 import { savePlugin } from '../actions/api';
+import { pluginRecord } from '../utils/records';
 
-// TODO
-// Add selector for types of plugins???
+// TODO: Use selector for plugin type
 
 const styles = StyleSheet.create({
   container: {
@@ -26,7 +26,8 @@ class PluginEdit extends Component {
       status: 'loading',
       error: undefined,
       data: {
-        url: values.url
+        url: values.url,
+        priority: values.priority,
       },
     };
 
@@ -44,11 +45,12 @@ class PluginEdit extends Component {
     const { handleSubmit, error, pristine, submitting, submitSucceeded } = this.props;
     return (
       <View style={styles.container}>
-        <Field name="type" label="Type" component={textField}/>
-        <Field name="url" label="Url" component={textField}/>
+        <Field name="type" label="Type" component={textField} dark={true}/>
+        <Field name="url" label="Url" component={textField} dark={true}/>
+        <Field name="priority" label="Priority" min={0} max={100} step={1} component={sliderField}/>
         {error ? <Text>{error}</Text> : null}
         <SubmitButton 
-          title="Save" 
+          title="SAVE" 
           onPress={handleSubmit(this._onSubmit)}
           disabled={pristine}
           submitting={submitting}
@@ -63,13 +65,14 @@ PluginEdit = reduxForm({
 })(PluginEdit);
 
 PluginEdit = connect((state, ownProps) => {
-  const { plugin = { data: {} }, selectedFeed } = ownProps.navigation.state.params;
+  const { plugin = new pluginRecord({}), selectedFeed } = ownProps.navigation.state.params;
   return {
     selectedFeed,
     id: plugin.id,
     initialValues: {
-      type: plugin.type || 'raw',
-      url: plugin.data.url,
+      type: plugin.type,
+      url: plugin.data.url || '',
+      priority: plugin.data.priority === undefined ? 50 : plugin.data.priority,
     }
   };
 })(PluginEdit);

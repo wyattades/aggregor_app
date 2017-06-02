@@ -1,8 +1,9 @@
 import React, { PropTypes } from 'react';
-import { View, Text, Button, Alert, StyleSheet} from 'react-native';
+import { View, Text, Button, StyleSheet} from 'react-native';
 import { connect } from 'react-redux';
 
 import { deleteUser } from '../actions/api';
+import { prompt } from '../utils/prompt';
 
 const styles = StyleSheet.create({
   AccountDisplay:{
@@ -21,14 +22,22 @@ const styles = StyleSheet.create({
 });
 
 const handleDeleteUser = dispatch => () => {
-  Alert.alert(
-    'Delete Account',
-    'This action cannot be undone. Are you sure?',
-    [
-      { text: 'Cancel' },
-      { text: 'OK', onPress: () => dispatch(deleteUser()) }
-    ]
-  );
+  // Alert.alert(
+  //   'Delete Account',
+  //   'This action cannot be undone. Are you sure?',
+  //   [
+  //     { text: 'Cancel' },
+  //     { text: 'OK', onPress: () => dispatch(deleteUser()) }
+  //   ]
+  // );
+  dispatch(prompt({
+    title: 'Are you sure you want to delete your account? Please enter your password to confirm.',
+    submitText: 'Delete',
+    textInputProps: {
+      secureTextEntry: true,
+    },
+    onSubmit: password => dispatch(deleteUser(password))
+  }));
 };
 
 const Account = ({ user, dispatch, navigation }) => (

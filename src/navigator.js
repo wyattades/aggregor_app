@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { addNavigationHelpers, StackNavigator, DrawerNavigator, NavigationActions, NavigationTransitionProps } from 'react-navigation';
+import { addNavigationHelpers, StackNavigator, DrawerNavigator, NavigationActions } from 'react-navigation';
 import React, { Component, PropTypes } from 'react';
 import { BackHandler, View } from 'react-native';
 
@@ -79,7 +79,6 @@ const MainNavigator = new DrawerNavigator(
   }
 );
 
-// TODO: remove headers for login and register page, make it look more modern
 export const AppNavigator = new StackNavigator(
   {
     Register: { 
@@ -105,12 +104,20 @@ export const AppNavigator = new StackNavigator(
 
 class Navigator extends Component {
 
+  static propTypes = {
+    dispatch: PropTypes.func.isRequired,
+    nav: PropTypes.object.isRequired,
+  }
+
   _handleBack = () => {
+
     const { nav: { routes }, dispatch } = this.props;
-    if (routes.length > 1 || (routes[0].routes && routes[0].routes.length > 1)) {
+    const route = routes[0].routes && routes[0].routes[0];
+
+    if ((routes[0].index > 0) || (route && route.routes && route.routes[0].index > 0)) {
       dispatch(NavigationActions.back());
       return true; // do not exit app
-    } else if (routes) {
+    } else {
 
       return false; // exit app
     }
@@ -132,11 +139,6 @@ class Navigator extends Component {
   }
 }
 
-Navigator.propTypes = {
-  dispatch: PropTypes.func.isRequired,
-  nav: PropTypes.object.isRequired,
-};
-
-export default connect(state => ({
-  nav: state.nav,
+export default connect(({ nav }) => ({
+  nav
 }))(Navigator);

@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Text, StyleSheet, View, Button, ToastAndroid } from 'react-native';
+import { Text, StyleSheet, View, ToastAndroid } from 'react-native';
 import { Toolbar } from 'react-native-material-ui';
 import { NavigationActions } from 'react-navigation';
 
@@ -16,7 +16,7 @@ export const styles = StyleSheet.create({
   },
 
   headerText: {
-    fontSize: 18,
+    fontSize: 20,
     fontWeight: '500',
     color: theme.WHITE,
     marginRight: 8,
@@ -80,14 +80,14 @@ const goBack = navigation => () => navigation.dispatch(NavigationActions.back())
 export const DashboardHeader = ({ navigation, scene }) => { 
   const params = scene.route.params,
         selectedFeed = params && params.selectedFeed;
-  return (
+  return selectedFeed ? (
     <Toolbar
       leftElement="menu"
       onLeftElementPress={openDrawer(navigation)}
       centerElement={<HeaderTitle texts={[
         {
-          title: selectedFeed || 'Home',
-          highlight: !!selectedFeed
+          title: selectedFeed,
+          highlight: true
         }
       ]}/>}
       rightElement={{ 
@@ -101,6 +101,8 @@ export const DashboardHeader = ({ navigation, scene }) => {
         }
       }}
       onRightElementPress={handleRightElementPress(navigation)}/>
+  ) : (
+    <MainHeader navigation={navigation} title="Home"/>
   );
 };
 

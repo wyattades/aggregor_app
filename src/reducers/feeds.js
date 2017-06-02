@@ -1,60 +1,17 @@
-import { Record, OrderedMap, List, Map } from 'immutable';
+import { OrderedMap, List } from 'immutable';
 
-// TODO: flatten reducers, ew
+import { pluginRecord, entryRecord, feedRecord } from '../utils/records';
 
-// Records ----------------------------------------------------
-const feedRecord = Record({
-	id: '',
-	name: '',
-	default: false,
-	plugins: OrderedMap(),
-	entries: List(),
-});
+// TODO: flatten reducers... maybe in my next lifetime
 
-const pluginRecord = Record({
-	id: undefined,
-	type: '',
-	status: 'loading',
-	error: undefined,
-	data: {
-		url: '',
-		priority: 0
-	}
-});
-
-const entryRecord = Record({
-	id: '',
-	title: '',
-	author: '',
-	link: '',
-	priority: 0,
-	rating: 0,
-	date: '',
-	commentURL: '',
-	authorURL: '',
-	feedId: '',
-	feed: '',
-	feedURL: '',
-	feedPriority: 0,
-	category: '',
-	categoryURL: '',
-	thumbnailURL: '',
-	commentAmount: 0,
-	mediaType: '',
-	imageURL: '',
-	votable: ''
-});
-
-// Reducers ---------------------------------------------------
 const entries = (state, action) => {
 	switch (action.type) {
 	case 'ADD_ENTRIES':
-		return state.concat(action.entries.map(_entry => new entryRecord(_entry)))
-			.sortBy(entry => entry.rating * entry.feedPriority);
-	// case 'UPDATE_PLUGIN':
-	// 	return state.sortBy(entry => entry.rating * entry.feedPriority);
+		return state.filter(_entry => _entry.pluginId !== action.id)
+			.concat(action.entries.map(_entry => new entryRecord(_entry)))
+			.sortBy(entry => entry.rating * entry.pluginPriority);
 	case 'DELETE_PLUGIN':
-		return state.filter(entry => entry.feedId !== action.id);
+		return state.filter(_entry => _entry.pluginId !== action.id);
 	case 'SET_PLUGINS':
 	case 'CLEAR_ENTRIES':
 		return List();
@@ -69,7 +26,6 @@ const plugin = (state, action) => {
 		return new pluginRecord(action.data);
 	case 'UPDATE_PLUGIN':
 		return state.mergeDeep(action.data);
-		// return new pluginRecord(action.data);
 	default:
 		return state;
 	}
@@ -99,8 +55,6 @@ const feed = (state, action) => {
 	case 'SET_PLUGINS':
 	case 'ADD_PLUGIN':
 	case 'DELETE_PLUGIN':
-		return state.update('plugins', _plugins => plugins(_plugins, action))
-			.update('entries', _entries => entries(_entries, action));
 	case 'UPDATE_PLUGIN':
 		return state.update('plugins', _plugins => plugins(_plugins, action))
 			.update('entries', _entries => entries(_entries, action));

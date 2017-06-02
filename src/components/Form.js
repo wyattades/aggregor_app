@@ -1,32 +1,26 @@
-import React, { PropTypes } from 'react';
-import { View, TextInput, Text, StyleSheet, TouchableNativeFeedback } from 'react-native';
+import React, { PropTypes, PureComponent } from 'react';
+import { View, TextInput, Text, StyleSheet, TouchableNativeFeedback, Slider, Animated, Easing } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import theme from '../utils/theme';
 
+// TODO: fix form inputs sometimes covered by keyboard (specifically register)
+
 const styles = StyleSheet.create({
   inputGroup: {
-    // marginHorizontal: 15
-    marginBottom: 16,
+    paddingTop: 24,
   },
+
   input: {
     padding: 8,
     color: theme.WHITE,
     fontSize: 18,
     borderBottomWidth: 1,
     borderBottomColor: theme.TEXT_SECOND,
-    // backgroundColor: theme.WHITE,
-    // borderWidth: 1,
-    // borderColor: 'black',
-  },
-  label: {
-    fontWeight: 'bold',
-    padding: 10,
-    color: theme.WHITE,
   },
 
   button: {
-    marginVertical: 16,
+    marginTop: 32,
     backgroundColor: theme.ACCENT,
     flexDirection: 'row',
     justifyContent: 'center',
@@ -51,8 +45,12 @@ const styles = StyleSheet.create({
   },
   errorText: {
     color: theme.ERROR,
-    paddingTop: 5,
-    paddingLeft: 5,
+    padding: 5,
+  },
+  dark: {
+    color: theme.TEXT,
+    borderBottomColor: theme.DIVIDER,
+    borderBottomWidth: 2,
   },
 
   mainErrorText: {
@@ -76,34 +74,154 @@ const styles = StyleSheet.create({
     color: theme.WHITE,
     // fontWeight: '500',
     fontSize: 16,
-  }
+  },
+
+  slider: {
+    flex: 0.9,
+    // height: 30,
+  },
+  sliderValue: {
+    // marginHorizontal: 8,
+    // backgroundColor: theme.SUPPORT,
+    // borderWidth: 2,
+    // borderColor: theme.SUPPORT,
+    paddingVertical: 6,
+    // paddingHorizontal: 4,
+    // borderRadius: 4,
+    flex: 0.1,
+    textAlign: 'center',
+    fontWeight: '500',
+    fontSize: 16,
+    color: theme.TEXT_SECOND,
+  },
+  sliderRow: {
+    flexDirection: 'row',
+  },
+
+  label: {
+    fontSize: 16,
+    margin: 8,
+    fontWeight: '500',
+    color: theme.TEXT_SECOND,
+  },
 });
 
-const textField = ({ input: { onChange, ...restInput }, meta: { error, touched }, label, secureTextEntry, style = null, inputStyle = null }) => {
-  const inputError = error && touched;
-  return (
-    <View style={[styles.inputGroup, style]}>
-      {/*{ label ? <Text style={styles.label}>{label}</Text> : null }*/}
-      <TextInput 
-        underlineColorAndroid="transparent"
-        autoCorrect={false}
-        style={[styles.input, inputError ? styles.inputError : null, inputStyle]} 
-        placeholderTextColor={theme.TEXT_SECOND}
-        onChangeText={onChange} 
-        placeholder={label}
-        secureTextEntry={secureTextEntry || false}
-        {...restInput}/>
-      { inputError ? <Text style={styles.errorText}>{error}</Text> : null }
-    </View>
-  );
-};
+class sliderField extends PureComponent {
 
-textField.propTypes = {
-  input: PropTypes.object.isRequired,
-  meta: PropTypes.object.isRequired,
-  label: PropTypes.string,
-  secureTextEntry: PropTypes.bool,
-};
+  static propTypes = {
+    input: PropTypes.object.isRequired,
+    meta: PropTypes.object.isRequired,
+    label: PropTypes.string,
+    min: PropTypes.number,
+    max: PropTypes.number,
+    step: PropTypes.number,
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value: props.input.value,
+    };
+  }
+
+  render() {
+    const { input: { onChange, value }, label, min, max, step } = this.props;
+    return (
+      <View>
+        {label ? <Text style={styles.label}>{label}</Text> : null}
+        <View style={styles.sliderRow}>
+          <Slider
+            value={this.state.value}
+            minimumValue={min}
+            maximumValue={max}
+            minimumTrackTintColor={theme.TEXT_SECOND}
+            maximumTrackTintColor={theme.PRIMARY}
+            thumbTintColor={theme.PRIMARY}
+            step={step}
+            style={styles.slider}
+            onValueChange={onChange}/>
+          <Text style={styles.sliderValue}>{value}</Text>
+        </View>
+      </View>
+    );
+  }
+}
+
+class textField extends PureComponent {
+
+  static propTypes = {
+    input: PropTypes.object.isRequired,
+    meta: PropTypes.object.isRequired,
+    label: PropTypes.string,
+    dark: PropTypes.any,
+    secureTextEntry: PropTypes.any,
+  };
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      anim: new Animated.Value(props.input.value.length > 0 ? 0 : 1)
+    };
+  }
+
+  _animate = toValue => Animated.timing(
+    this.state.anim,
+    {
+      toValue,
+      duration: 300,
+      easing: Easing.out(Easing.ease),
+    }
+  ).start();
+
+  _onChangeText = onChange => value => {
+
+    if (this.props.label) {
+      const oldLength = this.props.input.value.length,
+            newLength = value.length;
+
+      if (newLength === 0 && oldLength > 0) {
+        this._animate(1);
+      } else if (newLength > 0 && oldLength === 0) {
+        this._animate(0);
+      }
+    }
+
+    onChange(value);
+  }
+
+  render() {
+    const { input: { onChange, ...restInput }, meta: { error, touched }, dark, label, secureTextEntry } = this.props;
+    const inputError = error && touched;
+
+    const labelStyle = {
+      position: 'absolute',
+      transform: [{ translateY: this.state.anim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 24]
+      }) }],
+      fontSize: this.state.anim.interpolate({
+        inputRange: [0, 1],
+        outputRange: [16, 18]
+      }),
+    };
+
+    return (
+      <View style={[styles.inputGroup]}>
+        { label ? <Animated.Text style={[styles.label, labelStyle]}>{label}</Animated.Text> : null}
+        <TextInput 
+          underlineColorAndroid="transparent"
+          autoCorrect={false}
+          style={[styles.input, inputError ? styles.inputError : null, dark ? styles.dark : null]} 
+          onChangeText={this._onChangeText(onChange)} 
+          secureTextEntry={secureTextEntry || false}
+          {...restInput}/>
+        {inputError ? <Text style={styles.errorText}>{error}</Text> : null}
+      </View>
+    );
+  }
+}
 
 const ripple = TouchableNativeFeedback.SelectableBackground(),
   noRipple = TouchableNativeFeedback.Ripple('transparent');
@@ -148,4 +266,4 @@ FormLink.propTypes = {
   onPress: PropTypes.func,
 };
 
-export { textField, SubmitButton, FormError, FormLink };
+export { textField, sliderField, SubmitButton, FormError, FormLink };

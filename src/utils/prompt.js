@@ -4,23 +4,23 @@ import { connect } from 'react-redux';
 
 export const prompt = options => dispatch => dispatch({ type: 'SET_PROMPT', options });
 
-let PromptView = ({ dispatch, options: { onSubmit = () => {}, onCancel = () => {}, title = '', ...rest } }) => {
+let PromptView = ({ dispatch, options: { onSubmit, onCancel, title, textInputProps = {}, ...rest } }) => {
   const handleSubmit = value => {
-    onSubmit(value);
+    onSubmit && onSubmit(value);
     dispatch({ type: 'UNSET_PROMPT' });
   };
   const handleCancel = () => {
-    onCancel();
+    onCancel && onCancel();
     dispatch({ type: 'UNSET_PROMPT' });
   };
 
   return (
     <Prompt 
       {...rest} 
-      title={title}
+      title={title || ''}
       onSubmit={handleSubmit}
       onCancel={handleCancel}
-      textInputProps={{ maxLength: 32 }}/>
+      textInputProps={{ maxLength: 32, ...textInputProps }}/>
   );
 };
 

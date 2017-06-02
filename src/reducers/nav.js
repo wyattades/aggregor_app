@@ -10,6 +10,8 @@ export default (state, action) => {
       const isLoggedIn = action.payload && action.payload.user && action.payload.user.isLoggedIn === true;
       if (!isLoggedIn) {
         nextState = AppNavigator.router.getStateForAction(goLogin({ init: true }));   
+      } else {
+        nextState = AppNavigator.router.getStateForAction(action, state);
       }
       break;
 

@@ -15,19 +15,24 @@
 ### Build Producton App to Connected Device:
 - <code>npm run bundle-android</code>
 - <code>npm run android</code>
+- (I think)
 
 
 ## TODO
-- implement proper navigation between pages
-- planned containers: login, register, account, about, feed-edit, available-plugins, home
-- api (proper async loading)
-- component/container styles i.e. make it pretty
-  - [React Native Elements???](https://react-native-training.github.io/react-native-elements/)
-  - [React Native Vector Icons](https://github.com/oblador/react-native-vector-icons)
-  - material design?
-  - android AND iOS support?
+#1	file:///home/wyatt/Github/aggregor_app/src/containers/PluginEdit.js:10:4
+- TODO: Use selector for plugin type
 
-## ISSUES
-- form inputs can get covered by keyboard:
-  - add 'android:windowSoftInputMode="adjustResize"' to AndroidManifest.xml ???
-  - use KeyBoardAvoidingView
+#2	file:///home/wyatt/Github/aggregor_app/src/containers/Dashboard.js:8:4
+- TODO: add indicator for loading and plugin errors
+
+#3	file:///home/wyatt/Github/aggregor_app/src/utils/records.js:11:4
+- TODO: move priority outside data (because its a required value)
+
+#4	file:///home/wyatt/Github/aggregor_app/src/reducers/feeds.js:5:4
+- TODO: flatten reducers... maybe in my next lifetime
+
+#5	file:///home/wyatt/Github/aggregor_app/src/components/Entry.js:6:4
+- TODO: finish designing Entry component
+
+#6	file:///home/wyatt/Github/aggregor_app/src/components/Form.js:7:4
+- TODO: fix form inputs sometimes covered by keyboard (specifically register)
