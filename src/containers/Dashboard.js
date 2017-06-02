@@ -1,63 +1,83 @@
-import React, { Component, PropTypes } from 'react';
-import { StyleSheet, View, FlatList, Text, Linking } from 'react-native';
+import React, { PureComponent, PropTypes } from 'react';
+import { StyleSheet, View, FlatList, Text, Linking, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 
 import { fetchFeed } from '../actions/api';
 import Entry from '../components/Entry';
-import theme from '../utils/theme';
+
+// TODO: add indicator for loading and plugin errors
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.SUPPORT
   }, 
-  NoDisplay: {
+
+  message: {
     fontSize: 20,
+    margin: 16,
     marginHorizontal: 40,
-    paddingTop: 40
+    textAlign: 'center',
+  },
+  messageView: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
   }
 });
 
 const NoFeeds = () => (
-  <View>
-    <Text style={styles.NoDisplay}>You don't have any feeds yet!</Text>
-    <Text style={styles.NoDisplay}>You can manage your feeds in the drawer menu at the top left.</Text>
+  <View style={styles.messageView}>
+    <Text style={styles.message}>You don't have any feeds yet!</Text>
+    <Text style={styles.message}>You can manage your feeds in the drawer menu at the top left.</Text>
   </View>
 );
 
 const NoPlugins = () => (
-  <View>
-    <Text style={styles.NoDisplay}>You don't have any sources in this feed.</Text>
-    <Text style={styles.NoDisplay}>Click the edit button above to add some!</Text>
+  <View style={styles.messageView}>
+    <Text style={styles.message}>You don't have any sources in this feed.</Text>
+    <Text style={styles.message}>Click the edit button above to add some!</Text>
   </View>
 );
 
-// const Divider = () => (
-//   <View/>
-// );
-
-class NonemptyDashboard extends Component {
+class NonemptyDashboard extends PureComponent {
 
   state = {
-    refreshing: false
+    refreshing: false,
+    page: 0,
   }
 
   _onRefresh = () => {
-    const { selectedFeed, dispatch } = this.props;
-    this.setState({ refreshing: true });
-    dispatch(fetchFeed(selectedFeed)).then(() => {
-      this.setState({ refreshing: false });
+    this.setState({ 
+      page: 0
+    }, this._requestEntries);
+  }
+
+  _requestEntries = page => () => {
+    this.setState({ refreshing: true }, () => {
+
+      const { selectedFeed, dispatch } = this.props;
+
+      dispatch(fetchFeed(selectedFeed, page)).then(() => this.setState({ 
+        refreshing: false,
+        page,
+      }), () => {
+        // TEMP
+        console.log('Page is greater than 0');
+
+        this.setState({ 
+          refreshing: false
+        });
+      });
     });
   }
 
   _pressItem = item => () => {
     
-    // TODO: figure out what to do when opening links
-    // for now, don't use WebContent container
+    // NOTE: for now don't use WebContent container when opening links
 
     Linking.canOpenURL(item.link).then(supported => {
       if (!supported) {
-        console.log('Can\'t handle url: ' + item.link);
+        ToastAndroid.show('Can\'t open url: ' + item.link, ToastAndroid.SHORT);
         // this.props.navigation.navigate('WebContent', { 
         //   source: item.link,
         //   title: item.title,
@@ -65,8 +85,10 @@ class NonemptyDashboard extends Component {
       } else {
         return Linking.openURL(item.link);
       }
-    }).catch(err => console.error('An error occurred', err));
+    }).catch(err => ToastAndroid.show('Web connection error: ' + err, ToastAndroid.SHORT));
   }
+
+  _keyExtractor = item => item.id;
 
   _renderItem = ({ item }) => (
     <Entry 
@@ -78,11 +100,13 @@ class NonemptyDashboard extends Component {
     return (
       <View style={styles.container}>
         <FlatList
-          onRefresh={this._onRefresh}
+          onRefresh={this._requestEntries(0)}
           refreshing={this.state.refreshing}
           data={this.props.entries}
           renderItem={this._renderItem}
-          keyExtractor={item => item.id}
+          keyExtractor={this._keyExtractor}
+          onEndReached={this._requestEntries(this.state.page + 1)}
+          onEndThreshold={0}
         />
       </View>
     );
@@ -115,7 +139,7 @@ let Dashboard = ({ feeds, selectedFeed, dispatch, navigation }) => {
 
 Dashboard = connect(({ feeds }, { navigation }) => ({
   feeds,
-  selectedFeed: navigation.state.params.selectedFeed,
+  selectedFeed: navigation.state.params && navigation.state.params.selectedFeed,
 }))(Dashboard);
 
 Dashboard.propTypes = {

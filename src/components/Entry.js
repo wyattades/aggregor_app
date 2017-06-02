@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, TouchableNativeFeedback, Image } from 'react-na
 
 import theme from '../utils/theme';
 
+// TODO: finish designing Entry component
+
 const styles = StyleSheet.create({
   container: {
     height: 256,

@@ -1,6 +1,9 @@
-import { fetchFeeds } from '../actions/api';
 import { ToastAndroid } from 'react-native';
+
+import { fetchFeeds } from '../actions/api';
 import { setFeed } from '../actions/navActions';
+
+// NOTE: it might be possible to move most of these cases their corresponding functions in api.js
 
 export default store => next => action => {
   next(action);
@@ -24,7 +27,7 @@ export default store => next => action => {
       store.dispatch(setFeed(first ? first.get('name') : null));
       break;
     case 'ADD_FEED':
-      store.dispatch(setFeed(action.feed));
+      store.dispatch(setFeed(action.feed, true));
       break;
     case 'NETWORK_ERROR':
       ToastAndroid.show('Failed to connect to Aggregor server', ToastAndroid.SHORT);

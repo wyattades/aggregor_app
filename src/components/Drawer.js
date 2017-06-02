@@ -173,12 +173,6 @@ Drawer = connect(({ feeds }) => ({
 
 Drawer.propTypes = {
   navigation: PropTypes.object.isRequired,
-  // router: PropTypes.object.isRequired,
-  // renderIcon: PropTypes.func.isRequired,
-  // getLabel: PropTypes.func.isRequired,
 };
 
 export default Drawer;
-
-//TODO: map dispatch
-//TODO: selected NavItem based on navigation state

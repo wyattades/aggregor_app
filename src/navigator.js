@@ -12,10 +12,9 @@ import Loading from './containers/Loading';
 import Account from './containers/Account';
 import About from './containers/About';
 // import WebContent from './containers/WebContent';
-// import SplashScreen from './containers/SplashScreen';
 
 import Drawer from './components/Drawer';
-import { styles as headerStyles, HeaderLink, DashboardHeader, FeedEditHeader, PluginEditHeader, MainHeader } from './components/Header';
+import { DashboardHeader, FeedEditHeader, PluginEditHeader, MainHeader } from './components/Header';
 
 const MainPage = (Content, title) => (
   class extends Component {
@@ -65,66 +64,60 @@ const HomeNavigator = new StackNavigator(
 
 const MainNavigator = new DrawerNavigator(
   {
-    Home: { screen: HomeNavigator },
-    Account: { screen: MainPage(Account, 'Account') },
-    About: { screen: MainPage(About, 'About') },
+    Home: { 
+      screen: HomeNavigator
+    },
+    Account: { 
+      screen: MainPage(Account, 'Account') 
+    },
+    About: { 
+      screen: MainPage(About, 'About') 
+    },
   }, {
     initialRouteName: 'Home',
     contentComponent: Drawer,
   }
 );
 
-// TODO: remove headers for login and register page, make it look more modern
 export const AppNavigator = new StackNavigator(
   {
-    // SplashScreen: { screen: SplashScreen },
     Register: { 
-      screen: Register,
-      navigationOptions: ({ navigation }) => ({
-        title: 'Register',
-        headerLeft: null,
-        headerRight: (
-          <HeaderLink title="Sign In" onPress={() => navigation.navigate('Login') }/>
-        )
-      })
+      screen: Register
     },
     Login: { 
-      screen: Login,
-      navigationOptions: ({ navigation }) => ({
-        title: 'Login',
-        headerLeft: null,
-        headerRight: (
-          <HeaderLink title="Sign Up" onPress={() => navigation.navigate('Register') }/>
-        )
-      })
+      screen: Login
     },
     Main: { 
-      screen: MainNavigator,
-      navigationOptions: { header: null }
+      screen: MainNavigator
     },
     Loading: { 
-      screen: Loading,
-      navigationOptions: { header: null }
+      screen: Loading
     },
   }, {
-    headerMode: 'screen',
+    headerMode: 'none',
+    transitionConfig: () => ({
+
+    }),
     initialRouteName: 'Loading',
-    navigationOptions: {
-      headerStyle: headerStyles.header,
-      headerTitleStyle: headerStyles.title,
-      headerTintColor: 'white'
-    },
   }
 );
 
 class Navigator extends Component {
 
+  static propTypes = {
+    dispatch: PropTypes.func.isRequired,
+    nav: PropTypes.object.isRequired,
+  }
+
   _handleBack = () => {
+
     const { nav: { routes }, dispatch } = this.props;
-    if (routes.length > 1 || (routes[0].routes && routes[0].routes.length > 1)) {
+    const route = routes[0].routes && routes[0].routes[0];
+
+    if ((routes[0].index > 0) || (route && route.routes && route.routes[0].index > 0)) {
       dispatch(NavigationActions.back());
       return true; // do not exit app
-    } else if (routes) {
+    } else {
 
       return false; // exit app
     }
@@ -146,11 +139,6 @@ class Navigator extends Component {
   }
 }
 
-Navigator.propTypes = {
-  dispatch: PropTypes.func.isRequired,
-  nav: PropTypes.object.isRequired,
-};
-
-export default connect(state => ({
-  nav: state.nav,
+export default connect(({ nav }) => ({
+  nav
 }))(Navigator);

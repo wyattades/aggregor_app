@@ -4,6 +4,8 @@ const ADDRESS = (LEE !== 'true' && __DEV__) ? 'http://localhost:3000' : API_URL,
     TOKEN = API_KEY;
 
 const error = dispatch => err => {
+	console.log('ERROR: ', err);
+
 	const errorType = Math.floor(err.code / 100);
 	if (errorType === 5) {
 		dispatch({
@@ -26,18 +28,7 @@ const error = dispatch => err => {
 };
 
 const allErrors = dispatch => err => {
-	const errorType = Math.floor(err.code / 100);
-	if (errorType === 0) {
-		dispatch({
-			type: 'NETWORK_ERROR',
-			err
-		});
-	} else {
-		dispatch({
-			type: 'UNSET_USER',
-			err
-		});
-	}
+	error(dispatch)(err).catch(() => {});
 };
 
 const request = (method, route, token, data) => new Promise((resolve, reject) => {
@@ -71,34 +62,6 @@ const request = (method, route, token, data) => new Promise((resolve, reject) =>
 	});
 });
 
-// const apiGenerator = (next, type) => (...args) => {
-// 	next({ 
-// 		type,
-// 		status: 'loading'
-// 	});
-// 	api(...args).then(data => next({
-// 		type,
-// 		status: 'success',
-// 		data
-// 	}), err => next({
-// 		type,
-// 		status: 'error',
-// 		err
-// 	}));
-// };
-
-// ** Example of a request generator
-// const requestToStore = (type, method, route, token, data) => (dispatch, getState) => {
-// 	const user = getState().user;
-// 	dispatch({ type, status: 'loading' });
-// 	request(method, route.replace('${user}', user.username), token ? user.token : undefined, data).then(
-// 		res => dispatch({ type, status: 'success', ...res }),
-// 		err => dispatch({ type, status: 'error', err })
-// 	);
-// };
-
-// export const fetchPlugin = (feed, id) => requestToStore('SET_ENTRIES', 'GET', `/user/${user}/${feed}/${id}`, true);
-
 
 // NOTE: actions that might return an expected error (such as long login info) do not have 'error(dispatch)'
 
@@ -118,10 +81,13 @@ export const createUser = data => dispatch => request('POST', '/user', undefined
 );
 
 // data: username, password
-export const deleteUser = data => (dispatch, getState) => request('DELETE', '/user', getState().user.token, data).then(
-	() => dispatch({ type: 'UNSET_USER' }),
-	error(dispatch)
-);
+export const deleteUser = password => (dispatch, getState) => {
+	const user = getState().user;
+	return request('DELETE', '/user', user.token, { username: user.username, password }).then(
+		() => dispatch({ type: 'UNSET_USER' }),
+		allErrors(dispatch)
+	);
+};
 
 export const fetchFeeds = () => (dispatch, getState) => {
 	const user = getState().user;
@@ -184,7 +150,6 @@ export const fetchPlugin = (feed, id) => (dispatch, getState) => {
 			dispatch({ type: 'UPDATE_PLUGIN', feed, id, data: { status: 'success' }});
 			return Promise.resolve();
 		}, 
-		// TODO: Dont return. handle error and update redux store with error
 		err => error(dispatch)(err)
 		.catch(err2 => {
 			dispatch({ type: 'UPDATE_PLUGIN', feed, id, data: { status: 'error', error: err2.data }});
@@ -193,9 +158,14 @@ export const fetchPlugin = (feed, id) => (dispatch, getState) => {
 	);
 };
 
-export const fetchFeed = feed => (dispatch, getState) => {
-	const plugins = getState().feeds.get(feed).get('plugins').toArray();
+export const fetchFeed = (feed, page) => (dispatch, getState) => {
+	// TEMP
+	if (page > 0) {
+		return Promise.reject();
+	}
+
 	dispatch({ type: 'CLEAR_ENTRIES', feed });
+	const plugins = getState().feeds.get(feed).get('plugins').toArray();
 	return Promise.all(plugins.map(
 		plugin => dispatch(fetchPlugin(feed, plugin.id))
 	));
