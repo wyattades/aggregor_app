@@ -37,7 +37,6 @@ const styles = StyleSheet.create({
     marginLeft: 16,
     flex: 1,
   },
-
   button: {
     backgroundColor: theme.ACCENT,
   },
