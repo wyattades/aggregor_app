@@ -1,17 +1,15 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
+import theme from '../utils/theme';
 
 const styles = StyleSheet.create({ 
   mainText: {
     fontSize: 20,
     marginHorizontal: 30,
-    paddingTop: 20
-  },
-  header:{
-    fontSize: 25,
-    fontWeight: 'bold',
-    padding: 15
+    paddingTop: 20,
+    color: theme.ACCENT,
+    fontWeight: 'bold'
   },
   subText:{
     fontSize: 18,
@@ -22,7 +20,6 @@ const styles = StyleSheet.create({
 
 const About = () => (
   <View>
-    <Text style={styles.header}>About Aggregor</Text>
     <Text style={styles.mainText}>Supported News Sources:</Text>
     <Text style={styles.subText}>• Hacker News</Text>
     <Text style={styles.subText}>• Reddit</Text>
