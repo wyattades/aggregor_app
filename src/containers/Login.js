@@ -1,11 +1,10 @@
 import React, { PropTypes, Component } from 'react';
-import { Text, View, StyleSheet, LayoutAnimation, KeyboardAvoidingView } from 'react-native';
+import { Text, View, StyleSheet, LayoutAnimation } from 'react-native';
 import { reduxForm, SubmissionError, Field } from 'redux-form';
 
 import { login } from '../actions/api';
-import { textField, SubmitButton, FormError, FormLink } from '../components/Form';
+import { AnimatedTextField, SubmitButton, FormError, FormLink } from '../components/Form';
 import theme from '../utils/theme';
-// import { init } from '../actions/navActions';
   
 const onSubmit = (values, dispatch) => {
   return dispatch(login(values))
@@ -47,11 +46,9 @@ const animation = {
     create: {
       type: LayoutAnimation.Types.easeInEaseOut,
       property: LayoutAnimation.Properties.opacity,
-      // springDamping: 0.7,
     },
     update: {
       type: LayoutAnimation.Types.easeInEaseOut,
-      // springDamping: 0.7,
     },
   };
 
@@ -99,8 +96,8 @@ class Login extends Component {
         { this.state.show ? (
           <View>
             { _error ? <FormError error={_error}/> : null }
-            <Field label="Username" name="username" component={textField}/>
-            <Field label="Password" secureTextEntry={true} name="password" component={textField}/>
+            <Field label="Username" name="username" component={AnimatedTextField}/>
+            <Field label="Password" secureTextEntry={true} name="password" component={AnimatedTextField}/>
             <SubmitButton title="SIGN IN" onPress={handleSubmit(onSubmit)} submitting={submitting} submitSucceeded={submitSucceeded}/>
           </View>
          ) : null }

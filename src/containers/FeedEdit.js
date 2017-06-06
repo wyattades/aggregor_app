@@ -46,22 +46,20 @@ const styles = StyleSheet.create({
 class FeedEdit extends Component {
   
   _pluginItem = (item, index) => {
-    const error = item.status === 'error' && item.error;
+    const error = item.error;
     let subtitle = ' ';
     if (error) {
       subtitle = item.error;
-    } else if (item.status === 'loading') {
-      subtitle = 'Loading...';
-    } else if (item.status === 'success') {
-      subtitle = 'Successfully loaded';
+    } else {
+      subtitle = 'No errors';
     }
 
     return (
       <TouchableNativeFeedback key={item.id} onPress={this._editPlugin(item)}>
         <View style={styles.item}>
-          <PluginIcon plugin={item.feed} size={40}/>
+          <PluginIcon plugin={item.type} size={40}/>
           <View style={styles.textView}>
-            <Text style={[styles.title]} numberOfLines={1}>{item.data && item.data.url}</Text>
+            <Text style={[styles.title]} numberOfLines={1}>{item.type}</Text>
             <Text style={[styles.subtitle, error ? styles.error : null]} numberOfLines={1}>{subtitle}</Text>
           </View>
         </View>

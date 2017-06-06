@@ -1,5 +1,5 @@
 import React, { PropTypes, PureComponent } from 'react';
-import { View, TextInput, Text, StyleSheet, TouchableNativeFeedback, Slider, Animated, Easing } from 'react-native';
+import { View, TextInput, Text, StyleSheet, TouchableNativeFeedback, Slider, Animated, Easing, Picker } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import theme from '../utils/theme';
@@ -104,9 +104,68 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     color: theme.TEXT_SECOND,
   },
+
+  pickerStyle: {
+    marginTop: -8,
+    marginBottom: 0,
+  },
+
+  plainInput: {
+    backgroundColor: theme.WHITE,
+    marginBottom: 8,
+    borderColor: theme.SUPPORT,
+    borderWidth: 1,
+    padding: 8,
+    paddingHorizontal: 12,
+  },
+  plainInputError: {
+    borderColor: theme.ERROR,
+  },
 });
 
-class sliderField extends PureComponent {
+class PickerField extends PureComponent {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      value: props.value
+    };
+  }
+
+  _onValueChange = value => {
+    this.setState({ value });
+    this.props.input.onChange(value);
+  }
+
+  render () {
+    const { label, values } = this.props;
+    return (
+      <View>
+        {label ? <Text style={styles.label}>{label}</Text> : null}
+        <Picker
+          style={styles.pickerStyle}
+          selectedValue={this.state.value}
+          onValueChange={this._onValueChange}>
+          {values.map(val => (
+            <Picker.Item key={val.value} label={val.label} value={val.value}/>
+          ))}
+        </Picker>
+      </View>
+    );
+  }
+}
+
+PickerField.propTypes = {
+  input: PropTypes.object.isRequired,
+  label: PropTypes.string,
+  values: PropTypes.arrayOf(PropTypes.shape({
+    value: PropTypes.string.isRequired,
+    label: PropTypes.string.isRequired,
+  }).isRequired).isRequired,
+};
+
+class SliderField extends PureComponent {
 
   static propTypes = {
     input: PropTypes.object.isRequired,
@@ -125,8 +184,10 @@ class sliderField extends PureComponent {
     };
   }
 
+  _onValueChange = value => this.props.input.onChange(Math.round(value * 10) / 10);
+
   render() {
-    const { input: { onChange, value }, label, min, max, step } = this.props;
+    const { input: { value }, label, min, max, step } = this.props;
     return (
       <View>
         {label ? <Text style={styles.label}>{label}</Text> : null}
@@ -140,7 +201,7 @@ class sliderField extends PureComponent {
             thumbTintColor={theme.PRIMARY}
             step={step}
             style={styles.slider}
-            onValueChange={onChange}/>
+            onValueChange={this._onValueChange}/>
           <Text style={styles.sliderValue}>{value}</Text>
         </View>
       </View>
@@ -148,13 +209,29 @@ class sliderField extends PureComponent {
   }
 }
 
-class textField extends PureComponent {
+const TextField = ({ input: { onChange, ...restInput }, meta: { error, touched }, label, secureTextEntry }) => {
+  const inputError = error && touched;
+  return (
+    <View>
+      {label ? <Text style={styles.label}>{label}</Text> : null}
+      <TextInput
+        onChangeText={onChange}
+        autoCorrect={false}
+        underlineColorAndroid={'transparent'}
+        style={[styles.plainInput, inputError ? styles.plainInputError : null]}
+        secureTextEntry={secureTextEntry || false}
+        {...restInput}/>
+      {inputError ? <Text style={styles.errorText}>{error}</Text> : null}
+    </View>
+  );
+};
+
+class AnimatedTextField extends PureComponent {
 
   static propTypes = {
     input: PropTypes.object.isRequired,
     meta: PropTypes.object.isRequired,
     label: PropTypes.string,
-    dark: PropTypes.any,
     secureTextEntry: PropTypes.any,
   };
 
@@ -192,7 +269,7 @@ class textField extends PureComponent {
   }
 
   render() {
-    const { input: { onChange, ...restInput }, meta: { error, touched }, dark, label, secureTextEntry } = this.props;
+    const { input: { onChange, ...restInput }, meta: { error, touched }, label, secureTextEntry } = this.props;
     const inputError = error && touched;
 
     const labelStyle = {
@@ -208,12 +285,12 @@ class textField extends PureComponent {
     };
 
     return (
-      <View style={[styles.inputGroup]}>
+      <View style={styles.inputGroup}>
         { label ? <Animated.Text style={[styles.label, labelStyle]}>{label}</Animated.Text> : null}
         <TextInput 
           underlineColorAndroid="transparent"
           autoCorrect={false}
-          style={[styles.input, inputError ? styles.inputError : null, dark ? styles.dark : null]} 
+          style={[styles.input, inputError ? styles.inputError : null]} 
           onChangeText={this._onChangeText(onChange)} 
           secureTextEntry={secureTextEntry || false}
           {...restInput}/>
@@ -266,4 +343,4 @@ FormLink.propTypes = {
   onPress: PropTypes.func,
 };
 
-export { textField, sliderField, SubmitButton, FormError, FormLink };
+export { TextField, AnimatedTextField, PickerField, SliderField, SubmitButton, FormError, FormLink };

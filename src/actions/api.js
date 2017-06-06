@@ -134,49 +134,24 @@ export const fetchPlugins = feed => (dispatch, getState) => {
 	);
 };
 
-export const fetchPlugin = (feed, id) => (dispatch, getState) => {
+export const fetchFeed = (feed, page = 1) => (dispatch, getState) => {
 	const user = getState().user;
-
-	// TEMP
-	if (LEE === 'true') {
-		dispatch({ type: 'ADD_ENTRIES', feed, id, entries: [] });
-		return Promise.resolve();
-	}
-
-	return request('GET', `/user/${user.username}/feed/${feed}/${id}`, user.token).then(
-		({ entries }) => {
-			dispatch({ type: 'ADD_ENTRIES', feed, id, entries });
-			dispatch({ type: 'UPDATE_PLUGIN', feed, id, data: { status: 'success' }});
-			return Promise.resolve();
-		}, 
-		err => error(dispatch)(err)
-		.catch(err2 => {
-			dispatch({ type: 'UPDATE_PLUGIN', feed, id, data: { status: 'error', error: err2.data }});
-			return Promise.resolve();
-		})
+	return request('GET', `/user/${user.username}/feed/${feed}/${page}`, user.token).then(
+		({ entries, errors }) => {
+			dispatch({ type: 'APPEND_ENTRIES', feed, page, entries });
+			dispatch({ type: 'SET_ERRORS', feed, page, errors });
+		},
+		error(dispatch)
 	);
-};
-
-export const fetchFeed = (feed, page) => (dispatch, getState) => {
-	// TEMP
-	if (page > 0) {
-		return Promise.reject();
-	}
-
-	dispatch({ type: 'CLEAR_ENTRIES', feed });
-	const plugins = getState().feeds.get(feed).get('plugins').toArray();
-	return Promise.all(plugins.map(
-		plugin => dispatch(fetchPlugin(feed, plugin.id))
-	));
 };
 
 export const savePlugin = (feed, data, pluginId) => (dispatch, getState) => {
 	const user = getState().user;
-	if (pluginId) {
+	if (typeof pluginId === 'string' && pluginId.length > 0) {
 		return request('PUT', `/user/${user.username}/feed/${feed}/${pluginId}`, user.token, data).then(
 			() => {
 				dispatch({ type: 'UPDATE_PLUGIN', feed, id: pluginId, data });
-				dispatch(fetchPlugin(feed, pluginId)).then(() => {});
+				dispatch(fetchFeed(feed)).then(() => {});
 				return Promise.resolve();
 			}, 
 			error(dispatch)
@@ -186,7 +161,7 @@ export const savePlugin = (feed, data, pluginId) => (dispatch, getState) => {
 			({ id }) => {
 				data.id = id;
 				dispatch({ type: 'ADD_PLUGIN', feed, id, data });
-				dispatch(fetchPlugin(feed, id)).then(() => {});
+				dispatch(fetchFeed(feed)).then(() => {});
 				return Promise.resolve();
 			}, 
 			error(dispatch)

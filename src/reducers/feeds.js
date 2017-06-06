@@ -4,17 +4,16 @@ import { pluginRecord, entryRecord, feedRecord } from '../utils/records';
 
 // TODO: flatten reducers... maybe in my next lifetime
 
-const entries = (state, action) => {
+const entries = (state = List(), action) => {
 	switch (action.type) {
-	case 'ADD_ENTRIES':
-		return state.filter(_entry => _entry.pluginId !== action.id)
-			.concat(action.entries.map(_entry => new entryRecord(_entry)))
-			.sortBy(entry => entry.rating * entry.pluginPriority);
-	case 'DELETE_PLUGIN':
-		return state.filter(_entry => _entry.pluginId !== action.id);
-	case 'SET_PLUGINS':
-	case 'CLEAR_ENTRIES':
-		return List();
+	case 'APPEND_ENTRIES':
+		if (!action.page) {
+			return List();
+		} else if (action.page <= 1) {
+			return List(action.entries.map(_entry => new entryRecord(_entry)));
+		} else {
+			return state.concat(action.entries.map(_entry => new entryRecord(_entry)))
+		}
 	default:
 		return state;
 	}
@@ -40,9 +39,15 @@ const plugins = (state, action) => {
 	case 'ADD_PLUGIN':
 		return state.concat({ [action.id]: plugin(undefined, action) });
 	case 'UPDATE_PLUGIN':
+	case 'SET_ERRORS':
 		return state.update(action.id, _plugin => plugin(_plugin, action));
 	case 'DELETE_PLUGIN':
 		return state.remove(action.id);
+	case 'SET_ERRORS':
+		Object.keys(action.errors).forEach((id, error) => {
+			state = state.setIn(id, 'error', error);
+		});
+		return state;
 	default:
 		return state;
 	}
@@ -56,10 +61,9 @@ const feed = (state, action) => {
 	case 'ADD_PLUGIN':
 	case 'DELETE_PLUGIN':
 	case 'UPDATE_PLUGIN':
-		return state.update('plugins', _plugins => plugins(_plugins, action))
-			.update('entries', _entries => entries(_entries, action));
-	case 'ADD_ENTRIES':
-	case 'CLEAR_ENTRIES':
+	case 'SET_ERRORS':
+		return state.update('plugins', _plugins => plugins(_plugins, action));
+	case 'APPEND_ENTRIES':
 		return state.update('entries', _entries => entries(_entries, action));
 	default:
 		return state;
@@ -76,8 +80,8 @@ const feeds = (state = OrderedMap(), action) => {
 	case 'ADD_PLUGIN':
 	case 'UPDATE_PLUGIN':
 	case 'DELETE_PLUGIN':
-	case 'ADD_ENTRIES':
-	case 'CLEAR_ENTRIES':
+	case 'APPEND_ENTRIES':
+	case 'SET_ERRORS':
 		return state.update(action.feed, _feed => feed(_feed, action));
 	case 'DELETE_FEED':
 		return state.remove(action.feed);

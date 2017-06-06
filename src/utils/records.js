@@ -10,14 +10,11 @@ export const feedRecord = Record({
 
 // TODO: move priority outside data (because its a required value)
 export const pluginRecord = Record({
-	id: undefined,
-	type: 'raw',
-	status: 'loading',
+	id: '',
+	type: 'reddit',
 	error: undefined,
-	data: {
-		url: '',
-		priority: 50
-	}
+	priority: 0.5,
+	data: {}
 });
 
 export const entryRecord = Record({

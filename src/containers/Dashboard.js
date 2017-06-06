@@ -1,42 +1,25 @@
 import React, { PureComponent, PropTypes } from 'react';
-import { StyleSheet, View, FlatList, Text, Linking, ToastAndroid } from 'react-native';
+import { View, FlatList, Linking, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 
 import { fetchFeed } from '../actions/api';
 import Entry from '../components/Entry';
+import { Message, MessageView } from '../components/Message';
 
 // TODO: add indicator for loading and plugin errors
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  }, 
-
-  message: {
-    fontSize: 20,
-    margin: 16,
-    marginHorizontal: 40,
-    textAlign: 'center',
-  },
-  messageView: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'center',
-  }
-});
-
 const NoFeeds = () => (
-  <View style={styles.messageView}>
-    <Text style={styles.message}>You don't have any feeds yet!</Text>
-    <Text style={styles.message}>You can manage your feeds in the drawer menu at the top left.</Text>
-  </View>
+  <MessageView>
+    <Message text="You don't have any feeds yet!"/>
+    <Message text="You can manage your feeds in the drawer menu at the top left."/>
+  </MessageView>
 );
 
 const NoPlugins = () => (
-  <View style={styles.messageView}>
-    <Text style={styles.message}>You don't have any sources in this feed.</Text>
-    <Text style={styles.message}>Click the edit button above to add some!</Text>
-  </View>
+  <MessageView>
+    <Message text="You don't have any sources in this feed."/>
+    <Message text="Click the edit button above to add some!"/>
+  </MessageView>
 );
 
 class NonemptyDashboard extends PureComponent {
@@ -61,9 +44,6 @@ class NonemptyDashboard extends PureComponent {
         refreshing: false,
         page,
       }), () => {
-        // TEMP
-        console.log('Page is greater than 0');
-
         this.setState({ 
           refreshing: false
         });
@@ -98,9 +78,9 @@ class NonemptyDashboard extends PureComponent {
 
   render() {
     return (
-      <View style={styles.container}>
+      <View style={{ flex: 1 }}>
         <FlatList
-          onRefresh={this._requestEntries(0)}
+          onRefresh={this._requestEntries(1)}
           refreshing={this.state.refreshing}
           data={this.props.entries}
           renderItem={this._renderItem}

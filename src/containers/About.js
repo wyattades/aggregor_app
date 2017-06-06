@@ -14,13 +14,13 @@ const styles = StyleSheet.create({
     padding: 15
   },
   subText:{
-  	fontSize: 18,
-  	marginHorizontal: 45,
-  	paddingTop: 5
+    fontSize: 18,
+    marginHorizontal: 45,
+    paddingTop: 5
   }
 });
 
-const Account = () => (
+const About = () => (
   <View>
     <Text style={styles.header}>About Aggregor</Text>
     <Text style={styles.mainText}>Supported News Sources:</Text>
@@ -29,4 +29,4 @@ const Account = () => (
   </View>
 );
 
-export default connect()(Account);
+export default connect()(About);

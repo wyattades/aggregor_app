@@ -4,7 +4,7 @@ import { reduxForm, Field, SubmissionError } from 'redux-form';
 
 import { createUser } from '../actions/api';
 import format from '../utils/format';
-import { textField, SubmitButton, FormError, FormLink } from '../components/Form';
+import { AnimatedTextField, SubmitButton, FormError, FormLink } from '../components/Form';
 import theme from '../utils/theme';
   
 const onSubmit = (values, dispatch) => {
@@ -56,9 +56,9 @@ const RegisterForm = ({ handleSubmit, submitting, submitSucceeded, error, naviga
     </View>
     <View>
       { error ? <FormError error={error}/> : null }
-      <Field label="Username" name="username" component={textField}/>
-      <Field label="Email" name="email" component={textField}/>
-      <Field label="Password" secureTextEntry={true} name="password" component={textField}/>
+      <Field label="Username" name="username" component={AnimatedTextField}/>
+      <Field label="Email" name="email" component={AnimatedTextField}/>
+      <Field label="Password" secureTextEntry={true} name="password" component={AnimatedTextField}/>
       {/*<Field label="Password" secureTextEntry={true} name="passwordConfirm" component={renderInput}/>*/}
       <SubmitButton title="SIGN UP" onPress={handleSubmit(onSubmit)} submitting={submitting} submitSucceeded={submitSucceeded}/>
     </View>

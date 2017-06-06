@@ -59,22 +59,25 @@ const styles = StyleSheet.create({
   },
   billboard: {
     height: 128,
-    borderBottomWidth: 1,
-    borderBottomColor: theme.SUPPORT,
+    // borderBottomWidth: 1,
+    // borderBottomColor: theme.SUPPORT,
     marginBottom: 16,
-    backgroundColor: theme.PRIMARY_DARK,
+    // backgroundColor: theme.PRIMARY_DARK,
     padding: 16,
     flexDirection: 'column',
+    alignItems: 'center',
     justifyContent: 'space-between',
   },
   billboardTitle: {
     fontSize: 48,
     fontWeight: '700',
-    color: theme.WHITE,
+    color: theme.PRIMARY_DARK
+    // color: theme.WHITE,
   },
   billboardSubtitle: {
-    // fontWeight: '500',
-    color: theme.PRIMARY,
+    fontWeight: '500',
+    // color: theme.PRIMARY,
+    color: theme.TEXT_SECOND,
   },
 });
 

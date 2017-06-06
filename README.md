@@ -1,4 +1,4 @@
-# Aggregor App
+/# Aggregor App
 ## Setup
 ### Setup development environment:
 - make sure the following are installed on your system:
@@ -36,3 +36,5 @@
 
 #6	file:///home/wyatt/Github/aggregor_app/src/components/Form.js:7:4
 - TODO: fix form inputs sometimes covered by keyboard (specifically register)
+
+TODO: remove loading container, just use login?
