@@ -43,12 +43,12 @@ class NonemptyDashboard extends PureComponent {
 
   state = {
     refreshing: false,
-    page: 0,
+    page: 1,
   }
 
   _onRefresh = () => {
     this.setState({ 
-      page: 0
+      page: 1
     }, this._requestEntries);
   }
 
@@ -61,9 +61,6 @@ class NonemptyDashboard extends PureComponent {
         refreshing: false,
         page,
       }), () => {
-        // TEMP
-        console.log('Page is greater than 0');
-
         this.setState({ 
           refreshing: false
         });
@@ -73,40 +70,21 @@ class NonemptyDashboard extends PureComponent {
 
   _keyExtractor = item => item.id;
 
-  _pressItem = item => () => {
-    
-    // NOTE: for now don't use WebContent container when opening links
-
-    Linking.canOpenURL(item.link).then(supported => {
-      if (!supported) {
-        ToastAndroid.show('Can\'t open url: ' + item.link, ToastAndroid.SHORT);
-        // this.props.navigation.navigate('WebContent', { 
-        //   source: item.link,
-        //   title: item.title,
-        // });
-      } else {
-        return Linking.openURL(item.link);
-      }
-    }).catch(err => ToastAndroid.show('Web connection error: ' + err, ToastAndroid.SHORT));
-  }
-
   _renderItem = ({ item }) => (
-    <Entry 
-      {...item.toObject()} 
-      onPress={this._pressItem(item)}/>
+    <Entry {...item.toObject()}/>
   );
 
   render() {
     return (
       <View style={styles.container}>
         <FlatList
-          onRefresh={this._requestEntries(0)}
+          onRefresh={this._requestEntries(1)}
           refreshing={this.state.refreshing}
           data={this.props.entries}
           renderItem={this._renderItem}
           keyExtractor={this._keyExtractor}
           onEndReached={this._requestEntries(this.state.page + 1)}
-          onEndThreshold={0}
+          onEndThreshold={3}
         />
       </View>
     );

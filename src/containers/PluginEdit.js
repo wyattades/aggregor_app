@@ -34,7 +34,7 @@ class PluginEdit extends Component {
   };
 
   render() {
-    const { handleSubmit, error, pristine, submitting, submitSucceeded, type } = this.props;
+    const { handleSubmit, error, submitting, submitSucceeded, type } = this.props;
     const plg = plugins[type];
     const pluginOptions = plg ? plg.options : [];
 
@@ -53,7 +53,6 @@ class PluginEdit extends Component {
         <SubmitButton 
           title="SAVE" 
           onPress={handleSubmit(this._onSubmit)}
-          disabled={pristine}
           submitting={submitting}
           submitSucceeded={submitSucceeded}/>
       </View>
