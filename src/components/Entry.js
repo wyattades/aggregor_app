@@ -6,7 +6,6 @@ import theme from '../utils/theme';
 
 const styles = StyleSheet.create({
   container: {
-    height: 200,
     marginBottom: 8,
     padding: 16,
     backgroundColor: theme.WHITE,
@@ -69,9 +68,9 @@ class Entry extends PureComponent {
       <Text style={[styles.title, thumbnailURL ? {marginLeft: 5, maxWidth: 250} : null]}>{disp_title}</Text>
     );
   }
-
+  
   render() {
-    const { title, link, author, date, thumbnailURL, plugin, commentAmount, commentURL, authorURL } = this.props;
+    const { title, author, date, thumbnailURL, plugin, commentAmount, commentURL, link, authorURL } = this.props;
     return (
       <TouchableNativeFeedback onPress={this._pressItem(link)}>
         <View style={[styles.container, thumbnailURL ? {height: 200} : {height: 166}]}>
@@ -79,9 +78,9 @@ class Entry extends PureComponent {
             {thumbnailURL ? <Image source={{ uri: thumbnailURL }} style={styles.thumbnail}/> : null}
             {this._title_format(thumbnailURL, title)}
           </View>
-          <Text style={styles.secondary_text}>{commentAmount} comments</Text>
+          <Text style={styles.secondary_text} onPress={this._pressItem(commentURL)}>{commentAmount} comments</Text>
           <View style={styles.footer}>
-            <Text style={styles.secondary_text}>{plugin} : {author}</Text>
+            <Text style={styles.secondary_text} onPress={this._pressItem(authorURL)}>{plugin} : {author}</Text>
             <TimeAgo style={styles.secondary_text} time={date}/>
           </View>
         </View>

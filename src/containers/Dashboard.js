@@ -1,5 +1,5 @@
 import React, { PureComponent, PropTypes } from 'react';
-import { StyleSheet, View, FlatList, Text, Linking, ToastAndroid } from 'react-native';
+import { StyleSheet, View, FlatList, Text } from 'react-native';
 import { connect } from 'react-redux';
 
 import { fetchFeed } from '../actions/api';
