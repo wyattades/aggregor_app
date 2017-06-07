@@ -333,7 +333,10 @@ const FormError = ({ error }) => {
 }
 
 FormError.propTypes = {
-  error: PropTypes.string.isRequired
+  error: PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.object
+    ])
 };
 
 const FormLink = ({ title, onPress }) => (
