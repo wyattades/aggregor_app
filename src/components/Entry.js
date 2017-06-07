@@ -1,12 +1,11 @@
 import React, { PropTypes, PureComponent } from 'react';
-import { View, Text, StyleSheet, TouchableNativeFeedback, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableNativeFeedback, Image, Linking } from 'react-native';
 import TimeAgo from 'react-native-timeago';
 
 import theme from '../utils/theme';
 
 const styles = StyleSheet.create({
   container: {
-    height: 200,
     marginBottom: 8,
     padding: 16,
     backgroundColor: theme.WHITE,
@@ -25,7 +24,6 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: 18,
     color: theme.TEXT,
-    flexWrap: 'wrap',
   },
   thumbnail: {
     width: 80,
@@ -43,6 +41,23 @@ class Entry extends PureComponent {
     return false;
   }
 
+  _pressItem = link => () => {
+    
+    // NOTE: for now don't use WebContent container when opening links
+
+    Linking.canOpenURL(link).then(supported => {
+      if (!supported) {
+        ToastAndroid.show('Can\'t open url: ' + link, ToastAndroid.SHORT);
+        // this.props.navigation.navigate('WebContent', { 
+        //   source: item.link,
+        //   title: item.title,
+        // });
+      } else {
+        return Linking.openURL(link);
+      }
+    }).catch(err => ToastAndroid.show('Web connection error: ' + err, ToastAndroid.SHORT));
+  }
+
   _title_format(thumbnailURL, title) {
     var disp_title = title;
     if (title.length > 120) {
@@ -53,19 +68,19 @@ class Entry extends PureComponent {
       <Text style={[styles.title, thumbnailURL ? {marginLeft: 5, maxWidth: 250} : null]}>{disp_title}</Text>
     );
   }
-
+  
   render() {
-    const { title, author, date, onPress, thumbnailURL, plugin, commentAmount, commentURL } = this.props;
+    const { title, author, date, onPress, thumbnailURL, plugin, commentAmount, commentURL, link, authorURL } = this.props;
     return (
-      <TouchableNativeFeedback onPress={onPress}>
+      <TouchableNativeFeedback onPress={this._pressItem(link)}>
           <View style={[styles.container, thumbnailURL ? {height: 200} : {height: 166}]}>
             <View style={thumbnailURL ? styles.topRow : null}>
               {thumbnailURL ? <Image source={{ uri: thumbnailURL }} style={styles.thumbnail}/> : null}
               {this._title_format(thumbnailURL, title)}
             </View>
-            <Text style={styles.secondary_text}>{commentAmount} comments</Text>
+            <Text style={styles.secondary_text} onPress={this._pressItem(commentURL)}>{commentAmount} comments</Text>
             <View style={styles.footer}>
-              <Text style={styles.secondary_text}>{plugin} : {author}</Text>
+              <Text style={styles.secondary_text} onPress={this._pressItem(authorURL)}>{plugin} : {author}</Text>
               <TimeAgo style={styles.secondary_text} time={date}/>
             </View>
           </View>
@@ -75,7 +90,6 @@ class Entry extends PureComponent {
 }
 
 Entry.propTypes = {
-  onPress: PropTypes.func.isRequired,
   title: PropTypes.string.isRequired,
   link: PropTypes.string.isRequired,
 };

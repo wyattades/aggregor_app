@@ -73,27 +73,10 @@ class NonemptyDashboard extends PureComponent {
 
   _keyExtractor = item => item.id;
 
-  _pressItem = item => () => {
-    
-    // NOTE: for now don't use WebContent container when opening links
-
-    Linking.canOpenURL(item.link).then(supported => {
-      if (!supported) {
-        ToastAndroid.show('Can\'t open url: ' + item.link, ToastAndroid.SHORT);
-        // this.props.navigation.navigate('WebContent', { 
-        //   source: item.link,
-        //   title: item.title,
-        // });
-      } else {
-        return Linking.openURL(item.link);
-      }
-    }).catch(err => ToastAndroid.show('Web connection error: ' + err, ToastAndroid.SHORT));
-  }
-
   _renderItem = ({ item }) => (
     <Entry 
       {...item.toObject()} 
-      onPress={this._pressItem(item)}/>
+      />
   );
 
   render() {
