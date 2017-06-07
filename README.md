@@ -36,5 +36,3 @@
 
 #6	file:///home/wyatt/Github/aggregor_app/src/components/Form.js:7:4
 - TODO: fix form inputs sometimes covered by keyboard (specifically register)
-
-TODO: remove loading container, just use login?

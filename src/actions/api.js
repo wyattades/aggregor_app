@@ -71,7 +71,7 @@ export const login = data => (dispatch, getState) => request('POST', '/user/logi
 
 export const logout = () => (dispatch, getState) => request('DELETE', '/user/logout', getState().user.token).then(
 	() => dispatch({ type: 'UNSET_USER' }),
-	error(dispatch)
+	allErrors(dispatch)
 );
 
 // data: username, password, first_name, last_name, email
@@ -136,6 +136,13 @@ export const fetchPlugins = feed => (dispatch, getState) => {
 
 export const fetchFeed = (feed, page = 1) => (dispatch, getState) => {
 	const user = getState().user;
+
+	if (LEE === 'true') {
+		const entries =  require('..tests/sample-data.js').default;
+		dispatch({ type: 'APPEND_ENTRIES', feed, page, entries });
+		return Promise.resolve();
+	}
+
 	return request('GET', `/user/${user.username}/feed/${feed}/${page}`, user.token).then(
 		({ entries, errors }) => {
 			dispatch({ type: 'APPEND_ENTRIES', feed, page, entries });

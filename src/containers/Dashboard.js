@@ -6,7 +6,7 @@ import { fetchFeed } from '../actions/api';
 import Entry from '../components/Entry';
 import { Message, MessageView } from '../components/Message';
 
-// TODO: add indicator for loading and plugin errors
+// TODO: add indicator for loading and plugin errors at top of feed
 
 const NoFeeds = () => (
   <MessageView>
