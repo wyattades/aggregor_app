@@ -1,5 +1,6 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { View, Text, StyleSheet, TouchableNativeFeedback, Image } from 'react-native';
+import TimeAgo from 'react-native-timeago';
 
 import theme from '../utils/theme';
 
@@ -44,7 +45,7 @@ const styles = StyleSheet.create({
     left: 16
   },
   date: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 16,
     right: 16
   }
@@ -56,35 +57,26 @@ class Entry extends PureComponent {
     return false;
   }
 
-  _date_format(date) {
-    var temp = new Date(date);
-    var date = temp.toDateString();
-    var time = temp.toLocaleTimeString();
-    return (
-        <Text style={styles.author_date, styles.date}>{date} {time}</Text>
-      )
-  }
-
   _title_format(thumbnailURL, title) {
-    disp_title = title;
+    var disp_title = title;
     if (title.length > 150) {
       disp_title = title.substring(0, 150);
-      disp_title += "..."
+      disp_title += '...';
     }
     return (
-        <Text style={thumbnailURL ? styles.title : styles.title_NOIMAGE}>{disp_title}</Text>
-      )
+      <Text style={thumbnailURL ? styles.title : styles.title_NOIMAGE}>{disp_title}</Text>
+    );
   }
 
   render() {
-    const { title, author, date, link, onPress, thumbnailURL } = this.props;
+    const { title, author, date, onPress, thumbnailURL } = this.props;
     return (
       <TouchableNativeFeedback onPress={onPress}>
         <View style={thumbnailURL ? styles.container : styles.container_NOIMAGE}>
           {thumbnailURL ? <Image source={{ uri: thumbnailURL }} style={styles.thumbnail}/> : null}
           {this._title_format(thumbnailURL, title)}
-          <Text style={styles.author_date, styles.author}>{author}</Text>
-          {this._date_format(date)}
+          <Text style={[styles.author_date, styles.author]}>{author}</Text>
+          <TimeAgo style={styles.date} time={date}/>
         </View>
       </TouchableNativeFeedback>
     );

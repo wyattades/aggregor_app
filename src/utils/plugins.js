@@ -1,6 +1,6 @@
 import React from 'react';
-import IonIcon from 'react-native-vector-icons/Ionicons';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
 import theme from './theme';
 
@@ -8,21 +8,23 @@ export const plugins = {
   'reddit': {
     value: 'reddit',
     label: 'Reddit',
+    getLabel: ({ data: { subreddit }}) => subreddit ? `Reddit r/${subreddit}` : 'Reddit',
     options: [
       { value: 'subreddit', label: 'Subreddit', regex: /^[_A-Za-z0-9]{1,21}$/, default: '' },
     ],
-    icon: 'logo-reddit',
-    iconFamily: IonIcon,
-    color: 'blue'
+    icon: 'reddit',
+    iconFamily: FontAwesome,
+    color: '#149EF0'
   },
 
   'hackernews': {
     value: 'hackernews',
     label: 'HackerNews',
+    getLabel: () => 'HackerNews',
     options: [],
-    icon: 'logo-hackernews',
-    iconFamily: IonIcon,
-    color: 'orange'
+    icon: 'hacker-news',
+    iconFamily: FontAwesome,
+    color: '#ff6600'
   },
 };
 

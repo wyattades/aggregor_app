@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { ActionButton } from 'react-native-material-ui';
 
 import theme from '../utils/theme';
-import { PluginIcon } from '../utils/plugins';
+import { PluginIcon, plugins as plgs } from '../utils/plugins';
 
 const styles = StyleSheet.create({
   container: {
@@ -14,7 +14,7 @@ const styles = StyleSheet.create({
   item: {
     height: 72,
     backgroundColor: theme.WHITE,
-    padding: 16,
+    padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: theme.SUPPORT,
     flexDirection: 'row'
@@ -53,12 +53,15 @@ class FeedEdit extends Component {
       subtitle = 'No errors';
     }
 
+    const plg = plgs[item.type];
+    const label = plg ? plg.getLabel(item) : 'Unknown plugin';
+
     return (
       <TouchableNativeFeedback key={item.id} onPress={this._editPlugin(item)}>
         <View style={styles.item}>
           <PluginIcon plugin={item.type} size={40}/>
           <View style={styles.textView}>
-            <Text style={[styles.title]} numberOfLines={1}>{item.type}</Text>
+            <Text style={[styles.title]} numberOfLines={1}>{label}</Text>
             <Text style={[styles.subtitle, error ? styles.error : null]} numberOfLines={1}>{subtitle}</Text>
           </View>
         </View>

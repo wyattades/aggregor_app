@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "postinstall": "rm -rf ./node_modules/redux-form/node_modules/react",
+    "postinstall": "rm -rf ./node_modules/redux-form/node_modules/react && rm -rf ./node_modules/react-native-timeago/node_modules/react",
     "test": "jest",
     "android": "node node_modules/react-native/local-cli/cli.js run-android",
     "emulator": "$ANDROID_HOME/emulator/emulator -avd nexus",
@@ -30,7 +30,8 @@
     "react-redux": "^5.0.4",
     "redux": "^3.6.0",
     "redux-form": "^6.6.3",
-    "redux-thunk": "^2.2.0"
+    "redux-thunk": "^2.2.0",
+    "react-native-timeago": "^0.3.0"
   },
   "devDependencies": {
     "babel-eslint": "^7.2.3",
