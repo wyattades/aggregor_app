@@ -129,7 +129,7 @@ class PickerField extends PureComponent {
     super(props);
 
     this.state = {
-      value: props.value
+      value: props.input.value
     };
   }
 

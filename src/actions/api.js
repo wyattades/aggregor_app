@@ -134,8 +134,10 @@ export const fetchFeed = (feed, page = 1) => (dispatch, getState) => {
 	const user = getState().user;
 
 	if (LEE === 'true') {
-		const entries =  require('../tests/sample-data.js').default;
-		dispatch({ type: 'APPEND_ENTRIES', feed, page, entries });
+		if (page === 1) {
+			const entries =  require('../tests/sample-data.js').default;
+			dispatch({ type: 'APPEND_ENTRIES', feed, page, entries });
+		}
 		return Promise.resolve();
 	}
 
