@@ -1,6 +1,7 @@
 import React, { PropTypes, PureComponent } from 'react';
 import { View, Text, StyleSheet, TouchableNativeFeedback, Image, Linking } from 'react-native';
 import TimeAgo from 'react-native-timeago';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import theme from '../utils/theme';
 
@@ -68,23 +69,28 @@ class Entry extends PureComponent {
       <Text style={[styles.title, thumbnailURL ? {marginLeft: 5, maxWidth: 250} : null]}>{disp_title}</Text>
     );
   }
-  
+
   render() {
     const { title, author, date, onPress, thumbnailURL, plugin, commentAmount, commentURL, link, authorURL } = this.props;
     return (
-      <TouchableNativeFeedback onPress={this._pressItem(link)}>
-          <View style={[styles.container, thumbnailURL ? {height: 200} : {height: 166}]}>
-            <View style={thumbnailURL ? styles.topRow : null}>
+      <View style={[styles.container, thumbnailURL ? {height: 200} : {height: 166}]} >
+        <View style={thumbnailURL ? styles.topRow : null}>
+          <TouchableNativeFeedback onPress={this._pressItem(link)}>
+            <View>
               {thumbnailURL ? <Image source={{ uri: thumbnailURL }} style={styles.thumbnail}/> : null}
-              {this._title_format(thumbnailURL, title)}
+              {this._title_format(thumbnailURL, title, link)}
             </View>
-            <Text style={styles.secondary_text} onPress={this._pressItem(commentURL)}>{commentAmount} comments</Text>
-            <View style={styles.footer}>
-              <Text style={styles.secondary_text} onPress={this._pressItem(authorURL)}>{plugin} : {author}</Text>
-              <TimeAgo style={styles.secondary_text} time={date}/>
-            </View>
-          </View>
-      </TouchableNativeFeedback>
+          </TouchableNativeFeedback>
+        </View>
+        <View style={styles.topRow}>
+          <Icon name={"comment"} size={24}/>
+          <Text style={[styles.secondary_text, {marginLeft: 5}]} onPress={this._pressItem(commentURL)}>{commentAmount}</Text>
+        </View>
+        <View style={styles.footer}>
+          <Text style={styles.secondary_text} onPress={this._pressItem(authorURL)}>{plugin} : {author}</Text>
+          <TimeAgo style={styles.secondary_text} time={date}/>
+        </View>
+      </View>
     );
   }
 }
