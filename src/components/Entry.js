@@ -76,7 +76,7 @@ class Entry extends PureComponent {
       <View style={[styles.container, thumbnailURL ? {height: 200} : {height: 166}]} >
         <View style={thumbnailURL ? styles.topRow : null}>
           <TouchableNativeFeedback onPress={this._pressItem(link)}>
-            <View>
+            <View style={thumbnailURL ? styles.topRow : null}>
               {thumbnailURL ? <Image source={{ uri: thumbnailURL }} style={styles.thumbnail}/> : null}
               {this._title_format(thumbnailURL, title, link)}
             </View>
