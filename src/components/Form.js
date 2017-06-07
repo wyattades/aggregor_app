@@ -320,11 +320,17 @@ SubmitButton.propTypes = {
   disabled: PropTypes.bool
 };
 
-const FormError = ({ error }) => (
-  <View style={styles.mainErrorView}>
-    <Text style={styles.mainErrorText}>{error}</Text>
-  </View>
-);
+const FormError = ({ error }) => {
+  if (typeof error === 'object') {
+    error = JSON.stringify(error);
+  }
+
+  return (
+    <View style={styles.mainErrorView}>
+      <Text style={styles.mainErrorText}>{error}</Text>
+    </View>
+  );
+}
 
 FormError.propTypes = {
   error: PropTypes.string.isRequired
