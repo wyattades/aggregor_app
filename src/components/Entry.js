@@ -25,6 +25,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
     fontSize: 18,
     color: theme.TEXT,
+    flexWrap: 'wrap',
   },
   thumbnail: {
     width: 80,
@@ -49,8 +50,7 @@ class Entry extends PureComponent {
       disp_title += '...';
     }
     return (
-      // TODO: title goes offscreen instead of wrapping below when make a margin between it and thumbnail
-      <Text style={[styles.title, thumbnailURL ? {marginLeft: 5} : null]}>{disp_title}</Text>
+      <Text style={[styles.title, thumbnailURL ? {marginLeft: 5, maxWidth: 250} : null]}>{disp_title}</Text>
     );
   }
 

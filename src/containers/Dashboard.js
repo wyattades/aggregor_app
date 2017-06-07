@@ -1,25 +1,42 @@
 import React, { PureComponent, PropTypes } from 'react';
-import { View, FlatList, Linking, ToastAndroid } from 'react-native';
+import { StyleSheet, View, FlatList, Text, Linking, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 
 import { fetchFeed } from '../actions/api';
 import Entry from '../components/Entry';
-import { Message, MessageView } from '../components/Message';
 
-// TODO: add indicator for loading and plugin errors at top of feed
+// TODO: add indicator for loading and plugin errors
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  }, 
+
+  message: {
+    fontSize: 20,
+    margin: 16,
+    marginHorizontal: 40,
+    textAlign: 'center',
+  },
+  messageView: {
+    flex: 1,
+    flexDirection: 'column',
+    justifyContent: 'center',
+  }
+});
 
 const NoFeeds = () => (
-  <MessageView>
-    <Message text="You don't have any feeds yet!"/>
-    <Message text="You can manage your feeds in the drawer menu at the top left."/>
-  </MessageView>
+  <View style={styles.messageView}>
+    <Text style={styles.message}>You don't have any feeds yet!</Text>
+    <Text style={styles.message}>You can manage your feeds in the drawer menu at the top left.</Text>
+  </View>
 );
 
 const NoPlugins = () => (
-  <MessageView>
-    <Message text="You don't have any sources in this feed."/>
-    <Message text="Click the edit button above to add some!"/>
-  </MessageView>
+  <View style={styles.messageView}>
+    <Text style={styles.message}>You don't have any sources in this feed.</Text>
+    <Text style={styles.message}>Click the edit button above to add some!</Text>
+  </View>
 );
 
 class NonemptyDashboard extends PureComponent {
@@ -44,12 +61,17 @@ class NonemptyDashboard extends PureComponent {
         refreshing: false,
         page,
       }), () => {
+        // TEMP
+        console.log('Page is greater than 0');
+
         this.setState({ 
           refreshing: false
         });
       });
     });
   }
+
+  _keyExtractor = item => item.id;
 
   _pressItem = item => () => {
     
@@ -68,8 +90,6 @@ class NonemptyDashboard extends PureComponent {
     }).catch(err => ToastAndroid.show('Web connection error: ' + err, ToastAndroid.SHORT));
   }
 
-  _keyExtractor = item => item.id;
-
   _renderItem = ({ item }) => (
     <Entry 
       {...item.toObject()} 
@@ -78,9 +98,9 @@ class NonemptyDashboard extends PureComponent {
 
   render() {
     return (
-      <View style={{ flex: 1 }}>
+      <View style={styles.container}>
         <FlatList
-          onRefresh={this._requestEntries(1)}
+          onRefresh={this._requestEntries(0)}
           refreshing={this.state.refreshing}
           data={this.props.entries}
           renderItem={this._renderItem}
