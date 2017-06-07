@@ -1,5 +1,5 @@
 import React, { PropTypes, PureComponent } from 'react';
-import { View, Text, StyleSheet, TouchableNativeFeedback, Image, Linking } from 'react-native';
+import { View, Text, StyleSheet, TouchableNativeFeedback, Image, Linking, ToastAndroid } from 'react-native';
 import TimeAgo from 'react-native-timeago';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
@@ -42,19 +42,19 @@ class Entry extends PureComponent {
     return false;
   }
 
-  _pressItem = link => () => {
+  _pressItem = url => () => {
     
     // NOTE: for now don't use WebContent container when opening links
 
-    Linking.canOpenURL(link).then(supported => {
+    Linking.canOpenURL(url).then(supported => {
       if (!supported) {
-        ToastAndroid.show('Can\'t open url: ' + link, ToastAndroid.SHORT);
+        ToastAndroid.show('Can\'t open url: ' + url, ToastAndroid.SHORT);
         // this.props.navigation.navigate('WebContent', { 
         //   source: item.link,
         //   title: item.title,
         // });
       } else {
-        return Linking.openURL(link);
+        return Linking.openURL(url);
       }
     }).catch(err => ToastAndroid.show('Web connection error: ' + err, ToastAndroid.SHORT));
   }
@@ -71,7 +71,7 @@ class Entry extends PureComponent {
   }
 
   render() {
-    const { title, author, date, onPress, thumbnailURL, plugin, commentAmount, commentURL, link, authorURL } = this.props;
+    const { title, author, date, thumbnailURL, plugin, commentAmount, commentURL, link, authorURL } = this.props;
     return (
       <View style={[styles.container, thumbnailURL ? {height: 200} : {height: 166}]} >
         <View style={thumbnailURL ? styles.topRow : null}>
@@ -98,6 +98,13 @@ class Entry extends PureComponent {
 Entry.propTypes = {
   title: PropTypes.string.isRequired,
   link: PropTypes.string.isRequired,
+  author: PropTypes.string,
+  date: PropTypes.number,
+  thumbnailURL: PropTypes.string,
+  commentURL: PropTypes.string,
+  authorURL: PropTypes.string,
+  plugin: PropTypes.string,
+  commentAmount: PropTypes.number,
 };
 
 export default Entry;

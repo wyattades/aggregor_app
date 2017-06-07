@@ -1,21 +1,17 @@
 import { API_KEY, API_URL, LEE } from 'react-native-dotenv';
 
 const ADDRESS = (LEE !== 'true' && __DEV__) ? 'http://localhost:3000' : API_URL,
-    TOKEN = API_KEY;
+    	TOKEN = API_KEY;
 
 const error = dispatch => err => {
 	console.log('ERROR: ', err);
 
 	const errorType = Math.floor(err.code / 100);
-	if (errorType === 5) {
+	if (errorType === 5 || err.code === 401) {
 		dispatch({
 			type: 'UNSET_USER',
 			err
 		});
-		// } else if (err.code === 401) {
-		// 	dispatch({
-		// 		type: 'API_ERROR'
-		// 	});
 	} else if (errorType === 0) {
 		dispatch({
 			type: 'NETWORK_ERROR',

@@ -1,5 +1,5 @@
 import React, { PureComponent, PropTypes } from 'react';
-import { StyleSheet, View, FlatList, Text, Linking, ToastAndroid } from 'react-native';
+import { StyleSheet, View, FlatList, Text } from 'react-native';
 import { connect } from 'react-redux';
 
 import { fetchFeed } from '../actions/api';
@@ -43,12 +43,12 @@ class NonemptyDashboard extends PureComponent {
 
   state = {
     refreshing: false,
-    page: 0,
+    page: 1,
   }
 
   _onRefresh = () => {
     this.setState({ 
-      page: 0
+      page: 1
     }, this._requestEntries);
   }
 
@@ -61,9 +61,6 @@ class NonemptyDashboard extends PureComponent {
         refreshing: false,
         page,
       }), () => {
-        // TEMP
-        console.log('Page is greater than 0');
-
         this.setState({ 
           refreshing: false
         });
@@ -74,22 +71,20 @@ class NonemptyDashboard extends PureComponent {
   _keyExtractor = item => item.id;
 
   _renderItem = ({ item }) => (
-    <Entry 
-      {...item.toObject()} 
-      />
+    <Entry {...item.toObject()}/>
   );
 
   render() {
     return (
       <View style={styles.container}>
         <FlatList
-          onRefresh={this._requestEntries(0)}
+          onRefresh={this._requestEntries(1)}
           refreshing={this.state.refreshing}
           data={this.props.entries}
           renderItem={this._renderItem}
           keyExtractor={this._keyExtractor}
           onEndReached={this._requestEntries(this.state.page + 1)}
-          onEndThreshold={0}
+          onEndThreshold={3}
         />
       </View>
     );
