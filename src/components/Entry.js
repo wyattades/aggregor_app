@@ -96,12 +96,12 @@ class Entry extends PureComponent {
 
     return (
       <Link containRipple={true} onPress={pressLink(link)} style={[styles.container, styles.flexCol, thumbnailURL ? {height: 200} : {height: 166}]}>
-        <View style={[styles.flexRow, styles.spaceBetween]}>
-          <View>
+        <View style={[styles.flexRow, styles.spaceBetween, {flexWrap: 'wrap'}]}>
+          <View style={{ flex: 1 }}>
             <Text numberOfLines={4} style={styles.title}>{title}</Text>
             {category ? <Link onPress={pressLink(categoryURL)} style={styles.category}><Text style={styles.secondaryText}>({category})</Text></Link> : null}   
           </View>
-          {thumbnailURL ? <Image source={{ uri: thumbnailURL }} style={styles.thumbnail}/> : null}
+          {thumbnailURL ? <Image source={{ uri: thumbnailURL }} style={[styles.thumbnail]}/> : null}
         </View>
         <View style={[styles.flexRow, styles.spaceBetween]}>
           <View style={styles.flexRow}>

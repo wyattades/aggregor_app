@@ -18,7 +18,7 @@ const error = dispatch => err => {
 			err
 		});
 	} else {
-		throw err;
+		return Promise.reject(err);
 	}
 };
 
@@ -91,7 +91,13 @@ export const fetchFeeds = () => (dispatch, getState) => {
 			dispatch({ type: 'SET_FEEDS', feedNames });
 			// return Promise.resolve();
 		},
-		allErrors(dispatch)
+		err => {
+			if (err.code === 401) {
+				dispatch({ type: 'UNSET_USER' });
+			} else {
+				allErrors(dispatch)(err);
+			}
+		}
 	);
 };
 
