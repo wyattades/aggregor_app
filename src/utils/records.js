@@ -23,7 +23,7 @@ export const entryRecord = Record({
 	author: '',
 	link: '',
 	rating: 0,
-	date: '',
+	date: 0,
 	commentURL: '',
 	authorURL: '',
 	pluginId: '',

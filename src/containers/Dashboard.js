@@ -84,7 +84,7 @@ class NonemptyDashboard extends PureComponent {
           renderItem={this._renderItem}
           keyExtractor={this._keyExtractor}
           onEndReached={this._requestEntries(this.state.page + 1)}
-          onEndThreshold={3}
+          onEndThreshold={4}
         />
       </View>
     );
