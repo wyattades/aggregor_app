@@ -34,7 +34,7 @@ class PluginEdit extends Component {
   };
 
   render() {
-    const { handleSubmit, error, submitting, submitSucceeded, type } = this.props;
+    const { handleSubmit, error, pristine, newPlugin, submitting, submitSucceeded, type } = this.props;
     const plg = plugins[type];
     const pluginOptions = plg ? plg.options : [];
 
@@ -52,6 +52,7 @@ class PluginEdit extends Component {
         {error ? <Text>{error}</Text> : null}
         <SubmitButton 
           title="SAVE" 
+          disabled={pristine && !newPlugin}
           onPress={handleSubmit(this._onSubmit)}
           submitting={submitting}
           submitSucceeded={submitSucceeded}/>
@@ -96,7 +97,13 @@ PluginEdit = reduxForm({
 const selector = formValueSelector('pluginEdit');
 
 PluginEdit = connect((state, ownProps) => {
-  const { plugin = new pluginRecord({}), selectedFeed } = ownProps.navigation.state.params;
+  let { plugin, selectedFeed } = ownProps.navigation.state.params;
+
+  let newPlugin;
+  if (!plugin) {
+    plugin = new pluginRecord({});
+    newPlugin = true;
+  }
 
   const pluginOptions = plugins[plugin.type].options;
 
@@ -109,6 +116,7 @@ PluginEdit = connect((state, ownProps) => {
   return {
     selectedFeed,
     type: selector(state, 'type'),
+    newPlugin,
     initialValues: {
       type: plugin.type,
       priority: plugin.priority,
