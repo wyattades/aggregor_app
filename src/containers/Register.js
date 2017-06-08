@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { Text, View, StyleSheet } from 'react-native';
+import { Text, View, StyleSheet, KeyboardAvoidingView } from 'react-native';
 import { reduxForm, Field, SubmissionError } from 'redux-form';
 
 import { createUser } from '../actions/api';
@@ -49,7 +49,7 @@ const styles = StyleSheet.create({
 const goToLogin = navigation => () => navigation.navigate('Login');
 
 const RegisterForm = ({ handleSubmit, submitting, submitSucceeded, error, navigation }) => (
-  <View style={styles.container}>
+  <KeyboardAvoidingView style={styles.container}>
     <View>
       <Text style={[styles.title, styles.subtitle]}>Sign up</Text>
       <Text style={styles.title}>Aggregor</Text>
@@ -63,7 +63,7 @@ const RegisterForm = ({ handleSubmit, submitting, submitSucceeded, error, naviga
       <SubmitButton title="SIGN UP" onPress={handleSubmit(onSubmit)} submitting={submitting} submitSucceeded={submitSucceeded}/>
     </View>
     <FormLink title="Sign in to Aggregor" onPress={goToLogin(navigation)}/>
-  </View>
+  </KeyboardAvoidingView>
 );
 
 const Register = reduxForm({

@@ -21,7 +21,15 @@ class PluginEdit extends Component {
   _onSubmit = values => {
     const { selectedFeed, dispatch, id, navigation } = this.props;
 
-    console.log(values);
+    values.id = id;
+    
+    const keys = Object.keys(values.data);
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i], value = values.data[key];
+      if (typeof value === 'string' && value.length === 0) {
+        delete values.data[key];
+      }
+    }
 
     return dispatch(savePlugin(selectedFeed, values, id))
       .then(
@@ -98,6 +106,7 @@ const selector = formValueSelector('pluginEdit');
 
 PluginEdit = connect((state, ownProps) => {
   let { plugin, selectedFeed } = ownProps.navigation.state.params;
+  const id = plugin && plugin.id;
 
   let newPlugin;
   if (!plugin) {
@@ -114,6 +123,7 @@ PluginEdit = connect((state, ownProps) => {
   }
 
   return {
+    id,
     selectedFeed,
     type: selector(state, 'type'),
     newPlugin,

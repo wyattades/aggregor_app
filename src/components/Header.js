@@ -5,7 +5,7 @@ import { NavigationActions } from 'react-navigation';
 
 import theme from '../utils/theme';
 import { prompt } from '../utils/prompt';
-import { deleteFeed } from '../actions/api';
+import { deleteFeed, removePlugin } from '../actions/api';
 
 export const styles = StyleSheet.create({
   webContentHeader: {
@@ -55,9 +55,9 @@ const promptRename = (oldName, dispatch) => dispatch(prompt({
   onSubmit: newName => dispatch(renameFeed(oldName, newName))
 }));
 
-const handleRightElementPress = navigation => ({ action, index }) => {
-  const selectedFeed = navigation.state.routes[0].params.selectedFeed,
-        dispatch = navigation.dispatch;
+const handleFeedOptionsPress = (navigation, selectedFeed) => ({ action, index }) => {
+  const dispatch = navigation.dispatch;
+
   if (action === 'menu') {
     if (index === 0) {
       promptRename(selectedFeed, dispatch);
@@ -100,7 +100,7 @@ export const DashboardHeader = ({ navigation, scene }) => {
           ]
         }
       }}
-      onRightElementPress={handleRightElementPress(navigation)}/>
+      onRightElementPress={handleFeedOptionsPress(navigation, selectedFeed)}/>
   ) : (
     <MainHeader navigation={navigation} title="Home"/>
   );
@@ -128,9 +128,21 @@ export const FeedEditHeader = ({ navigation, scene }) => {
   );
 };
 
+const handleDeletePlugin = (navigation, selectedFeed, id) => () => {
+  const dispatch = navigation.dispatch;
+  
+  dispatch(removePlugin(selectedFeed, id))
+  .then(() => {
+    dispatch(NavigationActions.back());
+    ToastAndroid.show('Plugin succesfully deleted', ToastAndroid.SHORT);
+  });
+};
+
 export const PluginEditHeader = ({ navigation, scene }) => { 
   const params = scene.route.params,
-        { selectedFeed, plugin } = params;
+        selectedFeed = params && params.selectedFeed,
+        plugin = params && params.plugin;
+
   return (
     <Toolbar
       leftElement="arrow-back"
@@ -142,7 +154,9 @@ export const PluginEditHeader = ({ navigation, scene }) => {
           title: selectedFeed,
           highlight: true
         }
-       ]}/>}/>
+       ]}/>}
+       rightElement={plugin ? 'delete' : undefined}
+       onRightElementPress={plugin ? handleDeletePlugin(navigation, selectedFeed, plugin.id) : null}/>
   );
 };
 

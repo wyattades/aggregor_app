@@ -30,6 +30,7 @@ export const entryRecord = Record({
 	plugin: '',
 	pluginURL: '',
 	categoryURL: '',
+	category: '',
 	thumbnailURL: '',
 	commentAmount: 0,
 	mediaType: '',

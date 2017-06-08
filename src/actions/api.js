@@ -7,7 +7,7 @@ const error = dispatch => err => {
 	console.log('ERROR: ', err);
 
 	const errorType = Math.floor(err.code / 100);
-	if (errorType === 5 || err.code === 401) {
+	if (errorType === 5) {
 		dispatch({
 			type: 'UNSET_USER',
 			err
@@ -18,9 +18,8 @@ const error = dispatch => err => {
 			err
 		});
 	} else {
-		return Promise.reject(err);
+		throw err;
 	}
-	// throw err;
 };
 
 const allErrors = dispatch => err => {
@@ -59,7 +58,7 @@ const request = (method, route, token, data) => new Promise((resolve, reject) =>
 });
 
 
-// NOTE: actions that might return an expected error (such as long login info) do not have 'error(dispatch)'
+// NOTE: actions that might return an expected error (such as invalid login info) do not have 'error(dispatch)'
 
 export const login = data => (dispatch, getState) => request('POST', '/user/login', undefined, data).then(
 	({ token }) => dispatch({ type: 'SET_USER', username: data.username, token })
@@ -152,6 +151,7 @@ export const fetchFeed = (feed, page = 1) => (dispatch, getState) => {
 
 export const savePlugin = (feed, data, pluginId) => (dispatch, getState) => {
 	const user = getState().user;
+	console.log(data, pluginId);
 	if (typeof pluginId === 'string' && pluginId.length > 0) {
 		return request('PUT', `/user/${user.username}/feed/${feed}/${pluginId}`, user.token, data).then(
 			() => {
@@ -176,16 +176,14 @@ export const savePlugin = (feed, data, pluginId) => (dispatch, getState) => {
 
 export const removePlugin = (feed, id) => (dispatch, getState) => {
 	const user = getState().user;
-	return request('DELETE', `/user/${user.username}/feed/${feed}`, user.token).then(
+	return request('DELETE', `/user/${user.username}/feed/${feed}/${id}`, user.token).then(
 		() => dispatch({ type: 'DELETE_PLUGIN', feed, id }), 
 		error(dispatch)
 	);
 };
 
-// export const fetchAvailablePlugins = name => (dispatch, getState) => {
-// 	const user = getState().user;
-// 	return request('DELETE', `/user/${user.username}/feed/${feed}`, user.token).then(
-// 		res => dispatch({ type: 'SET_AVAILABLE-PLUGINS', name }), 
-// 		err => dispatch({ type: 'API_ERROR', err })
-// 	);
-// };
+// fetchAvailablePlugins???
+
+// changePassword
+
+// fetchUserData e.g. email

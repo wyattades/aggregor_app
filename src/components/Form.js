@@ -4,8 +4,6 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import theme from '../utils/theme';
 
-// TODO: fix form inputs sometimes covered by keyboard (specifically register)
-
 const styles = StyleSheet.create({
   inputGroup: {
     paddingTop: 24,
@@ -55,7 +53,6 @@ const styles = StyleSheet.create({
 
   mainErrorText: {
     color: theme.ERROR,
-    // fontWeight: 'bold',
     textAlign: 'center',
     fontSize: 18,
   },
@@ -68,26 +65,19 @@ const styles = StyleSheet.create({
 
   formLinkContainer: {
     alignSelf: 'center',
-    // marginBottom: 40,
+    margin: 8,
   },
   formLink: {
     color: theme.WHITE,
-    // fontWeight: '500',
     fontSize: 16,
+    padding: 8
   },
 
   slider: {
     flex: 0.9,
-    // height: 30,
   },
   sliderValue: {
-    // marginHorizontal: 8,
-    // backgroundColor: theme.SUPPORT,
-    // borderWidth: 2,
-    // borderColor: theme.SUPPORT,
     paddingVertical: 6,
-    // paddingHorizontal: 4,
-    // borderRadius: 4,
     flex: 0.1,
     textAlign: 'center',
     fontWeight: '500',

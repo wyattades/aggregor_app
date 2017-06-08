@@ -1,5 +1,5 @@
 import React, { PropTypes, Component } from 'react';
-import { Text, View, StyleSheet, LayoutAnimation } from 'react-native';
+import { Text, View, StyleSheet, LayoutAnimation, KeyboardAvoidingView } from 'react-native';
 import { reduxForm, SubmissionError, Field } from 'redux-form';
 
 import { login } from '../actions/api';
@@ -91,7 +91,7 @@ class Login extends Component {
     }
 
     return (
-      <View behavior="position" style={[styles.container, this.state.show ? { justifyContent: 'space-between' } : null]}>
+      <KeyboardAvoidingView style={[styles.container, this.state.show ? { justifyContent: 'space-between' } : null]}>
         <Text style={styles.title}>Aggregor</Text>
         { this.state.show ? (
           <View>
@@ -104,7 +104,7 @@ class Login extends Component {
         { this.state.show ? (
           <FormLink title="Sign up for Aggregor" onPress={goToRegister(navigation)}/>
          ) : null }
-      </View>
+      </KeyboardAvoidingView>
     );
   }
 }
