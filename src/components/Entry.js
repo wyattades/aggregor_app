@@ -4,6 +4,7 @@ import TimeAgo from 'react-native-timeago';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import theme from '../utils/theme';
+import { PluginIcon } from '../utils/plugins';
 
 const styles = StyleSheet.create({
   container: {
@@ -11,16 +12,11 @@ const styles = StyleSheet.create({
     padding: 16,
     backgroundColor: theme.WHITE,
     flex: 1,
-    flexDirection: 'column',
     justifyContent: 'space-between'
   },
-  topRow: {
-    flexDirection: 'row',
-  },
-  footer: {
-    flexDirection:'row',
-    justifyContent: 'space-between'
-  },
+  flexRow: { flexDirection: 'row', },
+  flexCol: { flexDirection: 'column' },
+  spaceBetween: { justifyContent: 'space-between' },
   title: {
     fontWeight: '500',
     fontSize: 18,
@@ -31,9 +27,10 @@ const styles = StyleSheet.create({
     height: 80,
   },
   secondary_text: {
-    fontSize: 15,
+    fontSize: 13,
     color: theme.TEXT_SECOND,
   },
+  secondary_emphasis: { fontWeight: '500' }
 });
 
 class Entry extends PureComponent {
@@ -61,34 +58,47 @@ class Entry extends PureComponent {
 
   _title_format(thumbnailURL, title) {
     var disp_title = title;
-    if (title.length > 120) {
-      disp_title = title.substring(0, 120);
+    if (title.length > 100) {
+      disp_title = title.substring(0, 100);
       disp_title += '...';
     }
     return (
-      <Text style={[styles.title, thumbnailURL ? {marginLeft: 5, maxWidth: 250} : null]}>{disp_title}</Text>
+      <Text style={[styles.title, thumbnailURL ? {marginRight: 5, maxWidth: 250} : null]}>{disp_title}</Text>
     );
   }
 
   render() {
     const { title, author, date, thumbnailURL, plugin, commentAmount, commentURL, link, authorURL } = this.props;
     return (
-      <View style={[styles.container, thumbnailURL ? {height: 200} : {height: 166}]} >
-        <View style={thumbnailURL ? styles.topRow : null}>
-          <TouchableNativeFeedback onPress={this._pressItem(link)}>
-            <View style={thumbnailURL ? styles.topRow : null}>
-              {thumbnailURL ? <Image source={{ uri: thumbnailURL }} style={styles.thumbnail}/> : null}
-              {this._title_format(thumbnailURL, title, link)}
+      <View style={[styles.container, styles.flexCol, thumbnailURL ? {height: 200} : {height: 166}]}>
+        <TouchableNativeFeedback onPress={this._pressItem(link)}>
+          <View style={thumbnailURL ? [styles.flexRow, styles.spaceBetween]: null}>
+            {this._title_format(thumbnailURL, title, link)}
+            {thumbnailURL ? <Image source={{ uri: thumbnailURL }} style={styles.thumbnail}/> : null}
+          </View>
+        </TouchableNativeFeedback>
+        <View style={[styles.flexRow, styles.spaceBetween]}>
+          <View style={styles.flexRow}>
+            <PluginIcon plugin={plugin} size={35}/>
+            <View style={styles.flexCol, {marginLeft: 5}}>
+              <Text>
+                <Text style={styles.secondary_text}>by </Text>
+                <Text style={[styles.secondary_text, styles.secondary_emphasis]} onPress={this._pressItem(authorURL)}>{author}</Text>
+              </Text>
+              <TimeAgo style={styles.secondary_text} time={date}/>
             </View>
-          </TouchableNativeFeedback>
-        </View>
-        <View style={styles.topRow}>
-          <Icon name={"comment"} size={24}/>
-          <Text style={[styles.secondary_text, {marginLeft: 5}]} onPress={this._pressItem(commentURL)}>{commentAmount}</Text>
-        </View>
-        <View style={styles.footer}>
-          <Text style={styles.secondary_text} onPress={this._pressItem(authorURL)}>{plugin} : {author}</Text>
-          <TimeAgo style={styles.secondary_text} time={date}/>
+          </View>
+          <View style={styles.flexCol, {justifyContent: 'flex-end'}}>
+            <View style={styles.flexRow}>
+              <TouchableNativeFeedback onPress={this._pressItem(authorURL)}>
+                <View style={styles.flexRow}>
+                  <Icon name={"comment"} size={22} style={{marginRight: 5}}/>
+                  <Text style={[styles.secondary_text]}>{commentAmount}</Text>
+                </View>
+              </TouchableNativeFeedback>
+              <Icon name={"share"} size={22} style={{marginLeft: 10}}/>
+            </View>
+          </View>
         </View>
       </View>
     );
