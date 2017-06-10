@@ -42,15 +42,15 @@ const styles = StyleSheet.create({
 });
 
 const animation = {
-    duration: 500,
-    create: {
-      type: LayoutAnimation.Types.easeInEaseOut,
-      property: LayoutAnimation.Properties.opacity,
-    },
-    update: {
-      type: LayoutAnimation.Types.easeInEaseOut,
-    },
-  };
+  duration: 800,
+  create: {
+    type: LayoutAnimation.Types.easeInEaseOut,
+    property: LayoutAnimation.Properties.opacity,
+  },
+  update: {
+    type: LayoutAnimation.Types.easeInEaseOut,
+  },
+};
 
 const goToRegister = navigation => () => navigation.navigate('Register');
 

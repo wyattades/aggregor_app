@@ -3,7 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { reduxForm, SubmissionError, Field, FormSection, formValueSelector } from 'redux-form';
 
-import { PickerField, TextField, SliderField, SubmitButton } from '../components/Form'; 
+import { PickerField, TextField, SliderField, SubmitButton, FormError } from '../components/Form'; 
 import { savePlugin } from '../actions/api';
 import { pluginRecord } from '../utils/records';
 import { plugins } from '../utils/plugins';
@@ -11,7 +11,7 @@ import { plugins } from '../utils/plugins';
 const styles = StyleSheet.create({
   container: {
     padding: 24,
-  }
+  },
 });
 
 const pluginTypes = Object.keys(plugins).map(key => plugins[key]);
@@ -48,16 +48,16 @@ class PluginEdit extends Component {
 
     return (
       <View style={styles.container}>
+        {error ? <FormError error={error}/> : null}
         <Field name="type" label="Type" values={pluginTypes} component={PickerField}/>
         <FormSection name="data">
           <View>
             {pluginOptions.map(option => (
-              <Field key={option.value} name={option.value} label={option.label} dark={true} component={TextField}/>
+              <Field key={option.value} name={option.value} label={option.label} optional={option.default !== undefined} component={TextField}/>
             ))}
           </View>
         </FormSection>
         <Field name="priority" label="Priority" min={0.0} max={1.0} step={0.1} component={SliderField}/>
-        {error ? <Text>{error}</Text> : null}
         <SubmitButton 
           title="SAVE" 
           disabled={pristine && !newPlugin}
@@ -77,7 +77,7 @@ PluginEdit = reduxForm({
     const plg = plugins[values.type];
 
     if (!plg) {
-      errors.type = 'Bad plugin type: ' + values.type;
+      errors._error = 'Bad plugin type: ' + values.type;
       return errors;
     }
 
@@ -86,15 +86,10 @@ PluginEdit = reduxForm({
     for (let i = 0; i < options.length; i++) {
       const option = options[i];
       const value = values.data[option.value];
-      if (value === undefined) {
-        errors._error = 'Missing value: ' + option.value;
-        return errors;
-      } else if (value.length === 0 && option.default) {
+      if (option.default === undefined && (value === undefined || value.length === 0)) {
         errors[option.value] = option.label + ' is required';
-      } else if (value.length > 0) {
-        if (!value.match(option.regex)) {
-          errors[option.value] = 'Invalid ' + option.label;
-        }
+      } else if (value !== undefined && value.length > 0 && !value.match(option.regex)) {
+        errors[option.value] = 'Invalid ' + option.label;
       }
     }
 
@@ -130,7 +125,7 @@ PluginEdit = connect((state, ownProps) => {
     initialValues: {
       type: plugin.type,
       priority: plugin.priority,
-      data
+      data,
     },
   };
 })(PluginEdit);

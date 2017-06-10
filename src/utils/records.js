@@ -22,7 +22,6 @@ export const entryRecord = Record({
 	title: '',
 	author: '',
 	link: '',
-	rating: 0,
 	date: 0,
 	commentURL: '',
 	authorURL: '',
@@ -35,5 +34,4 @@ export const entryRecord = Record({
 	commentAmount: 0,
 	mediaType: '',
 	imageURL: '',
-	votable: ''
 });

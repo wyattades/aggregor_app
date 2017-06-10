@@ -1,8 +1,5 @@
-// NOTE: feel free to add or change any of these values
-
 const theme = {
   PRIMARY: '#03A9F4',
-  STATUS_BAR: '#222',
   PRIMARY_DARK: '#333',
   PRIMARY_LIGHT: '#BBDEFB',
   ACCENT: '#FF5722',
@@ -14,20 +11,23 @@ const theme = {
   SUPPORT: '#DDD',
 };
 
-// Backup
-// {
-//   PRIMARY: '#03A9F4',
-//   PRIMARY_DARK: '#333',
-//   PRIMARY_LIGHT: '#BBDEFB',
-//   ACCENT: '#FF5722',
-//   TEXT: '#212121',
-//   TEXT_SECOND: '#757575',
-//   WHITE: '#FFFFFF',
-//   DIVIDER: '#BDBDBD',
-//   ERROR: '#D32F2F',
-//   SUPPORT: '#eee',
-// };
+/*
+Backup
+{
+  PRIMARY: '#03A9F4',
+  PRIMARY_DARK: '#333',
+  PRIMARY_LIGHT: '#BBDEFB',
+  ACCENT: '#FF5722',
+  TEXT: '#212121',
+  TEXT_SECOND: '#757575',
+  WHITE: '#FFFFFF',
+  DIVIDER: '#BDBDBD',
+  ERROR: '#D32F2F',
+  SUPPORT: '#eee',
+};
+*/
 
+// Color pallete of ToolBar by 'react-native-material-ui';
 export const uiTheme = {
   palette: {
     primaryColor: theme.PRIMARY_DARK,

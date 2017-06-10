@@ -6,9 +6,13 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import theme from '../utils/theme';
 import { PluginIcon } from '../utils/plugins';
 
+const getEntryHeight = data => data.thumbnailURL ? 200 : 166;
+
+const MARGIN = 8; 
+
 const styles = StyleSheet.create({
   container: {
-    marginBottom: 8,
+    marginBottom: MARGIN,
     padding: 16,
     backgroundColor: theme.WHITE,
     // flex: 1,
@@ -32,6 +36,7 @@ const styles = StyleSheet.create({
   thumbnail: {
     width: 80,
     height: 80,
+    marginLeft: 16,
   },
   secondaryText: {
     fontSize: 13,
@@ -87,7 +92,10 @@ const pressLink = url => () => {
 
 class Entry extends PureComponent {
 
-  shouldComponentUpdate() {
+  shouldComponentUpdate(nextProps) {
+    if (nextProps.id !== this.props.id) {
+      return true;
+    }
     return false;
   }
 
@@ -95,7 +103,7 @@ class Entry extends PureComponent {
     const { title, author, date, thumbnailURL, plugin, category, commentAmount, link, commentURL, authorURL, categoryURL } = this.props;
 
     return (
-      <Link containRipple={true} onPress={pressLink(link)} style={[styles.container, styles.flexCol, thumbnailURL ? {height: 200} : {height: 166}]}>
+      <Link containRipple={true} onPress={pressLink(link)} style={[styles.container, styles.flexCol, { height: getEntryHeight(this.props) }]}>
         <View style={[styles.flexRow, styles.spaceBetween, {flexWrap: 'wrap'}]}>
           <View style={{ flex: 1 }}>
             <Text numberOfLines={4} style={styles.title}>{title}</Text>
@@ -113,7 +121,7 @@ class Entry extends PureComponent {
                   <Text style={[styles.secondaryText, styles.secondaryEmphasis]}>{author}</Text>
                 </Link>
               </View>
-              <TimeAgo style={styles.secondaryText} time={date}/>
+              {date ? <TimeAgo style={styles.secondaryText} time={date}/> : <Text style={styles.secondaryText}>{'\u00a0'}</Text>}
             </View>
           </View>
           <View style={[styles.flexCol, {justifyContent: 'flex-end'}]}>
@@ -145,6 +153,7 @@ Entry.propTypes = {
   authorURL: PropTypes.string,
   plugin: PropTypes.string,
   commentAmount: PropTypes.number,
+  id: PropTypes.string.isRequired,
 };
 
 export default Entry;

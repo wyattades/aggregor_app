@@ -1,6 +1,6 @@
-import React, { PropTypes } from 'react';
-import { Text, StyleSheet, View, ToastAndroid } from 'react-native';
-import { Toolbar } from 'react-native-material-ui';
+import React from 'react';
+import { Text, StyleSheet, View, ToastAndroid, StatusBar } from 'react-native';
+import { Toolbar as _Toolbar } from 'react-native-material-ui';
 import { NavigationActions } from 'react-navigation';
 
 import theme from '../utils/theme';
@@ -28,7 +28,20 @@ export const styles = StyleSheet.create({
   highlight: {
     color: theme.ACCENT,
   },
+
+  statusBar: {
+    height: StatusBar.currentHeight,
+    backgroundColor: theme.PRIMARY_DARK,
+  },
+
 });
+
+const Toolbar = props => (
+  <View>
+    <View style={styles.statusBar}/>
+    <_Toolbar {...props}/>
+  </View>
+);
 
 const HeaderTitle = ({ texts }) => {
   return (

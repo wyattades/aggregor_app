@@ -12,7 +12,7 @@ const entries = (state = List(), action) => {
 		} else if (action.page <= 1) {
 			return List(action.entries.map(_entry => new entryRecord(_entry)));
 		} else {
-			return state.concat(action.entries.map(_entry => new entryRecord(_entry)))
+			return state.concat(action.entries.map(_entry => new entryRecord(_entry)));
 		}
 	default:
 		return state;
@@ -39,15 +39,11 @@ const plugins = (state, action) => {
 	case 'ADD_PLUGIN':
 		return state.concat({ [action.id]: plugin(undefined, action) });
 	case 'UPDATE_PLUGIN':
-	case 'SET_ERRORS':
 		return state.update(action.id, _plugin => plugin(_plugin, action));
 	case 'DELETE_PLUGIN':
 		return state.remove(action.id);
 	case 'SET_ERRORS':
-		Object.keys(action.errors).forEach((id, error) => {
-			state = state.setIn(id, 'error', error);
-		});
-		return state;
+		return state.map((_plugin, id) => _plugin.set('error', action.errors[id]));
 	default:
 		return state;
 	}

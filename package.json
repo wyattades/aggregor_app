@@ -5,12 +5,11 @@
   "scripts": {
     "postinstall": "rm -rf ./node_modules/redux-form/node_modules/react && rm -rf ./node_modules/react-native-timeago/node_modules/react",
     "test": "jest",
-    "android": "node node_modules/react-native/local-cli/cli.js run-android",
+    "android": "adb uninstall \"com.aggregor\"; node node_modules/react-native/local-cli/cli.js run-android",
     "emulator": "$ANDROID_HOME/emulator/emulator -avd nexus",
     "debug": "~/Documents/RNDebugger/React_Native_Debugger",
-    "build": "(cd android/ && ./gradlew assembleDebug)",
     "start": "adb reverse tcp:3000 tcp:3000; adb reverse tcp:8081 tcp:8081; node node_modules/react-native/local-cli/cli.js start",
-    "bundle-android": "react-native bundle --platform android --dev false --entry-file index.android.js --bundle-output android/app/src/main/assets/index.android.bundle --sourcemap-output android/app/src/main/assets/index.android.map --assets-dest android/app/src/main/res/"
+    "android-prod": "adb uninstall \"com.aggregor\"; cd android && ./gradlew assembleRelease && ./gradlew installRelease"
   },
   "remotedev": {
     "hostname": "localhost",

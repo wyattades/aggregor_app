@@ -5,7 +5,7 @@ if (__DEV__) {
 }
 
 import React, { Component } from 'react';
-import { AppRegistry, NativeModules, View } from 'react-native';
+import { AppRegistry, NativeModules, View, StatusBar } from 'react-native';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'react-native-material-ui';
 
@@ -13,7 +13,6 @@ import { PromptView } from './utils/prompt';
 import Navigator from './navigator';
 import configureStore from './configureStore';
 import { uiTheme } from './utils/theme';
-import setupStyles from './utils/setupStyles';
 
 const store = configureStore();
 
@@ -22,7 +21,7 @@ const UIManager = NativeModules.UIManager;
 class Aggregor extends Component {
 
   componentWillMount() {
-    setupStyles();
+    StatusBar.setTranslucent(true);
     
     if (UIManager.setLayoutAnimationEnabledExperimental) {
       UIManager.setLayoutAnimationEnabledExperimental(true);

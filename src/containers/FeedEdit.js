@@ -50,7 +50,7 @@ class FeedEdit extends Component {
     if (error) {
       subtitle = item.error;
     } else {
-      subtitle = 'No errors';
+      subtitle = 'Priority: ' + item.priority;
     }
 
     const plg = plgs[item.type];

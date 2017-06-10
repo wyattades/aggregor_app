@@ -1,9 +1,11 @@
 import React, { PureComponent, PropTypes } from 'react';
-import { StyleSheet, View, FlatList, Text } from 'react-native';
+import { StyleSheet, View, FlatList, Text, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { fetchFeed } from '../actions/api';
 import Entry from '../components/Entry';
+import theme from '../utils/theme';
 
 // TODO: add indicator for loading and plugin errors
 
@@ -22,7 +24,27 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'center',
-  }
+  },
+
+  loadingView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: 96,
+  },
+
+  errorView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: theme.ERROR,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+  },
+  errorText: {
+    color: theme.WHITE,
+    fontSize: 16,
+    marginLeft: 8,
+  },
 });
 
 const NoFeeds = () => (
@@ -39,6 +61,14 @@ const NoPlugins = () => (
   </View>
 );
 
+const LoadingIndicator = () => (
+  <View style={styles.loadingView}>
+    <ActivityIndicator
+      color={theme.PRIMARY}
+      size="large"/>
+  </View>
+);
+
 class NonemptyDashboard extends PureComponent {
 
   state = {
@@ -46,27 +76,24 @@ class NonemptyDashboard extends PureComponent {
     page: 1,
   }
 
-  _onRefresh = () => {
-    this.setState({ 
-      page: 1
-    }, this._requestEntries);
+  _fetchFeed = () => {
+    const { dispatch, selectedFeed } = this.props;
+    const page = this.state.page;
+
+    dispatch(fetchFeed(selectedFeed, page))
+    .then(() => this.setState({
+      refreshing: false,
+    }));
   }
 
-  _requestEntries = page => () => {
-    this.setState({ refreshing: true }, () => {
+  _onRefresh = () => this.setState({ 
+    page: 1,
+    refreshing: true,
+  }, this._fetchFeed);
 
-      const { selectedFeed, dispatch } = this.props;
-
-      dispatch(fetchFeed(selectedFeed, page)).then(() => this.setState({ 
-        refreshing: false,
-        page,
-      }), () => {
-        this.setState({ 
-          refreshing: false
-        });
-      });
-    });
-  }
+  _requestMore = () => this.setState({
+    page: this.state.page + 1,
+  }, this._fetchFeed);
 
   _keyExtractor = item => item.id;
 
@@ -75,17 +102,25 @@ class NonemptyDashboard extends PureComponent {
   );
 
   render() {
+    const { entries, errors, loading } = this.props;
     return (
       <View style={styles.container}>
         <FlatList
-          onRefresh={this._requestEntries(1)}
+          onRefresh={this._onRefresh}
           refreshing={this.state.refreshing}
-          data={this.props.entries}
+          data={entries}
           renderItem={this._renderItem}
+          ListFooterComponent={loading ? LoadingIndicator : undefined}
           keyExtractor={this._keyExtractor}
-          onEndReached={this._requestEntries(this.state.page + 1)}
+          onEndReached={this._requestMore}
           onEndThreshold={4}
         />
+        {errors > 0 ? (
+          <View style={styles.errorView}>
+            <Icon name="error" size={20} color={theme.WHITE}/>
+            <Text style={styles.errorText}>{errors} plugin{errors === 1 ? '' : 's'} failed to load</Text>
+          </View>
+        ) : null}
       </View>
     );
   }
@@ -96,14 +131,22 @@ let Dashboard = ({ feeds, selectedFeed, dispatch, navigation }) => {
 
   if (feed) {
     const entries = feed.get('entries').toArray(),
-          plugins = feed.get('plugins').toArray();
+          plugins = feed.get('plugins');
 
-    return plugins.length === 0 ? (
+    let errors = 0;
+    plugins.forEach(plugin => {
+      if (plugin.error !== undefined) {
+        errors++;
+      }
+    });
+
+    return plugins.size === 0 ? (
       <NoPlugins/>
     ) : (
       <NonemptyDashboard 
         entries={entries}
-        plugins={plugins}
+        errors={errors}
+        loading={errors !== plugins.size}
         dispatch={dispatch}
         navigation={navigation}
         selectedFeed={selectedFeed}/>

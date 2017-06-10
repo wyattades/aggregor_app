@@ -92,7 +92,7 @@ export const fetchFeeds = () => (dispatch, getState) => {
 			// return Promise.resolve();
 		},
 		err => {
-			if (err.code === 401) {
+			if (err.code === 401 || err.code === 0) {
 				dispatch({ type: 'UNSET_USER' });
 			} else {
 				allErrors(dispatch)(err);
@@ -157,7 +157,7 @@ export const fetchFeed = (feed, page = 1) => (dispatch, getState) => {
 
 export const savePlugin = (feed, data, pluginId) => (dispatch, getState) => {
 	const user = getState().user;
-	console.log(data, pluginId);
+
 	if (typeof pluginId === 'string' && pluginId.length > 0) {
 		return request('PUT', `/user/${user.username}/feed/${feed}/${pluginId}`, user.token, data).then(
 			() => {

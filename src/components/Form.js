@@ -88,11 +88,22 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
 
+  labelView: {
+    flexDirection: 'row',
+    alignItems: 'flex-end',
+    justifyContent: 'space-between'
+  },
   label: {
     fontSize: 16,
-    margin: 8,
     fontWeight: '500',
     color: theme.TEXT_SECOND,
+    margin: 8,
+  },
+  optional: {
+    fontSize: 16,
+    margin: 8,
+    marginLeft: 0,
+    color: theme.DIVIDER,
   },
 
   pickerStyle: {
@@ -199,11 +210,16 @@ class SliderField extends PureComponent {
   }
 }
 
-const TextField = ({ input: { onChange, ...restInput }, meta: { error, touched }, label, secureTextEntry }) => {
+const TextField = ({ input: { onChange, ...restInput }, meta: { error, touched }, optional, label, secureTextEntry }) => {
   const inputError = error && touched;
   return (
     <View>
-      {label ? <Text style={styles.label}>{label}</Text> : null}
+      {label ? (
+        <View style={styles.labelView}>
+          <Text style={styles.label}>{label}</Text> 
+          {optional ? <Text style={styles.optional}>(optional)</Text> : null}
+        </View>
+      ) : null}
       <TextInput
         onChangeText={onChange}
         autoCorrect={false}
