@@ -29,7 +29,7 @@ export const goHome = (selectedFeed, goToEdit) => {
       }) 
     }) ] 
   });
-}
+};
 
 export const setFeed = (feed, goToEdit) => dispatch => {
   if (feed) {

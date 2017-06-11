@@ -1,5 +1,5 @@
 import React, { PropTypes, PureComponent } from 'react';
-import { View, TextInput, Text, StyleSheet, TouchableNativeFeedback, Slider, Animated, Easing, Picker, ActivityIndicator, KeyboardAvoidingView } from 'react-native';
+import { View, TextInput, Text, StyleSheet, TouchableNativeFeedback, Slider, Animated, Easing, Picker, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import theme from '../utils/theme';
@@ -334,7 +334,7 @@ const FormError = ({ error }) => {
       <Text style={styles.mainErrorText}>{error}</Text>
     </View>
   );
-}
+};
 
 FormError.propTypes = {
   error: PropTypes.oneOfType([
