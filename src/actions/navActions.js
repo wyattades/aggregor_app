@@ -33,8 +33,8 @@ export const goHome = (selectedFeed, goToEdit) => {
 
 export const setFeed = (feed, goToEdit) => dispatch => {
   if (feed) {
+    dispatch({ type: 'SET_FEED', setFeed: feed, goToEdit });
     return dispatch(fetchPlugins(feed)).then(() => {
-      dispatch({ type: 'SET_FEED', setFeed: feed, goToEdit });
       dispatch(fetchFeed(feed)).then(() => {});
     }, err => {
       console.log('fetchPlugins: ', err);
@@ -43,5 +43,3 @@ export const setFeed = (feed, goToEdit) => dispatch => {
     return dispatch({type: 'SET_FEED', setFeed: null });
   }
 };
- 
-// export const navigate = (screen) => NavigationActions.navigate({ routeName: screen });

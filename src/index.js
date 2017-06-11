@@ -22,6 +22,7 @@ class Aggregor extends Component {
 
   componentWillMount() {
     StatusBar.setTranslucent(true);
+    StatusBar.setBackgroundColor('rgba(0,0,0,0.3)');
     
     if (UIManager.setLayoutAnimationEnabledExperimental) {
       UIManager.setLayoutAnimationEnabledExperimental(true);

@@ -23,7 +23,7 @@ export const styles = StyleSheet.create({
   },
   headerTextContainer: {
     flexDirection: 'row',
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
   },
   highlight: {
     color: theme.ACCENT,
@@ -47,14 +47,14 @@ const HeaderTitle = ({ texts }) => {
   return (
     <View style={styles.headerTextContainer}>
       {texts.map(({ title, highlight }) => (
-        <Text key={title} style={[ styles.headerText, highlight ? styles.highlight : null ]}>{title}</Text>
+        <Text numberOfLines={1} key={title} style={[ styles.headerText, highlight ? styles.highlight : null ]}>{title}</Text>
       ))}
     </View>
   );
 };
 
 const renameFeed = (oldName, newName) => dispatch => {
-  // TEMP
+  // TODO: support renaming feeds
   if (oldName !== newName) {
     ToastAndroid.show('Sorry, renaming feeds is not yet supported', ToastAndroid.LONG);
   }
@@ -78,12 +78,12 @@ const handleFeedOptionsPress = (navigation, selectedFeed) => ({ action, index })
       dispatch(deleteFeed(selectedFeed))
       .then(() => {
         ToastAndroid.show('Feed succesfully deleted', ToastAndroid.SHORT);
-      });
+      }, err => console.log(err));
     }
-  } else if (action === 'edit') {
-    navigation.navigate('FeedEdit', { selectedFeed });
   }
 };
+
+const goToFeedEdit = (navigation, selectedFeed) => () => navigation.navigate('FeedEdit', { selectedFeed });
 
 const openDrawer = navigation => () => navigation.navigate('DrawerOpen');
 
@@ -103,17 +103,8 @@ export const DashboardHeader = ({ navigation, scene }) => {
           highlight: true
         }
       ]}/>}
-      rightElement={{ 
-        actions: [ 'edit' ],
-        menu: {
-          icon: 'more-vert',
-          labels: [
-            'Rename Feed',
-            'Delete Feed'
-          ]
-        }
-      }}
-      onRightElementPress={handleFeedOptionsPress(navigation, selectedFeed)}/>
+      rightElement="edit"
+      onRightElementPress={goToFeedEdit(navigation, selectedFeed)}/>
   ) : (
     <MainHeader navigation={navigation} title="Home"/>
   );
@@ -122,6 +113,7 @@ export const DashboardHeader = ({ navigation, scene }) => {
 export const FeedEditHeader = ({ navigation, scene }) => { 
   const params = scene.route.params,
         selectedFeed = params && params.selectedFeed;
+
   return (
     <Toolbar
       leftElement={selectedFeed ? 'arrow-back' : 'close'}
@@ -137,7 +129,17 @@ export const FeedEditHeader = ({ navigation, scene }) => {
         {
           title: 'Create Feed'
         }
-      ]}/>}/>
+      ]}/>}
+      rightElement={{ 
+        menu: {
+          icon: 'more-vert',
+          labels: [
+            'Rename Feed',
+            'Delete Feed'
+          ]
+        }
+      }}
+      onRightElementPress={handleFeedOptionsPress(navigation, selectedFeed)}/>
   );
 };
 

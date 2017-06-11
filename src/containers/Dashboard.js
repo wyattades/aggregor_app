@@ -7,8 +7,6 @@ import { fetchFeed } from '../actions/api';
 import Entry from '../components/Entry';
 import theme from '../utils/theme';
 
-// TODO: add indicator for loading and plugin errors
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

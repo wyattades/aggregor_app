@@ -5,6 +5,7 @@ import { ActionButton } from 'react-native-material-ui';
 
 import theme from '../utils/theme';
 import { PluginIcon, plugins as plgs } from '../utils/plugins';
+import { Message, MessageView } from '../components/Message';
 
 const styles = StyleSheet.create({
   container: {
@@ -79,9 +80,15 @@ class FeedEdit extends Component {
     const { plugins } = this.props;
     return (
       <View style={styles.container}>
-        <ScrollView>
-          {plugins.map(this._pluginItem)}          
-        </ScrollView>
+        { plugins.length === 0 ? (
+          <MessageView>
+            <Message text="Add new sources with the button below."/>
+          </MessageView>
+        ) : (
+          <ScrollView>
+            {plugins.map(this._pluginItem)}          
+          </ScrollView>
+        )}
         <ActionButton
           style={{ container: styles.button }}
           onPress={this._addPlugin}/>
@@ -91,11 +98,11 @@ class FeedEdit extends Component {
 }
 
 FeedEdit = connect(({ feeds }, { navigation }) => {
-  const selectedFeed = navigation.state.params.selectedFeed;
+  const selectedFeed = navigation.state.params && navigation.state.params.selectedFeed;
   const feed = feeds.get(selectedFeed);
   return {
     selectedFeed,
-    plugins: feed.get('plugins').toArray().map(plugin => plugin.toJS()),
+    plugins: feed ? feed.get('plugins').toArray().map(plugin => plugin.toJS()) : [],
   };
 })(FeedEdit);
 

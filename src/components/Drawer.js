@@ -15,11 +15,13 @@ const styles = StyleSheet.create({
     backgroundColor: theme.WHITE,
     paddingTop: StatusBar.currentHeight || 0,
   },
+
   divider: {
     borderTopColor: theme.SUPPORT,
     borderTopWidth: 1,
     marginVertical: 12
   },
+
   labelText: {
     color: theme.TEXT_SECOND,
     fontWeight: '500'
@@ -27,11 +29,27 @@ const styles = StyleSheet.create({
   labelView: {
     height: 40
   },
+
   item: {
     height: 48,
-    alignItems: 'center',
     paddingLeft: 16,
+    paddingRight: 12,
     flexDirection: 'row',
+    alignItems: 'center',
+  },
+  itemText: {
+    color: theme.TEXT,
+    fontWeight: '500',
+  },
+  itemSpacer: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  textWrap: {
+    flex: 1,
+    marginRight: 4,
   },
   selectedItem: {
     backgroundColor: theme.SUPPORT
@@ -42,28 +60,12 @@ const styles = StyleSheet.create({
   },
   iconRight: {
     color: theme.TEXT_SECOND,
+    padding: 4,
+  },
 
-  },
-  iconRightWrap: {
-    position: 'absolute',
-    right: 8,
-    top: 8,
-    width: 32,
-    height: 32,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  itemText: { // FIXME: text should have dynamic width, but still truncate
-    color: theme.TEXT,
-    fontWeight: '500',
-    maxWidth: 200,
-  },
   billboard: {
     height: 128,
-    // borderBottomWidth: 1,
-    // borderBottomColor: theme.SUPPORT,
     marginBottom: 16,
-    // backgroundColor: theme.PRIMARY_DARK,
     padding: 16,
     flexDirection: 'column',
     alignItems: 'center',
@@ -73,11 +75,9 @@ const styles = StyleSheet.create({
     fontSize: 48,
     fontWeight: '700',
     color: theme.PRIMARY_DARK
-    // color: theme.WHITE,
   },
   billboardSubtitle: {
     fontWeight: '500',
-    // color: theme.PRIMARY,
     color: theme.TEXT_SECOND,
   },
 });
@@ -119,16 +119,20 @@ const NavItem = ({ title, onPress, iconLeft, iconRight, selected, onIconPress })
     <TouchableNativeFeedback onPress={onPress}>
       <View style={[styles.item, selected ? styles.selectedItem : null]}>
         {iconLeft ? <Icon name={iconLeft} size={24} style={styles.iconLeft}/> : null}
-        <Text style={styles.itemText} numberOfLines={1}>{title}</Text>
+        <View style={styles.itemSpacer}>
+          <View style={styles.textWrap}>
+            <Text style={styles.itemText} numberOfLines={1}>{title}</Text>
+          </View>
+          {iconRight ? (
+            <TouchableNativeFeedback onPress={onIconPress} background={ripple}>
+              <View>
+                <Icon name={iconRight} size={24} style={styles.iconRight}/>
+              </View>
+            </TouchableNativeFeedback>
+          ) : null}
+        </View>
       </View>
     </TouchableNativeFeedback>
-    {iconRight ? (
-      <TouchableNativeFeedback onPress={onIconPress} background={ripple}>
-        <View style={styles.iconRightWrap}>
-          <Icon name={iconRight} size={24} style={styles.iconRight}/>
-        </View>
-      </TouchableNativeFeedback>
-    ) : null}
   </View>
 );
 
@@ -147,6 +151,10 @@ const goToFeedEdit = (selectedFeed, dispatch) => () => dispatch(NavigationAction
   ]
 }));
 
+const navigate = (navigation, screen) => () => navigation.navigate(screen);
+
+const handleLogout = dispatch => () => dispatch(logout());
+
 let Drawer = ({ feeds, navigation, dispatch }) => {
   const { index, routes } = navigation.state;
   const params = routes[0].routes[routes[0].index].params;
@@ -164,9 +172,9 @@ let Drawer = ({ feeds, navigation, dispatch }) => {
       ))}
       <NavItem title="Create new feed" iconLeft="add" selected={selected('NewFeed')} onPress={promptNewFeed(navigation)}/>
       <View style={styles.divider}/>
-      <NavItem title="Account" iconLeft="account-circle" selected={selected('Account')} onPress={() => navigation.navigate('Account')}/>
-      <NavItem title="About" iconLeft="info" selected={selected('About')} onPress={() => navigation.navigate('About')}/>
-      <NavItem title="Logout" iconLeft="exit-to-app" onPress={() => dispatch(logout())}/>
+      <NavItem title="Account" iconLeft="account-circle" selected={selected('Account')} onPress={navigate(navigation, 'Account')}/>
+      <NavItem title="About" iconLeft="info" selected={selected('About')} onPress={navigate(navigation, 'About')}/>
+      <NavItem title="Logout" iconLeft="exit-to-app" onPress={handleLogout(dispatch)}/>
     </ScrollView>
   );
 };

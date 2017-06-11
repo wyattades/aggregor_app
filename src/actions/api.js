@@ -1,7 +1,11 @@
 import { API_KEY, API_URL, LEE } from 'react-native-dotenv';
 
+import { setFeed } from './navActions';
+
 const ADDRESS = (LEE !== 'true' && __DEV__) ? 'http://localhost:3000' : API_URL,
-    	TOKEN = API_KEY;
+			TOKEN = API_KEY;
+
+// TODO: many actions do not handle errors correctly, allErrors doesn't catch correctly
 
 const error = dispatch => err => {
 	console.log('ERROR: ', err);
@@ -57,9 +61,6 @@ const request = (method, route, token, data) => new Promise((resolve, reject) =>
 	});
 });
 
-
-// NOTE: actions that might return an expected error (such as invalid login info) do not have 'error(dispatch)'
-
 export const login = data => (dispatch, getState) => request('POST', '/user/login', undefined, data).then(
 	({ token }) => dispatch({ type: 'SET_USER', username: data.username, token })
 );
@@ -112,9 +113,12 @@ export const createFeed = feed => (dispatch, getState) => {
 	);
 };
 
-// NOTE: use name or id?
 export const deleteFeed = feed => (dispatch, getState) => {
-	const user = getState().user;
+	const { feeds, user } = getState();
+
+	const first = feeds.remove(feed).first();
+	dispatch(setFeed(first ? first.get('name') : null));
+
 	return request('DELETE', `/user/${user.username}/feed/${feed}`, user.token).then(
 		() => {
 			dispatch({ type: 'DELETE_FEED', feed });

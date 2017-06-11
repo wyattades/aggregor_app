@@ -44,8 +44,8 @@ const About = () => (
       </View>
       <View style={styles.textGroup}>
         <Text style={styles.title}>Created By:</Text>
-        <Text style={styles.text}>UI and Backend: Wyatt Ades</Text>
-        <Text style={styles.text}>UI: Lee White</Text>
+        <Text style={styles.text}>• Wyatt Ades (UI and Backend)</Text>
+        <Text style={styles.text}>• Lee White (UI)</Text>
       </View>
     </View>
     <Text style={styles.noteText}>*Aggregor is a proof of concept app and may or may not support more sources in the future</Text>

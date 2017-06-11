@@ -1,38 +1,37 @@
-/# Aggregor App
+# Aggregor App
 ## Setup
 ### Setup development environment:
-- make sure the following are installed on your system:
+- install the following on your system:
   - node v7.8.0
   - npm v4.2.0
   - yarn v0.23.4
   - react-native-cli v2.0.1
 - clone aggregor_app github repo to wherever you like
-- <code>npm install</code>
+- ```npm install```
 ### Start Developing:
 - start android emulator or plug in android device
-- <code>npm run android</code>
-- <code>npm start</code>, then double tap R in emulator 
+- ```npm run android```
+- ```npm start```
+- reload development environment
 ### Build Producton App to Connected Device:
-- <code>npm run bundle-android</code>
-- <code>npm run android</code>
-- (I think)
-
-
+- ```npm run android-prod```
 ## TODO
-#1	file:///home/wyatt/Github/aggregor_app/src/containers/PluginEdit.js:10:4
-- TODO: Use selector for plugin type
+#1	src/actions/api.js:6:4
+- TODO: many actions do not handle errors correctly, allErrors doesn't catch correctly
 
-#2	file:///home/wyatt/Github/aggregor_app/src/containers/Dashboard.js:8:4
-- TODO: add indicator for loading and plugin errors
+#2	src/containers/Loading.js:6:4
+- TODO: remove loading container, just use login?
 
-#3	file:///home/wyatt/Github/aggregor_app/src/utils/records.js:11:4
-- TODO: move priority outside data (because its a required value)
+#3	src/middleware/feed.js:6:4
+- TODO: it might be possible to move most of these cases their corresponding functions in api.js
 
-#4	file:///home/wyatt/Github/aggregor_app/src/reducers/feeds.js:5:4
+#4	/src/reducers/feeds.js:5:4
 - TODO: flatten reducers... maybe in my next lifetime
 
-#5	file:///home/wyatt/Github/aggregor_app/src/components/Entry.js:6:4
-- TODO: finish designing Entry component
+#5	src/reducers/nav.js:5:4
+- TODO: prevent duplicate route transtions
 
-#6	file:///home/wyatt/Github/aggregor_app/src/components/Form.js:7:4
-- TODO: fix form inputs sometimes covered by keyboard (specifically register)
+#6	src/components/Header.js:57:6
+- TODO: support renaming feeds
+
+

@@ -8,7 +8,6 @@ export const feedRecord = Record({
 	entries: List(),
 });
 
-// TODO: move priority outside data (because its a required value)
 export const pluginRecord = Record({
 	id: '',
 	type: 'reddit',

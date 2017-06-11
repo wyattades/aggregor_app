@@ -1,5 +1,5 @@
 import React, { PropTypes, PureComponent } from 'react';
-import { View, TextInput, Text, StyleSheet, TouchableNativeFeedback, Slider, Animated, Easing, Picker } from 'react-native';
+import { View, TextInput, Text, StyleSheet, TouchableNativeFeedback, Slider, Animated, Easing, Picker, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import theme from '../utils/theme';
@@ -30,9 +30,6 @@ const styles = StyleSheet.create({
     padding: 12,
     color: theme.WHITE,
     fontWeight: '500',
-  },
-  buttonIcon: {
-    color: theme.WHITE
   },
   disabled: {
     backgroundColor: theme.SUPPORT
@@ -312,7 +309,8 @@ const ripple = TouchableNativeFeedback.SelectableBackground(),
 const SubmitButton = ({ title, onPress, submitting, submitSucceeded, disabled, style = null }) => (
   <TouchableNativeFeedback onPress={disabled ? null : onPress} background={disabled ? noRipple : ripple}>
     <View style={[styles.button, disabled ? styles.disabled : null, style]}>
-      { (submitting || submitSucceeded) ? <Icon name={submitSucceeded ? 'check' : 'cached'} style={styles.buttonIcon} size={24}/> : null }
+      { submitting ? <ActivityIndicator color={theme.WHITE}/> : null }
+      { submitSucceeded ? <Icon name="check" color={theme.WHITE} size={24}/> : null }
       <Text style={styles.buttonText}>{title}</Text>
     </View>
   </TouchableNativeFeedback>
