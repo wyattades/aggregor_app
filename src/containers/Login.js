@@ -91,20 +91,20 @@ class Login extends Component {
     }
 
     return (
-      <KeyboardAvoidingView style={[styles.container, this.state.show ? { justifyContent: 'space-between' } : null]}>
+      <View style={[styles.container, this.state.show ? { justifyContent: 'space-between' } : null]}>
         <Text style={styles.title}>Aggregor</Text>
         { this.state.show ? (
-          <View>
+          <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={80}>
             { _error ? <FormError error={_error}/> : null }
             <Field label="Username" name="username" component={AnimatedTextField}/>
             <Field label="Password" secureTextEntry={true} name="password" component={AnimatedTextField}/>
             <SubmitButton title="SIGN IN" onPress={handleSubmit(onSubmit)} submitting={submitting} submitSucceeded={submitSucceeded}/>
-          </View>
+          </KeyboardAvoidingView>
          ) : null }
         { this.state.show ? (
           <FormLink title="Sign up for Aggregor" onPress={goToRegister(navigation)}/>
          ) : null }
-      </KeyboardAvoidingView>
+      </View>
     );
   }
 }

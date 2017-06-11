@@ -1,5 +1,5 @@
 # Other
-.vscode
+.vscode/
 *.keystore
 
 # OSX

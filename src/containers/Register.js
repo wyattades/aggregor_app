@@ -49,21 +49,21 @@ const styles = StyleSheet.create({
 const goToLogin = navigation => () => navigation.navigate('Login');
 
 const RegisterForm = ({ handleSubmit, submitting, submitSucceeded, error, navigation }) => (
-  <KeyboardAvoidingView style={styles.container}>
+  <View style={styles.container}>
     <View>
       <Text style={[styles.title, styles.subtitle]}>Sign up</Text>
       <Text style={styles.title}>Aggregor</Text>
     </View>
-    <View>
+    <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={80}>
       { error ? <FormError error={error}/> : null }
       <Field label="Username" name="username" component={AnimatedTextField}/>
       <Field label="Email" name="email" component={AnimatedTextField}/>
       <Field label="Password" secureTextEntry={true} name="password" component={AnimatedTextField}/>
       {/*<Field label="Password" secureTextEntry={true} name="passwordConfirm" component={renderInput}/>*/}
       <SubmitButton title="SIGN UP" onPress={handleSubmit(onSubmit)} submitting={submitting} submitSucceeded={submitSucceeded}/>
-    </View>
+    </KeyboardAvoidingView>
     <FormLink title="Sign in to Aggregor" onPress={goToLogin(navigation)}/>
-  </KeyboardAvoidingView>
+  </View>
 );
 
 const Register = reduxForm({
