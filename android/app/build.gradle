@@ -97,14 +97,13 @@ android {
         }
     }
     signingConfigs {
-        debug {
-
-        }
-        release {
+        release project.hasProperty('AGGREGOR_RELEASE_STORE_FILE') ? {
             storeFile file(AGGREGOR_RELEASE_STORE_FILE)
             storePassword AGGREGOR_RELEASE_STORE_PASSWORD
             keyAlias AGGREGOR_RELEASE_KEY_ALIAS
             keyPassword AGGREGOR_RELEASE_KEY_PASSWORD
+        } : {
+
         }
     }
     splits {
@@ -116,9 +115,6 @@ android {
         }
     }
     buildTypes {
-        debug {
-            
-        }
         release {
             minifyEnabled enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
