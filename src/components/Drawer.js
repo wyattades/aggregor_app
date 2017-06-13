@@ -164,6 +164,7 @@ let Drawer = ({ feeds, navigation, dispatch }) => {
   return (
     <ScrollView style={styles.container} endFillColor="#444">
       <Billboard/>
+      <View style={styles.divider}/>
       <Label title="My Feeds"/>
       {feeds.map(feed => (
         <NavItem title={feed} iconLeft="label" iconRight="edit" selected={index === 0 && feed === selectedFeed} key={feed} 

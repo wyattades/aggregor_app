@@ -13,6 +13,7 @@ import Account from './containers/Account';
 import About from './containers/About';
 // import WebContent from './containers/WebContent';
 
+import PushTransition from './components/Transition';
 import Drawer from './components/Drawer';
 import { DashboardHeader, FeedEditHeader, PluginEditHeader, MainHeader } from './components/Header';
 
@@ -95,9 +96,7 @@ export const AppNavigator = new StackNavigator(
     },
   }, {
     headerMode: 'none',
-    transitionConfig: () => ({
-
-    }),
+    transitionConfig: PushTransition,
     initialRouteName: 'Loading',
   }
 );

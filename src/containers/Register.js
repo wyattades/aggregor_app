@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const goToLogin = navigation => () => navigation.navigate('Login');
+const goToLogin = navigation => () => navigation.goBack();
 
 const RegisterForm = ({ handleSubmit, submitting, submitSucceeded, error, navigation }) => (
   <View style={styles.container}>
