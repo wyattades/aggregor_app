@@ -75,7 +75,7 @@ class NonemptyDashboard extends PureComponent {
   }
 
   componentWillReceiveProps(nextProps) {
-    if (nextProps.entries.length <= this.props.entries.length) {
+    if (nextProps.entries.length < this.props.entries.length) {
       this.entryList.scrollToIndex({ index: 0 });
     }
   }
