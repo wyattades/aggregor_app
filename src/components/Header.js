@@ -5,7 +5,7 @@ import { NavigationActions } from 'react-navigation';
 
 import theme from '../utils/theme';
 import { prompt } from '../utils/prompt';
-import { deleteFeed, removePlugin } from '../actions/api';
+import { deleteFeed, removePlugin, updateFeed } from '../actions/api';
 
 export const styles = StyleSheet.create({
   webContentHeader: {
@@ -53,19 +53,23 @@ const HeaderTitle = ({ texts }) => {
   );
 };
 
-const renameFeed = (oldName, newName) => dispatch => {
-  // TODO: support renaming feeds
-  if (oldName !== newName) {
-    ToastAndroid.show('Sorry, renaming feeds is not yet supported', ToastAndroid.LONG);
-  }
-};
-
 const promptRename = (oldName, dispatch) => dispatch(prompt({
   title: 'Rename Feed',
   placeholder: 'name',
   defaultValue: oldName,
   submitText: 'Rename',
-  onSubmit: newName => dispatch(renameFeed(oldName, newName))
+  onSubmit: newName => {
+    if (oldName !== newName) {
+      dispatch(updateFeed(oldName, newName))
+      .catch(err => {
+        if (err.code === 400) {
+          ToastAndroid.show('Sorry, invalid feed name', ToastAndroid.SHORT);
+        } else if (err.code === 409) {
+          ToastAndroid.show('Sorry, feed name already taken', ToastAndroid.SHORT);
+        }
+      });
+    }
+  }
 }));
 
 const handleFeedOptionsPress = (navigation, selectedFeed) => ({ action, index }) => {

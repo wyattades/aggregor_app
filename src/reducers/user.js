@@ -1,18 +1,18 @@
 const initialState = {
-    isLoggedIn: false
+  isLoggedIn: false
 };
 
 export default (state = initialState, action) => {
-    switch (action.type) {
+  switch (action.type) {
     case 'SET_USER':
-        return {
-            username: action.username,
-            token: action.token,
-            isLoggedIn: true
-        };
+    case 'UPDATE_USER':
+      const newUser = { ...action };
+      delete newUser.type;
+      newUser.isLoggedIn = true;
+      return Object.assign({}, state, newUser);
     case 'UNSET_USER':
-        return initialState;
+      return initialState;
     default:
-        return state;
-    }
+      return state;
+  }
 };

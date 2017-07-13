@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
+
 import theme from '../utils/theme';
 
 const styles = StyleSheet.create({ 
@@ -30,7 +31,7 @@ const styles = StyleSheet.create({
   }
 });
 
-const About = () => (
+const About = ({ plugin_array }) => (
   <View style={styles.container}>
     <View>
       <View style={styles.textGroup}>
@@ -39,8 +40,9 @@ const About = () => (
       </View>
       <View style={styles.textGroup}>
         <Text style={styles.title}>Supported News Sources*:</Text>
-        <Text style={styles.text}>• Hacker News</Text>
-        <Text style={styles.text}>• Reddit</Text>
+        {plugin_array.map(plugin => 
+          <Text style={styles.text} key={plugin.type}>• {plugin.label}</Text>
+        )}
       </View>
       <View style={styles.textGroup}>
         <Text style={styles.title}>Created By:</Text>
@@ -52,4 +54,6 @@ const About = () => (
   </View>
 );
 
-export default connect()(About);
+export default connect(state => ({
+  plugin_array: state.plugin_array,
+}))(About);

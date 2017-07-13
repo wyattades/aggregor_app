@@ -5,6 +5,7 @@ import nav from './nav';
 import user from './user';
 import feeds from './feeds';
 import prompt from './prompt';
+import { plugin_types, plugin_array } from './plugin_types';
 
 export default combineReducers({
   form,
@@ -12,4 +13,6 @@ export default combineReducers({
   user,
   feeds,
   prompt,
+  plugin_types,
+  plugin_array
 });

@@ -74,6 +74,12 @@ class NonemptyDashboard extends PureComponent {
     page: 1,
   }
 
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.entries.length <= this.props.entries.length) {
+      this.entryList.scrollToIndex({ index: 0 });
+    }
+  }
+
   _fetchFeed = () => {
     const { dispatch, selectedFeed } = this.props;
     const page = this.state.page;
@@ -96,7 +102,9 @@ class NonemptyDashboard extends PureComponent {
   _keyExtractor = item => item.id;
 
   _renderItem = ({ item }) => (
-    <Entry {...item.toObject()}/>
+    <Entry 
+      {...item.toObject()}
+      plugin={this.props.plugin_types[item.plugin]}/>
   );
 
   render() {
@@ -112,6 +120,7 @@ class NonemptyDashboard extends PureComponent {
           keyExtractor={this._keyExtractor}
           onEndReached={this._requestMore}
           onEndThreshold={4}
+          ref={entryList => { this.entryList = entryList; }}
         />
         {errors > 0 ? (
           <View style={styles.errorView}>
@@ -124,25 +133,27 @@ class NonemptyDashboard extends PureComponent {
   }
 }
 
-let Dashboard = ({ feeds, selectedFeed, dispatch, navigation }) => {
+let Dashboard = ({ feeds, selectedFeed, plugin_types, dispatch, navigation }) => {
   const feed = feeds.get(selectedFeed);
 
   if (feed) {
     const entries = feed.get('entries').toArray(),
-          plugins = feed.get('plugins');
+          plugins = feed.get('plugins'),
+          errors = plugins.count(plugin => plugin.error !== undefined);
 
-    let errors = 0;
-    plugins.forEach(plugin => {
-      if (plugin.error !== undefined) {
-        errors++;
-      }
-    });
+    // let errors = 0;
+    // plugins.forEach(plugin => {
+    //   if (plugin.error !== undefined) {
+    //     errors++;
+    //   }
+    // });
 
     return plugins.size === 0 ? (
       <NoPlugins/>
     ) : (
       <NonemptyDashboard 
         entries={entries}
+        plugin_types={plugin_types}
         errors={errors}
         loading={errors !== plugins.size}
         dispatch={dispatch}
@@ -156,9 +167,10 @@ let Dashboard = ({ feeds, selectedFeed, dispatch, navigation }) => {
   }
 };
 
-Dashboard = connect(({ feeds }, { navigation }) => ({
+Dashboard = connect(({ feeds, plugin_types }, { navigation }) => ({
   feeds,
   selectedFeed: navigation.state.params && navigation.state.params.selectedFeed,
+  plugin_types,
 }))(Dashboard);
 
 Dashboard.propTypes = {

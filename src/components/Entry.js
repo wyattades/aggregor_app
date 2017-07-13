@@ -4,7 +4,7 @@ import TimeAgo from 'react-native-timeago';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import theme from '../utils/theme';
-import { PluginIcon } from '../utils/plugins';
+import PluginIcon from '../components/PluginIcon';
 
 const getEntryHeight = data => data.thumbnailURL ? 200 : 166;
 
@@ -151,7 +151,7 @@ Entry.propTypes = {
   thumbnailURL: PropTypes.string,
   commentURL: PropTypes.string,
   authorURL: PropTypes.string,
-  plugin: PropTypes.string,
+  plugin: PropTypes.object,
   commentAmount: PropTypes.number,
   id: PropTypes.string.isRequired,
 };

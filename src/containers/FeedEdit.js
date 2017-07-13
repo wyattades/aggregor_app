@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import { ActionButton } from 'react-native-material-ui';
 
 import theme from '../utils/theme';
-import { PluginIcon, plugins as plgs } from '../utils/plugins';
+import PluginIcon from '../components/PluginIcon';
 import { Message, MessageView } from '../components/Message';
 
 const styles = StyleSheet.create({
@@ -54,13 +54,32 @@ class FeedEdit extends Component {
       subtitle = 'Priority: ' + item.priority;
     }
 
-    const plg = plgs[item.type];
-    const label = plg ? plg.getLabel(item) : 'Unknown plugin';
+    const plg = this.props.plugin_types[item.type];
+    let label;
+    if (plg) {
+      label = plg.label;
+
+      const keys = Object.keys(item.data);
+      if (keys.length > 0) {
+        const getPrefix = key => {
+          for (let option of plg.options) {
+            if (option.key === key) {
+              return option.prefix || '';
+            }
+          }
+          return '';
+        };
+
+        label += keys.map(key => ` ${getPrefix(key)}${item.data[key]}`).join('');
+      }
+    } else {
+      label = 'Unknown Plugin';
+    }
 
     return (
       <TouchableNativeFeedback key={item.id} onPress={this._editPlugin(item)}>
         <View style={styles.item}>
-          <PluginIcon plugin={item.type} size={40}/>
+          <PluginIcon plugin={plg} size={40}/>
           <View style={styles.textView}>
             <Text style={[styles.title]} numberOfLines={1}>{label}</Text>
             <Text style={[styles.subtitle, error ? styles.error : null]} numberOfLines={1}>{subtitle}</Text>
@@ -97,11 +116,12 @@ class FeedEdit extends Component {
   }
 }
 
-FeedEdit = connect(({ feeds }, { navigation }) => {
+FeedEdit = connect(({ feeds, plugin_types }, { navigation }) => {
   const selectedFeed = navigation.state.params && navigation.state.params.selectedFeed;
   const feed = feeds.get(selectedFeed);
   return {
     selectedFeed,
+    plugin_types,
     plugins: feed ? feed.get('plugins').toArray().map(plugin => plugin.toJS()) : [],
   };
 })(FeedEdit);

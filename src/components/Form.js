@@ -138,6 +138,7 @@ class PickerField extends PureComponent {
 
   render () {
     const { label, values } = this.props;
+
     return (
       <View>
         {label ? <Text style={styles.label}>{label}</Text> : null}
@@ -146,7 +147,7 @@ class PickerField extends PureComponent {
           selectedValue={this.state.value}
           onValueChange={this._onValueChange}>
           {values.map(val => (
-            <Picker.Item key={val.value} label={val.label} value={val.value}/>
+            <Picker.Item key={val.type} label={val.label} value={val.type}/>
           ))}
         </Picker>
       </View>
@@ -158,7 +159,7 @@ PickerField.propTypes = {
   input: PropTypes.object.isRequired,
   label: PropTypes.string,
   values: PropTypes.arrayOf(PropTypes.shape({
-    value: PropTypes.string.isRequired,
+    type: PropTypes.string.isRequired,
     label: PropTypes.string.isRequired,
   }).isRequired).isRequired,
 };

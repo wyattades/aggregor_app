@@ -13,7 +13,6 @@ const onSubmit = (values, dispatch) => {
     // ()=>{}, 
   .catch(
     err => {
-      console.log(err);
       if (err.code === 401) {
         throw new SubmissionError({ _error: 'Invalid username or password' });
       } else if (err.code === 0) {

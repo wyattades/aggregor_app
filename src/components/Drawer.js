@@ -1,5 +1,5 @@
 import React, { PropTypes } from 'react';
-import { ScrollView, View, Text, TouchableNativeFeedback, StyleSheet, ToastAndroid, StatusBar } from 'react-native';
+import { ScrollView, View, Text, TouchableNativeFeedback, StyleSheet, ToastAndroid } from 'react-native';
 import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { NavigationActions } from 'react-navigation';
@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.WHITE,
-    paddingTop: StatusBar.currentHeight || 0,
+    paddingTop: 32,
   },
 
   divider: {

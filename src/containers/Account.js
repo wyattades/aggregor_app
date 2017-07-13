@@ -3,7 +3,7 @@ import { View, Text, TouchableNativeFeedback, StyleSheet, ToastAndroid } from 'r
 import { connect } from 'react-redux';
 
 import theme from '../utils/theme';
-import { deleteUser } from '../actions/api';
+import { deleteUser, updateUser } from '../actions/api';
 import { prompt } from '../utils/prompt';
 import { SubmitButton } from '../components/Form';
 
@@ -60,7 +60,16 @@ const handleChangePassword = dispatch => () => {
     textInputProps: {
       secureTextEntry: true,
     },
-    onSubmit: password => ToastAndroid.show('Sorry, changing passwords is not yet supported.', ToastAndroid.SHORT)
+    onSubmit: password => dispatch(updateUser({ password })).then(
+      () => ToastAndroid.show('Password successfully changed.', ToastAndroid.SHORT),
+      err => {
+        if (err.code === 400) {
+          ToastAndroid.show('Sorry, invalid password.', ToastAndroid.SHORT);
+        } else {
+          console.log(err);
+        }
+      },
+    )
   }));
 };
 
@@ -72,8 +81,12 @@ const Account = ({ user, dispatch, navigation }) => (
         <Text style={styles.value}>{user.username}</Text>
       </View>
       <View style={styles.textGroup}>
+        <Text style={styles.label}>Name:</Text>
+        <Text style={styles.value}>{(user.first_name || '') + ' ' + (user.last_name || '')}</Text>
+      </View>
+      <View style={styles.textGroup}>
         <Text style={styles.label}>Email:</Text>
-        <Text style={styles.value}>{user.email || '<email>'}</Text>
+        <Text style={styles.value}>{user.email || ' '}</Text>
       </View>
       <View style={styles.textGroup}>
         <Text style={styles.label}>Password:</Text>

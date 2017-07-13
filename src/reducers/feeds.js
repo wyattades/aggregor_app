@@ -81,6 +81,8 @@ const feeds = (state = OrderedMap(), action) => {
 		return state.update(action.feed, _feed => feed(_feed, action));
 	case 'DELETE_FEED':
 		return state.remove(action.feed);
+	case 'UPDATE_FEED':
+		return state.set(action.name, state.get(action.feed)).remove(action.feed);
 	case 'SET_FEEDS':
 		return OrderedMap(action.feedNames.map(
 			name => [name, new feedRecord({ name })]
