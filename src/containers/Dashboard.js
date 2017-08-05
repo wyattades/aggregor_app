@@ -1,10 +1,12 @@
 import React, { PureComponent, PropTypes } from 'react';
-import { StyleSheet, View, FlatList, Text, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, FlatList, Text, ActivityIndicator, TouchableNativeFeedback } from 'react-native';
 import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { fetchFeed } from '../actions/api';
+import { goHome } from '../actions/navActions';
 import Entry from '../components/Entry';
+import { DashboardHeader } from '../components/Header';
 import theme from '../utils/theme';
 
 const styles = StyleSheet.create({
@@ -67,6 +69,8 @@ const LoadingIndicator = () => (
   </View>
 );
 
+
+
 class NonemptyDashboard extends PureComponent {
 
   state = {
@@ -107,6 +111,20 @@ class NonemptyDashboard extends PureComponent {
       plugin={this.props.plugin_types[item.plugin]}/>
   );
 
+  _goToError = () => {
+    const { dispatch, selectedFeed } = this.props;
+    dispatch(goHome(selectedFeed, true));
+  }
+
+  _renderError = () => (
+    <TouchableNativeFeedback onPress={this._goToError}>
+      <View style={styles.errorView}>
+        <Icon name="error" size={20} color={theme.WHITE}/>
+        <Text style={styles.errorText}>{this.props.errors} plugin{this.props.errors === 1 ? '' : 's'} failed to load</Text>
+      </View>
+    </TouchableNativeFeedback>
+  );
+
   render() {
     const { entries, errors, loading } = this.props;
     return (
@@ -122,12 +140,7 @@ class NonemptyDashboard extends PureComponent {
           onEndThreshold={4}
           ref={entryList => { this.entryList = entryList; }}
         />
-        {errors > 0 ? (
-          <View style={styles.errorView}>
-            <Icon name="error" size={20} color={theme.WHITE}/>
-            <Text style={styles.errorText}>{errors} plugin{errors === 1 ? '' : 's'} failed to load</Text>
-          </View>
-        ) : null}
+        {errors > 0 ? <this._renderError/> : null}
       </View>
     );
   }
@@ -140,13 +153,6 @@ let Dashboard = ({ feeds, selectedFeed, plugin_types, dispatch, navigation }) =>
     const entries = feed.get('entries').toArray(),
           plugins = feed.get('plugins'),
           errors = plugins.count(plugin => plugin.error !== undefined);
-
-    // let errors = 0;
-    // plugins.forEach(plugin => {
-    //   if (plugin.error !== undefined) {
-    //     errors++;
-    //   }
-    // });
 
     return plugins.size === 0 ? (
       <NoPlugins/>
@@ -172,6 +178,11 @@ Dashboard = connect(({ feeds, plugin_types }, { navigation }) => ({
   selectedFeed: navigation.state.params && navigation.state.params.selectedFeed,
   plugin_types,
 }))(Dashboard);
+
+Dashboard.navigationOptions = { 
+  header: DashboardHeader
+};
+
 
 Dashboard.propTypes = {
   navigation: PropTypes.object.isRequired,

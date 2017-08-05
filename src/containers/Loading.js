@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 
 import theme from '../utils/theme';
 
@@ -12,17 +12,27 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
+  middle: {
+    alignItems: 'center',
+  },
   title: {
     alignSelf: 'center',
     fontSize: 50,
     fontWeight: 'bold',
     color: theme.WHITE,
-  }
+  },
+  indicator: {
+    position: 'absolute',
+    top: 100,
+  },
 });
 
 const Loading = () => (
   <View style={styles.container}>
-    <Text style={styles.title}>Aggregor</Text>
+    <View style={styles.middle}>
+      <Text style={styles.title}>Aggregor</Text>
+      <ActivityIndicator color={theme.PRIMARY} size="large" style={styles.indicator}/>
+    </View>
   </View>
 );
 

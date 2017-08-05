@@ -23,7 +23,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     marginBottom: 2,
   },
-  text:{
+  text: {
     color: theme.TEXT,
     fontSize: 18,
     marginHorizontal: 16,

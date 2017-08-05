@@ -2,6 +2,8 @@ import React from 'react';
 import Prompt from 'react-native-prompt';
 import { connect } from 'react-redux';
 
+// TODO: remake prompt: styles, allow regex matching, custom buttons
+
 export const prompt = options => dispatch => dispatch({ type: 'SET_PROMPT', options });
 
 let PromptView = ({ dispatch, options: { onSubmit, onCancel, title, textInputProps = {}, ...rest } }) => {

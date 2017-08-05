@@ -8,14 +8,14 @@ import PluginIcon from '../components/PluginIcon';
 
 const getEntryHeight = data => data.thumbnailURL ? 200 : 166;
 
-const MARGIN = 8; 
+const MARGIN = 6;
+const __BLANK__ = '\u00a0';
 
 const styles = StyleSheet.create({
   container: {
     marginBottom: MARGIN,
     padding: 16,
     backgroundColor: theme.WHITE,
-    // flex: 1,
     flexDirection: 'column',
     justifyContent: 'space-between',
   },
@@ -37,6 +37,7 @@ const styles = StyleSheet.create({
     width: 80,
     height: 80,
     marginLeft: 16,
+    borderRadius: 4,
   },
   secondaryText: {
     fontSize: 13,
@@ -93,10 +94,7 @@ const pressLink = url => () => {
 class Entry extends PureComponent {
 
   shouldComponentUpdate(nextProps) {
-    if (nextProps.id !== this.props.id) {
-      return true;
-    }
-    return false;
+    return nextProps.id !== this.props.id;
   }
 
   render() {
@@ -121,7 +119,7 @@ class Entry extends PureComponent {
                   <Text style={[styles.secondaryText, styles.secondaryEmphasis]}>{author}</Text>
                 </Link>
               </View>
-              {date ? <TimeAgo style={styles.secondaryText} time={date}/> : <Text style={styles.secondaryText}>{'\u00a0'}</Text>}
+              {date ? <TimeAgo style={styles.secondaryText} time={date}/> : <Text style={styles.secondaryText}>{__BLANK__}</Text>}
             </View>
           </View>
           <View style={[styles.flexCol, {justifyContent: 'flex-end'}]}>

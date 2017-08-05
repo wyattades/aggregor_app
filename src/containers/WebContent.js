@@ -5,6 +5,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import theme from '../utils/theme';
 
+// DEPRACTED
+
 const styles = StyleSheet.create({
   webview: {
     // flex: 1,

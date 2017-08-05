@@ -4,8 +4,10 @@ import { connect } from 'react-redux';
 import { ActionButton } from 'react-native-material-ui';
 
 import theme from '../utils/theme';
+import { formatPluginTitle, formatPluginSubtitle } from '../utils/format';
 import PluginIcon from '../components/PluginIcon';
 import { Message, MessageView } from '../components/Message';
+import { FeedEditHeader } from '../components/Header';
 
 const styles = StyleSheet.create({
   container: {
@@ -46,43 +48,18 @@ const styles = StyleSheet.create({
 class FeedEdit extends Component {
   
   _pluginItem = (item, index) => {
-    const error = item.error;
-    let subtitle = ' ';
-    if (error) {
-      subtitle = item.error;
-    } else {
-      subtitle = 'Priority: ' + item.priority;
-    }
 
-    const plg = this.props.plugin_types[item.type];
-    let label;
-    if (plg) {
-      label = plg.label;
-
-      const keys = Object.keys(item.data);
-      if (keys.length > 0) {
-        const getPrefix = key => {
-          for (let option of plg.options) {
-            if (option.key === key) {
-              return option.prefix || '';
-            }
-          }
-          return '';
-        };
-
-        label += keys.map(key => ` ${getPrefix(key)}${item.data[key]}`).join('');
-      }
-    } else {
-      label = 'Unknown Plugin';
-    }
+    const plg = this.props.plugin_types[item.type], 
+          title = formatPluginTitle(plg, item),
+          subtitle = formatPluginSubtitle(item);
 
     return (
       <TouchableNativeFeedback key={item.id} onPress={this._editPlugin(item)}>
         <View style={styles.item}>
           <PluginIcon plugin={plg} size={40}/>
           <View style={styles.textView}>
-            <Text style={[styles.title]} numberOfLines={1}>{label}</Text>
-            <Text style={[styles.subtitle, error ? styles.error : null]} numberOfLines={1}>{subtitle}</Text>
+            <Text style={[styles.title]} numberOfLines={1}>{title}</Text>
+            <Text style={[styles.subtitle, item.error ? styles.error : null]} numberOfLines={1}>{subtitle}</Text>
           </View>
         </View>
       </TouchableNativeFeedback>
@@ -125,6 +102,10 @@ FeedEdit = connect(({ feeds, plugin_types }, { navigation }) => {
     plugins: feed ? feed.get('plugins').toArray().map(plugin => plugin.toJS()) : [],
   };
 })(FeedEdit);
+
+FeedEdit.navigationOptions = { 
+  header: FeedEditHeader
+};
 
 FeedEdit.propTypes = {
   navigation: PropTypes.shape({

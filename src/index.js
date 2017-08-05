@@ -5,7 +5,7 @@ if (__DEV__) {
 }
 
 import React, { Component } from 'react';
-import { AppRegistry, NativeModules, View, StatusBar } from 'react-native';
+import { AppRegistry, NativeModules, View, StatusBar, BackHandler, AsyncStorage } from 'react-native';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'react-native-material-ui';
 
@@ -14,7 +14,7 @@ import Navigator from './navigator';
 import configureStore from './configureStore';
 import { uiTheme } from './utils/theme';
 
-const store = configureStore();
+const store = configureStore({}, AsyncStorage);
 
 const UIManager = NativeModules.UIManager;
 
@@ -34,7 +34,7 @@ class Aggregor extends Component {
       <Provider store={store}>
         <ThemeProvider uiTheme={uiTheme}>
           <View style={{ flex: 1 }}>
-            <Navigator/>
+            <Navigator backHandler={BackHandler}/>
             <PromptView/>
           </View>
         </ThemeProvider>

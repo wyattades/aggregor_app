@@ -1,5 +1,4 @@
 import Immutable from 'immutable';
-import { Platform, AsyncStorage } from 'react-native';
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
 import { persistStore, autoRehydrate } from 'redux-persist';
@@ -20,7 +19,7 @@ if (__DEV__) {
     window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ||
     require('remote-redux-devtools').composeWithDevTools
   )({
-    name: Platform.OS,
+    name: 'remote-redux device',
     ...require('../package.json').remotedev,
     actionCreators,
   });
@@ -31,7 +30,7 @@ const enhancer = composeEnhancers(
   autoRehydrate()
 );
 
-const configureStore = (initialState) => {
+const configureStore = (initialState = {}, storageType) => {
   
   if (module.hot) {
     // Enable hot module replacement for reducers
@@ -41,17 +40,17 @@ const configureStore = (initialState) => {
         const reducers = require('./reducers').default;
         store.replaceReducer(reducers);
       } catch (error) {
-        console.error(`Reducer hot reloading error ${error}`);
+        console.error(`Reducer hot reloading error: ${error}`);
       }
     });
   }
 
-  const store = createStore(reducer, initialState || {}, enhancer);
+  const store = createStore(reducer, initialState, enhancer);
   
   // Persist user state
   persistStore(store, {
     whitelist: [ 'user' ],
-    storage: AsyncStorage
+    storage: storageType
   });
 
   return store;

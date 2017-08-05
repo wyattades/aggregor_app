@@ -2,10 +2,9 @@
 ## Setup
 ### Setup development environment:
 - install the following on your system:
-  - node v7.8.0
-  - npm v4.2.0
-  - yarn v0.23.4
-  - react-native-cli v2.0.1
+  - node v7.x.x
+  - npm v4.x.x
+  - adb (comes with Android Studio)
 - clone aggregor_app github repo to wherever you like
 - ```npm install```
 ### Start Developing:
@@ -16,22 +15,22 @@
 ### Build Producton App to Connected Device:
 - ```npm run android-prod```
 ## TODO
-#1	src/actions/api.js:6:4
-- TODO: many actions do not handle errors correctly, allErrors doesn't catch correctly
-
-#2	src/containers/Loading.js:6:4
+#1 file:///home/wyatt/Github/aggregor_app/src/containers/Loading.js:6:4
 - TODO: remove loading container, just use login?
 
-#3	src/middleware/feed.js:6:4
-- TODO: it might be possible to move most of these cases their corresponding functions in api.js
+#2	file:///home/wyatt/Github/aggregor_app/src/middleware/feed.js:6:4
+- TODO: move these cases to their corresponding functions in api.js
 
-#4	/src/reducers/feeds.js:5:4
+#3	file:///home/wyatt/Github/aggregor_app/src/utils/prompt.js:5:4
+- TODO: remake prompt: styles, allow regex matching, custom buttons
+
+#4	file:///home/wyatt/Github/aggregor_app/src/reducers/feeds.js:5:4
 - TODO: flatten reducers... maybe in my next lifetime
 
-#5	src/reducers/nav.js:5:4
+#5	file:///home/wyatt/Github/aggregor_app/src/reducers/nav.js:36:4
 - TODO: prevent duplicate route transtions
 
-#6	src/components/Header.js:57:6
-- TODO: support renaming feeds
+#6	file:///home/wyatt/Github/aggregor_app/src/actions/api.js:8:4
+- TODO: many actions do not handle errors correctly, fix
 
 

@@ -1,15 +1,14 @@
 {
-  "name": "Aggregor",
+  "name": "aggregor",
   "version": "0.0.1",
-  "private": true,
   "scripts": {
     "postinstall": "rm -rf ./node_modules/redux-form/node_modules/react && rm -rf ./node_modules/react-native-timeago/node_modules/react",
     "test": "jest",
     "android": "adb uninstall \"com.aggregor\"; node node_modules/react-native/local-cli/cli.js run-android",
+    "android-prod": "adb uninstall \"com.aggregor\"; cd android && ./gradlew assembleRelease && ./gradlew installRelease",
     "emulator": "$ANDROID_HOME/emulator/emulator -avd nexus",
     "debug": "~/Documents/RNDebugger/React_Native_Debugger",
-    "start": "adb reverse tcp:3000 tcp:3000; adb reverse tcp:8081 tcp:8081; node node_modules/react-native/local-cli/cli.js start",
-    "android-prod": "adb uninstall \"com.aggregor\"; cd android && ./gradlew assembleRelease && ./gradlew installRelease"
+    "start": "adb reverse tcp:3000 tcp:3000; adb reverse tcp:8081 tcp:8081; node node_modules/react-native/local-cli/cli.js start"
   },
   "remotedev": {
     "hostname": "localhost",

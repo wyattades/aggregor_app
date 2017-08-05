@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { reduxForm, SubmissionError, Field, FormSection, formValueSelector } from 'redux-form';
 
 import { PickerField, TextField, SliderField, SubmitButton, FormError } from '../components/Form'; 
+import { PluginEditHeader } from '../components/Header';
 import { savePlugin } from '../actions/api';
 import { pluginRecord } from '../utils/records';
 
@@ -17,7 +18,7 @@ class PluginEdit extends Component {
 
   _onSubmit = values => {
     const { selectedFeed, dispatch, id, navigation } = this.props;
-    
+
     const keys = Object.keys(values.data);
     for (let i = 0; i < keys.length; i++) {
       const key = keys[i], value = values.data[key];
@@ -80,7 +81,7 @@ PluginEdit = reduxForm({
       const value = values.data[option.key];
       if (option.default === undefined && (value === undefined || value.length === 0)) {
         errors[option.key] = option.label + ' is required';
-      } else if (value !== undefined && value.length > 0 && !value.match(option.regex)) {
+      } else if (typeof value === 'string' && value.length > 0 && !value.match(option.regex)) {
         errors[option.key] = 'Invalid ' + option.label;
       }
     }
@@ -125,6 +126,10 @@ PluginEdit = connect((state, ownProps) => {
     },
   };
 })(PluginEdit);
+
+PluginEdit.navigationOptions = {
+  header: PluginEditHeader
+};
 
 PluginEdit.propTypes = {
   navigation: PropTypes.shape({

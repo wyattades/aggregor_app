@@ -23,10 +23,12 @@ export const styles = StyleSheet.create({
   },
   headerTextContainer: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   highlight: {
-    color: theme.ACCENT,
+    // color: theme.ACCENT,
+    borderBottomColor: theme.ACCENT,
+    borderBottomWidth: 2,
   },
 
   statusBar: {
@@ -43,15 +45,13 @@ const Toolbar = props => (
   </View>
 );
 
-const HeaderTitle = ({ texts }) => {
-  return (
-    <View style={styles.headerTextContainer}>
-      {texts.map(({ title, highlight }) => (
-        <Text numberOfLines={1} key={title} style={[ styles.headerText, highlight ? styles.highlight : null ]}>{title}</Text>
-      ))}
-    </View>
-  );
-};
+const HeaderTitle = ({ texts }) => (
+  <View style={styles.headerTextContainer}>
+    {texts.map(({ title, highlight }) => (
+      <Text numberOfLines={1} key={title} style={[ styles.headerText, highlight ? styles.highlight : null ]}>{title}</Text>
+    ))}
+  </View>
+);
 
 const promptRename = (oldName, dispatch) => dispatch(prompt({
   title: 'Rename Feed',

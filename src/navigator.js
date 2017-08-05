@@ -1,7 +1,6 @@
 import { connect } from 'react-redux';
 import { addNavigationHelpers, StackNavigator, DrawerNavigator, NavigationActions } from 'react-navigation';
 import React, { Component, PropTypes } from 'react';
-import { BackHandler, View } from 'react-native';
 
 import Dashboard from './containers/Dashboard';
 import Login from './containers/Login';
@@ -15,18 +14,19 @@ import About from './containers/About';
 
 import PushTransition from './components/Transition';
 import Drawer from './components/Drawer';
-import { DashboardHeader, FeedEditHeader, PluginEditHeader, MainHeader } from './components/Header';
+import Container from './components/Container';
+import { MainHeader } from './components/Header';
 
 const MainPage = (Content, title) => (
   class extends Component {
     render() {
       return (
-        <View style={{ flex: 1 }}>
+        <Container>
           <MainHeader 
             navigation={this.props.navigation}
             title={title}/>
           <Content/>
-        </View>
+        </Container>
       );
     }
   }
@@ -34,30 +34,17 @@ const MainPage = (Content, title) => (
 
 const HomeNavigator = new StackNavigator(
   {
-    Dashboard: { 
+    Dashboard: {
       screen : Dashboard,
-      navigationOptions: { header: DashboardHeader }
     },
     FeedEdit: {
       screen: FeedEdit,
-      navigationOptions: { header: FeedEditHeader }
+      path: ':feed/edit'
     },
     PluginEdit: {
       screen: PluginEdit,
-      navigationOptions: { header: PluginEditHeader },
+      path: ':feed/edit/:plugin'
     },
-    // WebContent: {
-    //   screen: WebContent,
-    //   navigationOptions: ({ navigation }) => {
-    //     const { title } = navigation.state.params;
-    //     return {
-    //       title,
-    //       headerStyle: headerStyles.webContentHeader,
-    //       headerTitleStyle: headerStyles.webContentTitle,
-    //       headerTintColor: 'black',
-    //     };
-    //   }
-    // }
   }, {
     initialRouteName: 'Dashboard',
   }
@@ -66,13 +53,16 @@ const HomeNavigator = new StackNavigator(
 const MainNavigator = new DrawerNavigator(
   {
     Home: { 
-      screen: HomeNavigator
+      screen: HomeNavigator,
+      path: 'feed'
     },
     Account: { 
-      screen: MainPage(Account, 'Account') 
+      screen: MainPage(Account, 'Account'),
+      path: 'account'
     },
     About: { 
-      screen: MainPage(About, 'About') 
+      screen: MainPage(About, 'About'),
+      path: 'about'
     },
   }, {
     initialRouteName: 'Home',
@@ -83,13 +73,15 @@ const MainNavigator = new DrawerNavigator(
 export const AppNavigator = new StackNavigator(
   {
     Register: { 
-      screen: Register
+      screen: Register,
+      path: 'register'
     },
     Login: { 
-      screen: Login
+      screen: Login,
+      path: 'login'
     },
     Main: { 
-      screen: MainNavigator
+      screen: MainNavigator,
     },
     Loading: { 
       screen: Loading
@@ -123,11 +115,15 @@ class Navigator extends Component {
   }
 
   componentWillMount() {
-    BackHandler.addEventListener('hardwareBackPress', this._handleBack);
+    if (this.props.backHandler) {
+      this.props.backHandler.addEventListener('hardwareBackPress', this._handleBack);
+    }
   }
 
   componentWillUnmount() {
-    BackHandler.removeEventListener('hardwareBackPress', this._handleBack);
+    if (this.props.backHandler) {
+      this.props.backHandler.removeEventListener('hardwareBackPress', this._handleBack);
+    }
   }
 
   render() {

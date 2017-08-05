@@ -11,7 +11,7 @@ const loadInit = (dispatch, isLoggedIn) => Promise.all([
   isLoggedIn ? dispatch(fetchFeeds()) : true,
 ])
 .catch(err => {
-  if (err.code === 401) {
+  if (err.code === 401 || err.code === 0) {
     dispatch({ type: 'UNSET_USER' });
   }
 });

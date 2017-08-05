@@ -18,6 +18,51 @@
 //     return validUrl.isWebUri(str);
 // };
 
+exports.formatPluginTitle = (plg, item) => {
+  let label;
+  if (plg) {
+    label = plg.label;
+
+    const keys = Object.keys(item.data);
+    if (keys.length > 0) {
+
+      const getPrefix = key => {
+
+        for (let option of plg.options) {
+          if (option.key === key) {
+            return option.prefix || '';
+          }
+        }
+        return '';
+      };
+
+      label += keys.map(key => {
+        const value = item.data[key];
+        if (typeof value === 'string' && value.length > 0) {
+          return ` ${getPrefix(key)}${item.data[key]}`;
+        } else {
+          return '';
+        }
+      }).join('');
+      
+    }
+  } else {
+    label = 'Unknown Plugin';
+  }
+
+  return label;
+};
+
+exports.formatPluginSubtitle = (item) => {
+  let subtitle = ' ';
+  if (item.error) {
+    subtitle = item.error;
+  } else {
+    subtitle = 'Priority: ' + item.priority;
+  }
+  return subtitle;
+}
+
 exports.username = (str) => {
   if (!/^[a-zA-Z0-9]*$/.test(str)) {
     return 'Username can only contain alphanumeric characters';
