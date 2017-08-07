@@ -1,13 +1,14 @@
 import React from 'react';
-import { Text, StyleSheet, View, ToastAndroid, StatusBar } from 'react-native';
-import { Toolbar as _Toolbar } from 'react-native-material-ui';
+import { Text, StyleSheet, View } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 
+import Toolbar from './Toolbar';
 import theme from '../utils/theme';
 import { prompt } from '../utils/prompt';
+import alert from '../utils/alert';
 import { deleteFeed, removePlugin, updateFeed } from '../actions/api';
 
-export const styles = StyleSheet.create({
+const styles = StyleSheet.create({
   webContentHeader: {
     backgroundColor: theme.WHITE,
   },
@@ -19,36 +20,29 @@ export const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: '500',
     color: theme.WHITE,
-    marginRight: 8,
   },
   headerTextContainer: {
     flexDirection: 'row',
     alignItems: 'center',
   },
-  highlight: {
-    // color: theme.ACCENT,
-    borderBottomColor: theme.ACCENT,
+  headerTextBorder: {
     borderBottomWidth: 2,
+    borderBottomColor: 'transparent',
+    marginRight: 8,
+    marginTop: 2,
   },
-
-  statusBar: {
-    height: StatusBar.currentHeight,
-    backgroundColor: theme.PRIMARY_DARK,
+  highlight: {
+    borderBottomColor: theme.ACCENT,
   },
 
 });
 
-const Toolbar = props => (
-  <View>
-    <View style={styles.statusBar}/>
-    <_Toolbar {...props}/>
-  </View>
-);
-
 const HeaderTitle = ({ texts }) => (
   <View style={styles.headerTextContainer}>
     {texts.map(({ title, highlight }) => (
-      <Text numberOfLines={1} key={title} style={[ styles.headerText, highlight ? styles.highlight : null ]}>{title}</Text>
+      <View key={title} style={[styles.headerTextBorder, highlight ? styles.highlight : null]}>
+        <Text numberOfLines={1} style={styles.headerText}>{title}</Text>
+      </View>
     ))}
   </View>
 );
@@ -63,9 +57,9 @@ const promptRename = (oldName, dispatch) => dispatch(prompt({
       dispatch(updateFeed(oldName, newName))
       .catch(err => {
         if (err.code === 400) {
-          ToastAndroid.show('Sorry, invalid feed name', ToastAndroid.SHORT);
+          alert('Sorry, invalid feed name');
         } else if (err.code === 409) {
-          ToastAndroid.show('Sorry, feed name already taken', ToastAndroid.SHORT);
+          alert('Sorry, feed name already taken');
         }
       });
     }
@@ -81,7 +75,7 @@ const handleFeedOptionsPress = (navigation, selectedFeed) => ({ action, index })
     } else if (index === 1) {
       dispatch(deleteFeed(selectedFeed))
       .then(() => {
-        ToastAndroid.show('Feed succesfully deleted', ToastAndroid.SHORT);
+        alert('Feed succesfully deleted');
       }, err => console.log(err));
     }
   }
@@ -97,6 +91,7 @@ const goBack = navigation => () => navigation.dispatch(NavigationActions.back())
 export const DashboardHeader = ({ navigation, scene }) => { 
   const params = scene.route.params,
         selectedFeed = params && params.selectedFeed;
+
   return selectedFeed ? (
     <Toolbar
       leftElement="menu"
@@ -153,7 +148,7 @@ const handleDeletePlugin = (navigation, selectedFeed, id) => () => {
   dispatch(removePlugin(selectedFeed, id))
   .then(() => {
     dispatch(NavigationActions.back());
-    ToastAndroid.show('Plugin succesfully deleted', ToastAndroid.SHORT);
+    alert('Plugin succesfully deleted');
   });
 };
 
@@ -183,5 +178,5 @@ export const MainHeader = ({ navigation, title }) => (
   <Toolbar
     leftElement="menu"
     onLeftElementPress={openDrawer(navigation)}
-    centerElement={title}/>
+    centerElement={<HeaderTitle texts={[{ title: 'Home' }]}/>}/>
 );

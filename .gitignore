@@ -1,6 +1,7 @@
 # Other
 .vscode/
 *.keystore
+cache/
 
 # OSX
 #

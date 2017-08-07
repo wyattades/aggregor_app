@@ -1,6 +1,8 @@
 import React, { PropTypes } from 'react';
-import { Text, View, StyleSheet, KeyboardAvoidingView } from 'react-native';
+import { Text, View, StyleSheet, Platform, KeyboardAvoidingView as NativeKeyboardAvoidingView } from 'react-native';
 import { reduxForm, Field, SubmissionError } from 'redux-form';
+
+const KeyboardAvoidingView = Platform.OS === 'web' ? ({ children }) => <View children={children}/> : NativeKeyboardAvoidingView;
 
 import { createUser } from '../actions/api';
 import format from '../utils/format';
@@ -9,8 +11,6 @@ import theme from '../utils/theme';
   
 const onSubmit = (values, dispatch) => {
   return dispatch(createUser(values))
-  // .then(
-    // () => dispatch(init('Main')), 
     .catch(
     err => {
       console.log(err);

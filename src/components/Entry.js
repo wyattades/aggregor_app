@@ -1,15 +1,18 @@
 import React, { PropTypes, PureComponent } from 'react';
-import { View, Text, StyleSheet, TouchableNativeFeedback, Image, Linking, ToastAndroid, Share } from 'react-native';
-import TimeAgo from 'react-native-timeago';
+import { View, Text, StyleSheet, Image, Linking, Share } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import theme from '../utils/theme';
-import PluginIcon from '../components/PluginIcon';
-
-const getEntryHeight = data => data.thumbnailURL ? 200 : 166;
+import alert from '../utils/alert';
+import PluginIcon from './PluginIcon';
+import TimeAgo from './TimeAgo';
+import Touchable from './Touchable';
 
 const MARGIN = 6;
 const __BLANK__ = '\u00a0';
+
+const getEntryHeight = data => data.thumbnailURL ? 200 : 166;
+export const getRowHeight = data => (data.thumbnailURL ? 200 : 166) + MARGIN;
 
 const styles = StyleSheet.create({
   container: {
@@ -57,17 +60,13 @@ const sharePost = url => () => {
     message: url,
   })
   .then(() => {}) 
-  .catch(() => ToastAndroid.show('Failed to share link', ToastAndroid.SHORT));
+  .catch(() => alert('Failed to share link'));
 };
 
-const ripple = TouchableNativeFeedback.SelectableBackgroundBorderless();
-
 const Link = ({ onPress, style, children, containRipple }) => (
-  <TouchableNativeFeedback onPress={onPress} background={containRipple ? undefined : ripple}>
-    <View style={style}>
-      {children}
-    </View>
-  </TouchableNativeFeedback>
+  <Touchable onPress={onPress} feedback={containRipple ? undefined : 'uncontained'} style={style}>
+    {children}
+  </Touchable>
 );
 
 const pressLink = url => () => {
@@ -75,7 +74,7 @@ const pressLink = url => () => {
 
   Linking.canOpenURL(url).then(supported => {
     if (!supported) {
-      ToastAndroid.show('Can\'t open url: ' + url, ToastAndroid.SHORT);
+      alert('Can\'t open url: ' + url);
       // this.props.navigation.navigate('WebContent', { 
       //   source: item.link,
       //   title: item.title,
@@ -87,7 +86,7 @@ const pressLink = url => () => {
     if (typeof err !== 'string') {
       err = 'Unknown Error';
     }
-    ToastAndroid.show('Web connection error: ' + err, ToastAndroid.SHORT);
+    alert('Web connection error: ' + err);
   });
 };
 
@@ -125,11 +124,11 @@ class Entry extends PureComponent {
           <View style={[styles.flexCol, {justifyContent: 'flex-end'}]}>
             <View style={styles.flexRow}>
               <Link onPress={pressLink(commentURL)} style={styles.flexRow}>
-                <Icon name="comment" size={22} style={{marginRight: 5}}/>
+                <Icon name="comment" size={22} style={{marginRight: 5}} color={theme.TEXT_SECOND}/>
                 <Text style={[styles.secondaryText]}>{commentAmount}</Text>
               </Link>
               <Link onPress={sharePost(link)} style={{marginLeft: 10}}>
-                <Icon name="share" size={22}/>
+                <Icon name="share" size={22} color={theme.TEXT_SECOND}/>
               </Link>
             </View>
           </View>

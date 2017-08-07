@@ -1,13 +1,15 @@
 import React, { PropTypes } from 'react';
-import { ScrollView, View, Text, TouchableNativeFeedback, StyleSheet, ToastAndroid } from 'react-native';
+import { ScrollView, View, Text, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import { NavigationActions } from 'react-navigation';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { createFeed } from '../actions/api';
 import theme from '../utils/theme';
 import { logout } from '../actions/api';
 import { prompt } from '../utils/prompt';
+import alert from '../utils/alert';
+import Touchable from './Touchable';
 
 const styles = StyleSheet.create({
   container: {
@@ -85,7 +87,7 @@ const styles = StyleSheet.create({
 const handleCreateFeed = dispatch => feed => {
   dispatch(createFeed(feed))
   .catch(err => {
-    ToastAndroid.show(err.data, ToastAndroid.LONG);
+    alert(err.data);
   });
 };
 
@@ -112,27 +114,21 @@ const Label = ({ title }) => (
   </View>
 );
 
-const ripple = TouchableNativeFeedback.SelectableBackgroundBorderless();
-
 const NavItem = ({ title, onPress, iconLeft, iconRight, selected, onIconPress }) => (
   <View>
-    <TouchableNativeFeedback onPress={onPress}>
-      <View style={[styles.item, selected ? styles.selectedItem : null]}>
-        {iconLeft ? <Icon name={iconLeft} size={24} style={styles.iconLeft}/> : null}
-        <View style={styles.itemSpacer}>
-          <View style={styles.textWrap}>
-            <Text style={styles.itemText} numberOfLines={1}>{title}</Text>
-          </View>
-          {iconRight ? (
-            <TouchableNativeFeedback onPress={onIconPress} background={ripple}>
-              <View>
-                <Icon name={iconRight} size={24} style={styles.iconRight}/>
-              </View>
-            </TouchableNativeFeedback>
-          ) : null}
+    <Touchable onPress={onPress} style={[styles.item, selected ? styles.selectedItem : null]}>
+      {iconLeft ? <Icon name={iconLeft} size={24} style={styles.iconLeft}/> : null}
+      <View style={styles.itemSpacer}>
+        <View style={styles.textWrap}>
+          <Text style={styles.itemText} numberOfLines={1}>{title}</Text>
         </View>
+        {iconRight ? (
+          <Touchable onPress={onIconPress} feedback="uncontained">
+            <Icon name={iconRight} size={24} style={styles.iconRight}/>
+          </Touchable>
+        ) : null}
       </View>
-    </TouchableNativeFeedback>
+    </Touchable>
   </View>
 );
 
@@ -180,6 +176,7 @@ let Drawer = ({ feeds, navigation, dispatch }) => {
   );
 };
 
+// TODO: component should not be 'smart' (by using connect), only containers
 Drawer = connect(({ feeds }) => ({
   feeds: feeds.keySeq().toArray(),
 }))(Drawer);

@@ -1,5 +1,5 @@
-import React, { PureComponent, PropTypes } from 'react';
-import { StyleSheet, View, FlatList, Text, ActivityIndicator, TouchableNativeFeedback } from 'react-native';
+import React, { Component, PropTypes } from 'react';
+import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
 import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -7,7 +7,11 @@ import { fetchFeed } from '../actions/api';
 import { goHome } from '../actions/navActions';
 import Entry from '../components/Entry';
 import { DashboardHeader } from '../components/Header';
+import InfList from '../components/InfList';
+import Touchable from '../components/Touchable';
 import theme from '../utils/theme';
+
+// TODO: don't allow viewing of NoFeeds???
 
 const styles = StyleSheet.create({
   container: {
@@ -71,37 +75,40 @@ const LoadingIndicator = () => (
 
 
 
-class NonemptyDashboard extends PureComponent {
+class NonemptyDashboard extends Component {
+
+  _page = 1
 
   state = {
     refreshing: false,
-    page: 1,
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.entries.length < this.props.entries.length) {
-      this.entryList.scrollToIndex({ index: 0 });
+      this._entryList.scrollToIndex(0);
     }
   }
 
   _fetchFeed = () => {
     const { dispatch, selectedFeed } = this.props;
-    const page = this.state.page;
 
-    dispatch(fetchFeed(selectedFeed, page))
+    return dispatch(fetchFeed(selectedFeed, this._page))
     .then(() => this.setState({
       refreshing: false,
     }));
   }
 
-  _onRefresh = () => this.setState({ 
-    page: 1,
-    refreshing: true,
-  }, this._fetchFeed);
+  _onRefresh = () => {
+    this._requestMore();
+    this.setState({ 
+      refreshing: true,
+    });
+  }
 
-  _requestMore = () => this.setState({
-    page: this.state.page + 1,
-  }, this._fetchFeed);
+  _requestMore = () => {
+    this._page++;
+    return this._fetchFeed();
+  }
 
   _keyExtractor = item => item.id;
 
@@ -117,19 +124,18 @@ class NonemptyDashboard extends PureComponent {
   }
 
   _renderError = () => (
-    <TouchableNativeFeedback onPress={this._goToError}>
-      <View style={styles.errorView}>
-        <Icon name="error" size={20} color={theme.WHITE}/>
-        <Text style={styles.errorText}>{this.props.errors} plugin{this.props.errors === 1 ? '' : 's'} failed to load</Text>
-      </View>
-    </TouchableNativeFeedback>
+    <Touchable onPress={this._goToError} style={styles.errorView}>
+      <Icon name="error" size={20} color={theme.WHITE}/>
+      <Text style={styles.errorText}>{this.props.errors} plugin{this.props.errors === 1 ? '' : 's'} failed to load</Text>
+    </Touchable>
   );
 
   render() {
     const { entries, errors, loading } = this.props;
+    const RenderError = this._renderError;
     return (
       <View style={styles.container}>
-        <FlatList
+        <InfList
           onRefresh={this._onRefresh}
           refreshing={this.state.refreshing}
           data={entries}
@@ -138,9 +144,9 @@ class NonemptyDashboard extends PureComponent {
           keyExtractor={this._keyExtractor}
           onEndReached={this._requestMore}
           onEndThreshold={4}
-          ref={entryList => { this.entryList = entryList; }}
+          ref={_entryList => { this._entryList = _entryList; }}
         />
-        {errors > 0 ? <this._renderError/> : null}
+        {errors > 0 ? <RenderError/> : null}
       </View>
     );
   }
@@ -182,7 +188,6 @@ Dashboard = connect(({ feeds, plugin_types }, { navigation }) => ({
 Dashboard.navigationOptions = { 
   header: DashboardHeader
 };
-
 
 Dashboard.propTypes = {
   navigation: PropTypes.object.isRequired,

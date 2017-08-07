@@ -1,16 +1,19 @@
 import React, { PropTypes, Component } from 'react';
-import { Text, View, StyleSheet, LayoutAnimation, KeyboardAvoidingView } from 'react-native';
+import { Text, View, StyleSheet, Platform, LayoutAnimation as NativeLayoutAnimation, KeyboardAvoidingView as NativeKeyboardAvoidingView } from 'react-native';
 import { reduxForm, SubmissionError, Field } from 'redux-form';
 
 import { login } from '../actions/api';
 import { AnimatedTextField, SubmitButton, FormError, FormLink } from '../components/Form';
 import theme from '../utils/theme';
   
+// TEMP
+const LayoutAnimation = Platform.OS === 'web' ? { Types: {}, Properties: {}, configureNext: ()=>{} } : NativeLayoutAnimation;
+
+// TODO: figure out better keyboardAvoiding
+const KeyboardAvoidingView = Platform.OS === 'web' ? ({ children }) => <View children={children}/> : NativeKeyboardAvoidingView;
+
 const onSubmit = (values, dispatch) => {
-  return dispatch(login(values))
-  // .then(
-    // () => dispatch(init('Main')),
-    // ()=>{}, 
+  return dispatch(login(values)) 
   .catch(
     err => {
       if (err.code === 401) {

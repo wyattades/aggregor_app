@@ -1,11 +1,13 @@
 import React, { PropTypes } from 'react';
-import { View, Text, TouchableNativeFeedback, StyleSheet, ToastAndroid } from 'react-native';
+import { View, Text, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 
 import theme from '../utils/theme';
 import { deleteUser, updateUser } from '../actions/api';
 import { prompt } from '../utils/prompt';
+import alert from '../utils/alert';
 import { SubmitButton } from '../components/Form';
+import Touchable from '../components/Touchable';
 
 const styles = StyleSheet.create({
   container:{
@@ -48,7 +50,7 @@ const handleDeleteUser = dispatch => () => {
       secureTextEntry: true,
     },
     onSubmit: password => dispatch(deleteUser(password)).catch(() => {
-      ToastAndroid.show('Invalid password provided', ToastAndroid.SHORT);
+      alert('Invalid password provided');
     })
   }));
 };
@@ -61,10 +63,10 @@ const handleChangePassword = dispatch => () => {
       secureTextEntry: true,
     },
     onSubmit: password => dispatch(updateUser({ password })).then(
-      () => ToastAndroid.show('Password successfully changed.', ToastAndroid.SHORT),
+      () => alert('Password successfully changed.'),
       err => {
         if (err.code === 400) {
-          ToastAndroid.show('Sorry, invalid password.', ToastAndroid.SHORT);
+          alert('Sorry, invalid password.');
         } else {
           console.log(err);
         }
@@ -91,11 +93,9 @@ const Account = ({ user, dispatch, navigation }) => (
       <View style={styles.textGroup}>
         <Text style={styles.label}>Password:</Text>
         <Text style={styles.value}>••••••••</Text>
-        <TouchableNativeFeedback onPress={handleChangePassword(dispatch)}>
-          <View>
-            <Text style={styles.link}>Change Password</Text>
-          </View>
-        </TouchableNativeFeedback>
+        <Touchable onPress={handleChangePassword(dispatch)}>
+          <Text style={styles.link}>Change Password</Text>
+        </Touchable>
       </View>
     </View>
     <SubmitButton 

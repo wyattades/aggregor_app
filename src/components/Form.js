@@ -1,8 +1,17 @@
 import React, { PropTypes, PureComponent } from 'react';
-import { View, TextInput, Text, StyleSheet, TouchableNativeFeedback, Slider, Animated, Easing, Picker, ActivityIndicator } from 'react-native';
+import { View, TextInput, Text, StyleSheet, Animated, ActivityIndicator, Easing } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
+import Touchable from './Touchable';
+import Picker from './Picker';
+import Slider from './Slider';
 import theme from '../utils/theme';
+
+// TODO: fix styles for web
+// - labels too low
+// - abrupt error msgs???
+// - SubmitButton margin is inside touchable
+// - Loading animations
 
 const styles = StyleSheet.create({
   inputGroup: {
@@ -230,6 +239,8 @@ const TextField = ({ input: { onChange, ...restInput }, meta: { error, touched }
   );
 };
 
+const easing = Easing.out(Easing.ease);
+
 class AnimatedTextField extends PureComponent {
 
   static propTypes = {
@@ -252,7 +263,7 @@ class AnimatedTextField extends PureComponent {
     {
       toValue,
       duration: 300,
-      easing: Easing.out(Easing.ease),
+      easing,
     }
   ).start();
 
@@ -304,18 +315,23 @@ class AnimatedTextField extends PureComponent {
   }
 }
 
-const ripple = TouchableNativeFeedback.SelectableBackground(),
-  noRipple = TouchableNativeFeedback.Ripple('transparent');
-
 const SubmitButton = ({ title, onPress, submitting, submitSucceeded, disabled, style = null }) => (
-  <TouchableNativeFeedback onPress={disabled ? null : onPress} background={disabled ? noRipple : ripple}>
-    <View style={[styles.button, disabled ? styles.disabled : null, style]}>
-      { submitting ? <ActivityIndicator color={theme.WHITE}/> : null }
-      { submitSucceeded ? <Icon name="check" color={theme.WHITE} size={24}/> : null }
-      <Text style={styles.buttonText}>{title}</Text>
-    </View>
-  </TouchableNativeFeedback>
+  <Touchable style={[styles.button, disabled ? styles.disabled : null, style]} onPress={onPress}>
+    { submitting ? <ActivityIndicator color={theme.WHITE}/> : null }
+    { submitSucceeded ? <Icon name="check" color={theme.WHITE} size={24}/> : null }
+    <Text style={styles.buttonText}>{title}</Text>
+  </Touchable>
 );
+
+// const SubmitButton = ({ title, onPress, submitting, submitSucceeded, disabled, style = null }) => (
+//   <TouchableHighlight onPress={onPress}>
+//     <View style={[styles.button, disabled ? styles.disabled : null, style]}>
+//       { submitting ? <ActivityIndicator color={theme.WHITE}/> : null }
+//       { submitSucceeded ? <Icon name="check" color={theme.WHITE} size={24}/> : null }
+//       <Text style={styles.buttonText}>{title}</Text>
+//     </View>
+//   </TouchableHighlight>
+// );
 
 SubmitButton.propTypes = {
   title: PropTypes.string.isRequired,
@@ -345,11 +361,9 @@ FormError.propTypes = {
 };
 
 const FormLink = ({ title, onPress }) => (
-  <TouchableNativeFeedback onPress={onPress}>
-    <View style={styles.formLinkContainer}>
-      <Text style={styles.formLink}>{title}</Text>
-    </View>
-  </TouchableNativeFeedback>
+  <Touchable onPress={onPress} style={styles.formLinkContainer}>
+    <Text style={styles.formLink}>{title}</Text>
+  </Touchable>
 );
 
 FormLink.propTypes = {

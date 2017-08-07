@@ -1,5 +1,4 @@
-import { ToastAndroid } from 'react-native';
-
+import alert from '../utils/alert';
 import { fetchFeeds, fetchUser, fetchAvailablePlugins } from '../actions/api';
 import { setFeed } from '../actions/navActions';
 
@@ -35,7 +34,7 @@ export default store => next => action => {
       store.dispatch(setFeed(action.feed, true));
       break;
     case 'NETWORK_ERROR':
-      ToastAndroid.show('Failed to connect to Aggregor server. Please try again later.', ToastAndroid.SHORT);
+      alert('Failed to connect to Aggregor server. Please try again later.');
       break;
     default:
       break;

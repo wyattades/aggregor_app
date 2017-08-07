@@ -1,13 +1,14 @@
 import React, { Component, PropTypes } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableNativeFeedback } from 'react-native';
+import { View, Text, ScrollView, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
-import { ActionButton } from 'react-native-material-ui';
 
 import theme from '../utils/theme';
 import { formatPluginTitle, formatPluginSubtitle } from '../utils/format';
 import PluginIcon from '../components/PluginIcon';
 import { Message, MessageView } from '../components/Message';
 import { FeedEditHeader } from '../components/Header';
+import ActionButton from '../components/ActionButton';
+import Touchable from '../components/Touchable';
 
 const styles = StyleSheet.create({
   container: {
@@ -54,15 +55,13 @@ class FeedEdit extends Component {
           subtitle = formatPluginSubtitle(item);
 
     return (
-      <TouchableNativeFeedback key={item.id} onPress={this._editPlugin(item)}>
-        <View style={styles.item}>
-          <PluginIcon plugin={plg} size={40}/>
-          <View style={styles.textView}>
-            <Text style={[styles.title]} numberOfLines={1}>{title}</Text>
-            <Text style={[styles.subtitle, item.error ? styles.error : null]} numberOfLines={1}>{subtitle}</Text>
-          </View>
+      <Touchable key={item.id} onPress={this._editPlugin(item)} style={styles.item}>
+        <PluginIcon plugin={plg} size={40}/>
+        <View style={styles.textView}>
+          <Text style={[styles.title]} numberOfLines={1}>{title}</Text>
+          <Text style={[styles.subtitle, item.error ? styles.error : null]} numberOfLines={1}>{subtitle}</Text>
         </View>
-      </TouchableNativeFeedback>
+      </Touchable>
     );
   }
 
