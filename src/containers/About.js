@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import theme from '../utils/theme';
 
-const styles = StyleSheet.create({ 
+const styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     marginHorizontal: 16,
     marginTop: 6,
-  }
+  },
 });
 
 const About = ({ plugin_array }) => (
@@ -36,21 +36,27 @@ const About = ({ plugin_array }) => (
     <View>
       <View style={styles.textGroup}>
         <Text style={styles.title}>The Idea:</Text>
-        <Text style={styles.text}>A method for viewing all of your news/social media feeds in one place.</Text>
+        <Text style={styles.text}>A method for viewing all of your news and social media feeds in one place.</Text>
       </View>
       <View style={styles.textGroup}>
-        <Text style={styles.title}>Supported News Sources*:</Text>
-        {plugin_array.map(plugin => 
-          <Text style={styles.text} key={plugin.type}>• {plugin.label}</Text>
+        <Text style={styles.title}>Supported Sources*:</Text>
+        {plugin_array.map(plugin =>
+          <Text style={styles.text} key={plugin.type}>• {plugin.label}</Text>,
         )}
       </View>
       <View style={styles.textGroup}>
         <Text style={styles.title}>Created By:</Text>
-        <Text style={styles.text}>• Wyatt Ades (UI and Backend)</Text>
+        <Text style={styles.text}>• Wyatt Ades</Text>
+      </View>
+      <View style={styles.textGroup}>
+        <Text style={styles.title}>With help from:</Text>
         <Text style={styles.text}>• Lee White (UI)</Text>
+        <Text style={styles.text}>• Spenser Williams (backend)</Text>
       </View>
     </View>
-    <Text style={styles.noteText}>*Aggregor is a proof of concept app and may or may not support more sources in the future</Text>
+    <Text style={styles.noteText}>
+      *Aggregor is a proof of concept app and may or may not support more sources in the future
+    </Text>
   </View>
 );
 

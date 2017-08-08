@@ -2,34 +2,40 @@ import { NavigationActions } from 'react-navigation';
 
 import { AppNavigator } from '../navigator';
 
-const goLogin = (params = {}) => NavigationActions.reset({ 
-  index: 0, 
-  actions: [ NavigationActions.navigate({ routeName: 'Login', params }) ] 
-});
+const goLogin = (params = {}) =>
+  NavigationActions.reset({
+    index: 0,
+    actions: [NavigationActions.navigate({ routeName: 'Login', params })],
+  });
 
 const goHome = (selectedFeed, goToEdit) => {
-
-  const homeActions = [ NavigationActions.navigate({
-    routeName: 'Dashboard',
-    params: { selectedFeed },
-  }) ];
+  const homeActions = [
+    NavigationActions.navigate({
+      routeName: 'Dashboard',
+      params: { selectedFeed },
+    }),
+  ];
 
   if (goToEdit) {
-    homeActions.push(NavigationActions.navigate({
-      routeName: 'FeedEdit',
-      params: { selectedFeed },
-    }));
+    homeActions.push(
+      NavigationActions.navigate({
+        routeName: 'FeedEdit',
+        params: { selectedFeed },
+      }),
+    );
   }
-  
-  return NavigationActions.reset({ 
-    index: 0, 
-    actions: [ NavigationActions.navigate({ 
-      routeName: 'Main', 
-      action: NavigationActions.reset({
-        index: goToEdit ? 1 : 0,
-        actions: homeActions,
-      }) 
-    }) ] 
+
+  return NavigationActions.reset({
+    index: 0,
+    actions: [
+      NavigationActions.navigate({
+        routeName: 'Main',
+        action: NavigationActions.reset({
+          index: goToEdit ? 1 : 0,
+          actions: homeActions,
+        }),
+      }),
+    ],
   });
 };
 
@@ -56,7 +62,6 @@ const goHome = (selectedFeed, goToEdit) => {
 export default (state, action) => {
   let nextState;
   switch (action.type) {
-
     // Prevent duplicate route transitions
     // case 'Navigation/NAVIGATE':
     //   const { routes, index } = state;
@@ -74,11 +79,11 @@ export default (state, action) => {
     //       nextState = AppNavigator.router.getStateForAction(action, state);
     //   }
     //   break;
-    
+
     case 'persist/REHYDRATE':
       const isLoggedIn = action.payload && action.payload.user && action.payload.user.isLoggedIn === true;
       if (!isLoggedIn) {
-        nextState = AppNavigator.router.getStateForAction(goLogin({ init: true }));   
+        nextState = AppNavigator.router.getStateForAction(goLogin({ init: true }));
       } else {
         nextState = AppNavigator.router.getStateForAction(action, state);
       }

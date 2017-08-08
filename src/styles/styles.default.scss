@@ -18,8 +18,14 @@ html, body, body * {
 input[type=text], 
 input[type=password], 
 input[type=email] {
-  outline: none;
+  outline: none; 
 }
+// .button,
+// button,
+// input[type=button],
+// input[type=submit] {
+//   outline-color: white;
+// }
 
 // TODO: Slider styles
 $range: #03A9F4;

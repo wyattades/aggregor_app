@@ -19,32 +19,49 @@ function getAction(router, path, params) {
 export default NavigationAwareView => {
   const initialAction = getAction(
     NavigationAwareView.router,
-    window.location.pathname.substr(1)
+    window.location.pathname.substr(1),
   );
   const initialState = NavigationAwareView.router.getStateForAction(
-    initialAction
+    initialAction,
   );
   console.log({ initialAction, initialState });
 
   class NavigationContainer extends React.Component {
+
+    static childContextTypes = {
+      getActionForPathAndParams: PropTypes.func.isRequired,
+      getURIForAction: PropTypes.func.isRequired,
+      dispatch: PropTypes.func.isRequired,
+    };
+
     state = initialState;
+
+    getChildContext() {
+      return {
+        getActionForPathAndParams: this.getActionForPathAndParams,
+        getURIForAction: this.getURIForAction,
+        dispatch: this.dispatch,
+      };
+    }
+
     componentDidMount() {
       const navigation = addNavigationHelpers({
         state: this.state.routes[this.state.index],
         dispatch: this.dispatch,
       });
       document.title = NavigationAwareView.router.getScreenOptions(
-        navigation
+        navigation,
       ).title;
       window.onpopstate = e => {
         e.preventDefault();
         const action = getAction(
           NavigationAwareView.router,
-          window.location.pathname.substr(1)
+          window.location.pathname.substr(1),
         );
         if (action) this.dispatch(action);
       };
     }
+
     componentWillUpdate(props, state) {
       const {
         path,
@@ -60,21 +77,35 @@ export default NavigationAwareView => {
         dispatch: this.dispatch,
       });
       document.title = NavigationAwareView.router.getScreenOptions(
-        navigation
+        navigation,
       ).title;
     }
+
     componentDidUpdate() {
       const { params } = NavigationAwareView.router.getPathAndParamsForState(
-        this.state
+        this.state,
       );
       if (params && params.hash) {
         document.getElementById(params.hash).scrollIntoView();
       }
     }
+
+    getActionForPathAndParams = (path, params) => NavigationAwareView.router.getActionForPathAndParams(path, params);
+
+    getURIForAction = action => {
+      const state =
+        NavigationAwareView.router.getStateForAction(action, this.state) ||
+        this.state;
+      const { path } = NavigationAwareView.router.getPathAndParamsForState(
+        state,
+      );
+      return `/${path}`;
+    };
+
     dispatch = action => {
       const state = NavigationAwareView.router.getStateForAction(
         action,
-        this.state
+        this.state,
       );
 
       if (!state) {
@@ -112,30 +143,6 @@ export default NavigationAwareView => {
           })}
         />
       );
-    }
-    getURIForAction = action => {
-      const state =
-        NavigationAwareView.router.getStateForAction(action, this.state) ||
-        this.state;
-      const { path } = NavigationAwareView.router.getPathAndParamsForState(
-        state
-      );
-      return `/${path}`;
-    };
-    getActionForPathAndParams = (path, params) => {
-      return NavigationAwareView.router.getActionForPathAndParams(path, params);
-    };
-    static childContextTypes = {
-      getActionForPathAndParams: PropTypes.func.isRequired,
-      getURIForAction: PropTypes.func.isRequired,
-      dispatch: PropTypes.func.isRequired,
-    };
-    getChildContext() {
-      return {
-        getActionForPathAndParams: this.getActionForPathAndParams,
-        getURIForAction: this.getURIForAction,
-        dispatch: this.dispatch,
-      };
     }
   }
   return NavigationContainer;

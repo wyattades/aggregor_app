@@ -13,13 +13,13 @@ const styles = StyleSheet.create({
 class Container extends Component {
 
   state = {
-    large: Dimensions.get('screen').width > this.props.testWidth
+    large: Dimensions.get('screen').width > this.props.testWidth,
   }
 
   _onLayout = ({ nativeEvent: { layout: { width } } }) => {
     if ((width > this.props.testWidth && !this.state.large) || (width <= this.props.testWidth && this.state.large)) {
       this.setState({
-        large: !this.state.large
+        large: !this.state.large,
       });
     }
   }
@@ -29,9 +29,10 @@ class Container extends Component {
     const { adjust, children, style } = this.props;
     const _style = Array.isArray(style) ? style : [style];
 
-    const inner = this.state.large ? 
-      (adjust <= 1 ? { flex: adjust } : { maxWidth: adjust, flex: 1 }) : 
-      { flex: 1 };
+    const inner = {
+      flex: (this.state.large && adjust <= 1) ? adjust : 1,
+      maxWidth: (this.state.large && adjust > 1) && adjust,
+    };
 
     return (
       <View style={[ styles.outer ]} onLayout={this._onLayout}>

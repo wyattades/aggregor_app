@@ -52,6 +52,7 @@ import { getRowHeight } from './Entry';
 
 class InfList extends Component {
 
+  // TODO
   scrollToIndex = index => {}
 
   _isRowLoaded = ({ index }) => !!this.props.data[index];// !this.props.hasNextPage || index < this.props.data.length;

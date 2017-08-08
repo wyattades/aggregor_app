@@ -10,7 +10,7 @@ class FlatList extends Component {
 
   scrollToIndex = index => this._list.scrollTo({ x: index })
 
-  _renderRow = (rowData, sectionID, rowID, highlightRow) => (
+  _renderRow = (rowData) => (
     <this.props.renderItem item={rowData}/>
   )
 
@@ -30,7 +30,7 @@ class FlatList extends Component {
           />
         }
         renderFooter={ListFooterComponent}
-        enableEmptySections={true}
+        enableEmptySections
         renderSectionHeader={() => null}
         initialListSize={15}
         onEndReached={onEndReached}

@@ -3,7 +3,7 @@ import { TouchableNativeFeedback, TouchableOpacity, View, Platform, StyleSheet }
 
 const extractMargins = ({ marginTop, marginLeft, marginRight, marginBottom, margin, ...otherStyles }) => [
   { marginTop, marginLeft, marginRight, marginBottom, margin },
-  { ...otherStyles }
+  { ...otherStyles },
 ];
 
 const WebTouchable = ({ onPress, feedback, style = {}, ...rest }) => {
@@ -24,7 +24,14 @@ const WebTouchable = ({ onPress, feedback, style = {}, ...rest }) => {
   );
 };
 
-const IosTouchable = WebTouchable;
+const IosTouchable = ({ feedback, onPress, ...rest }) => (
+  <TouchableOpacity
+    onPress={onPress}
+    activeOpacity={0.8}
+    focusedOpacity={0.8}>
+    <View {...rest}/>
+  </TouchableOpacity>
+);
 
 const getBackground = (type = 'contained') => {
   if (type === 'uncontained') {
@@ -37,11 +44,11 @@ const getBackground = (type = 'contained') => {
 };
 
 const AndroidTouchable = ({ feedback, onPress, ...rest }) => (
-  <TouchableNativeFeedback 
+  <TouchableNativeFeedback
     background={getBackground(feedback)}
     onPress={onPress}>
     <View {...rest}/>
-  </TouchableNativeFeedback>  
+  </TouchableNativeFeedback>
 );
 
 export default Platform.select({

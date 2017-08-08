@@ -10,6 +10,7 @@ let prompt;
 if (Platform.OS === 'web') {
 
   prompt = options => dispatch => {
+    // TEMP
     let value = window.prompt(options.title);
     if (value) {
       options.onSubmit(value);
@@ -22,6 +23,7 @@ if (Platform.OS === 'web') {
 
   prompt = options => dispatch => dispatch({ type: 'SET_PROMPT', options });
 
+  // eslint-disable-next-line global-require
   const Prompt = require('react-native-prompt').default;
 
   PromptView = ({ dispatch, options: { onSubmit, onCancel, title, textInputProps = {}, ...rest } }) => {
@@ -35,8 +37,8 @@ if (Platform.OS === 'web') {
     };
 
     return (
-      <Prompt 
-        {...rest} 
+      <Prompt
+        {...rest}
         title={title || ''}
         onSubmit={handleSubmit}
         onCancel={handleCancel}

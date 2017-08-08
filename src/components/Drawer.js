@@ -5,9 +5,8 @@ import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import { createFeed } from '../actions/api';
+import { createFeed, logout } from '../actions/api';
 import theme from '../utils/theme';
-import { logout } from '../actions/api';
 import { prompt } from '../utils/prompt';
 import alert from '../utils/alert';
 import Touchable from './Touchable';
@@ -22,15 +21,15 @@ const styles = StyleSheet.create({
   divider: {
     borderTopColor: theme.SUPPORT,
     borderTopWidth: 1,
-    marginVertical: 12
+    marginVertical: 12,
   },
 
   labelText: {
     color: theme.TEXT_SECOND,
-    fontWeight: '500'
+    fontWeight: '500',
   },
   labelView: {
-    height: 40
+    height: 40,
   },
 
   item: {
@@ -55,7 +54,7 @@ const styles = StyleSheet.create({
     marginRight: 4,
   },
   selectedItem: {
-    backgroundColor: theme.SUPPORT
+    backgroundColor: theme.SUPPORT,
   },
   iconLeft: {
     color: theme.ACCENT,
@@ -77,7 +76,7 @@ const styles = StyleSheet.create({
   billboardTitle: {
     fontSize: 48,
     fontWeight: '700',
-    color: theme.PRIMARY_DARK
+    color: theme.PRIMARY_DARK,
   },
   billboardSubtitle: {
     fontWeight: '500',
@@ -98,7 +97,7 @@ const promptNewFeed = navigation => () => {
     title: 'Create New Feed',
     placeholder: 'Name',
     submitText: 'Create',
-    onSubmit: handleCreateFeed(navigation.dispatch)
+    onSubmit: handleCreateFeed(navigation.dispatch),
   }));
 };
 
@@ -134,18 +133,18 @@ const NavItem = ({ title, onPress, iconLeft, iconRight, selected, onIconPress })
 );
 
 const goToFeed = (selectedFeed, dispatch) => () => dispatch(NavigationActions.reset({
-  index: 0, 
+  index: 0,
   actions: [
     NavigationActions.navigate({ routeName: 'Dashboard', params: { selectedFeed } }),
-  ]
+  ],
 }));
 
 const goToFeedEdit = (selectedFeed, dispatch) => () => dispatch(NavigationActions.reset({
-  index: 1, 
+  index: 1,
   actions: [
     NavigationActions.navigate({ routeName: 'Dashboard', params: { selectedFeed } }),
     NavigationActions.navigate({ routeName: 'FeedEdit', params: { selectedFeed } }),
-  ]
+  ],
 }));
 
 const navigate = (navigation, screen) => () => navigation.navigate(screen);
@@ -164,13 +163,26 @@ let Drawer = ({ feeds, navigation, dispatch }) => {
       <View style={styles.divider}/>
       <Label title="My Feeds"/>
       {feeds.map(feed => (
-        <NavItem title={feed} iconLeft="label" iconRight="edit" selected={index === 0 && feed === selectedFeed} key={feed} 
+        <NavItem
+          title={feed}
+          iconLeft="label"
+          iconRight="edit"
+          selected={index === 0 && feed === selectedFeed}
+          key={feed}
           onPress={goToFeed(feed, dispatch)}
           onIconPress={goToFeedEdit(feed, dispatch)}/>
       ))}
-      <NavItem title="Create new feed" iconLeft="add" selected={selected('NewFeed')} onPress={promptNewFeed(navigation)}/>
+      <NavItem
+        title="Create new feed"
+        iconLeft="add"
+        selected={selected('NewFeed')}
+        onPress={promptNewFeed(navigation)}/>
       <View style={styles.divider}/>
-      <NavItem title="Account" iconLeft="account-circle" selected={selected('Account')} onPress={navigate(navigation, 'Account')}/>
+      <NavItem
+        title="Account"
+        iconLeft="account-circle"
+        selected={selected('Account')}
+        onPress={navigate(navigation, 'Account')}/>
       <NavItem title="About" iconLeft="info" selected={selected('About')} onPress={navigate(navigation, 'About')}/>
       <NavItem title="Logout" iconLeft="exit-to-app" onPress={handleLogout(dispatch)}/>
     </ScrollView>

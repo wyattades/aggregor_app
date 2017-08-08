@@ -4,10 +4,10 @@ import { View, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 import { reduxForm, SubmissionError, Field, FormSection, formValueSelector } from 'redux-form';
 
-import { PickerField, TextField, SliderField, SubmitButton, FormError } from '../components/Form'; 
+import { PickerField, TextField, SliderField, SubmitButton, FormError } from '../components/Form';
 import { PluginEditHeader } from '../components/Header';
 import { savePlugin } from '../actions/api';
-import { pluginRecord } from '../utils/records';
+import { PluginRecord } from '../utils/records';
 
 const styles = StyleSheet.create({
   container: {
@@ -16,26 +16,25 @@ const styles = StyleSheet.create({
 });
 
 class PluginEdit extends Component {
-
   _onSubmit = values => {
     const { selectedFeed, dispatch, id, navigation } = this.props;
 
     const keys = Object.keys(values.data);
     for (let i = 0; i < keys.length; i++) {
-      const key = keys[i], value = values.data[key];
+      const key = keys[i],
+            value = values.data[key];
       if (typeof value === 'string' && value.length === 0) {
         delete values.data[key];
       }
     }
 
-    return dispatch(savePlugin(selectedFeed, values, id))
-      .then(
-        () => navigation.goBack(), 
-        err => {
-          console.log('pluginErr: ', err);
-          throw new SubmissionError({ _error: err.data });
-        }
-      );
+    return dispatch(savePlugin(selectedFeed, values, id)).then(
+      () => navigation.goBack(),
+      err => {
+        console.log('pluginErr: ', err);
+        throw new SubmissionError({ _error: err.data });
+      },
+    );
   };
 
   render() {
@@ -44,22 +43,29 @@ class PluginEdit extends Component {
 
     return (
       <View style={styles.container}>
-        {error ? <FormError error={error}/> : null}
-        <Field name="type" label="Type" values={plugin_array} component={PickerField}/>
+        {error ? <FormError error={error} /> : null}
+        <Field name="type" label="Type" values={plugin_array} component={PickerField} />
         <FormSection name="data">
           <View>
-            {pluginOptions.map(option => (
-              <Field key={option.key} name={option.key} label={option.label} optional={option.default !== undefined} component={TextField}/>
-            ))}
+            {pluginOptions.map(option =>
+              (<Field
+                key={option.key}
+                name={option.key}
+                label={option.label}
+                optional={option.default !== undefined}
+                component={TextField}
+              />),
+            )}
           </View>
         </FormSection>
-        <Field name="priority" label="Priority" min={0.0} max={1.0} step={0.1} component={SliderField}/>
-        <SubmitButton 
-          title="SAVE" 
+        <Field name="priority" label="Priority" min={0.0} max={1.0} step={0.1} component={SliderField} />
+        <SubmitButton
+          title="SAVE"
           disabled={pristine && !newPlugin}
           onPress={handleSubmit(this._onSubmit)}
           submitting={submitting}
-          submitSucceeded={submitSucceeded}/>
+          submitSucceeded={submitSucceeded}
+        />
       </View>
     );
   }
@@ -68,10 +74,10 @@ class PluginEdit extends Component {
 PluginEdit = reduxForm({
   form: 'pluginEdit',
   validate: (values, props) => {
-    let errors = {};
+    const errors = {};
 
     if (!props.plg) {
-      errors._error = 'Bad plugin type: ' + values.type;
+      errors._error = `Bad plugin type: ${values.type}`;
       return errors;
     }
 
@@ -81,14 +87,14 @@ PluginEdit = reduxForm({
       const option = options[i];
       const value = values.data[option.key];
       if (option.default === undefined && (value === undefined || value.length === 0)) {
-        errors[option.key] = option.label + ' is required';
+        errors[option.key] = `${option.label} is required`;
       } else if (typeof value === 'string' && value.length > 0 && !value.match(option.regex)) {
-        errors[option.key] = 'Invalid ' + option.label;
+        errors[option.key] = `Invalid ${option.label}`;
       }
     }
 
     return { data: errors };
-  }
+  },
 })(PluginEdit);
 
 const selector = formValueSelector('pluginEdit');
@@ -99,7 +105,7 @@ PluginEdit = connect((state, ownProps) => {
 
   let newPlugin;
   if (!plugin) {
-    plugin = new pluginRecord({});
+    plugin = new PluginRecord({});
     newPlugin = true;
   }
 
@@ -108,7 +114,7 @@ PluginEdit = connect((state, ownProps) => {
 
   const pluginOptions = plg.options;
 
-  let data = {};
+  const data = {};
   for (let i = 0; i < pluginOptions.length; i++) {
     const option = pluginOptions[i];
     data[option.key] = plugin.data[option.key] || option.default;
@@ -129,7 +135,7 @@ PluginEdit = connect((state, ownProps) => {
 })(PluginEdit);
 
 PluginEdit.navigationOptions = {
-  header: PluginEditHeader
+  header: PluginEditHeader,
 };
 
 PluginEdit.propTypes = {
@@ -143,9 +149,9 @@ PluginEdit.propTypes = {
           priority: PropTypes.number.isRequired,
           data: PropTypes.object.isRequired,
         }),
-      }).isRequired
-    }).isRequired
-  }).isRequired
+      }).isRequired,
+    }).isRequired,
+  }).isRequired,
 };
 
 export default PluginEdit;

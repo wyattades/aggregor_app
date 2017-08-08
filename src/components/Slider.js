@@ -5,10 +5,12 @@ let Slider;
 
 if (Platform.OS === 'web') {
 
-  Slider = ({ value, minimumValue, maximumValue, minimumTrackTintColor, maximumTrackTintColor, thumbTintColor, step, style, onValueChange }) => {
+  Slider = ({
+    value, minimumValue, maximumValue, minimumTrackTintColor,
+    maximumTrackTintColor, thumbTintColor, step, style, onValueChange,
+  }) => {
 
     const onChange = e => {
-      // e.preventDefault();
       let val = e.target.value;
       console.log(val);
       if (isNaN(val)) {
@@ -19,13 +21,13 @@ if (Platform.OS === 'web') {
 
     return (
       <View style={[style]}>
-        <input 
+        <input
           className="slider"
-          type="range" 
-          defaultValue={value} 
-          min={minimumValue} 
-          max={maximumValue} 
-          step={step}  
+          type="range"
+          defaultValue={value}
+          min={minimumValue}
+          max={maximumValue}
+          step={step}
           onChange={onChange}/>
       </View>
     );

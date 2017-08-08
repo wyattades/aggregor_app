@@ -1,33 +1,37 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Text, View, StyleSheet, Platform, LayoutAnimation as NativeLayoutAnimation, KeyboardAvoidingView as NativeKeyboardAvoidingView } from 'react-native';
+import { Text, View, StyleSheet, Platform,
+  LayoutAnimation as NativeLayoutAnimation,
+  KeyboardAvoidingView as NativeKeyboardAvoidingView } from 'react-native';
 import { reduxForm, SubmissionError, Field } from 'redux-form';
 
 import { login } from '../actions/api';
 import { AnimatedTextField, SubmitButton, FormError, FormLink } from '../components/Form';
 import theme from '../utils/theme';
 import Container from '../components/Container';
-  
+
 // TEMP
-const LayoutAnimation = Platform.OS === 'web' ? { Types: {}, Properties: {}, configureNext: ()=>{} } : NativeLayoutAnimation;
+const LayoutAnimation = Platform.OS === 'web' ?
+  { Types: {}, Properties: {}, configureNext: () => {} } :
+  NativeLayoutAnimation;
 
 // TODO: figure out better keyboardAvoiding
-const KeyboardAvoidingView = Platform.OS === 'web' ? ({ children }) => <View children={children}/> : NativeKeyboardAvoidingView;
+const KeyboardAvoidingView = Platform.OS === 'web' ?
+  ({ children }) => <View children={children}/> :
+  NativeKeyboardAvoidingView;
 
-const onSubmit = (values, dispatch) => {
-  return dispatch(login(values)) 
-  .catch(
-    err => {
-      if (err.code === 401) {
-        throw new SubmissionError({ _error: 'Invalid username or password' });
-      } else if (err.code === 0) {
-        throw new SubmissionError({ _error: 'Failed to connect to the Aggregor server' });
-      } else {
-        throw new SubmissionError({ _error: err.data || 'An unknown error occurred. Please try again later.' });
-      }
+const onSubmit = (values, dispatch) =>
+  dispatch(login(values))
+  .catch(err => {
+    if (err.code === 401) {
+      throw new SubmissionError({ _error: 'Invalid username or password' });
+    } else if (err.code === 0) {
+      throw new SubmissionError({ _error: 'Failed to connect to the Aggregor server' });
+    } else {
+      throw new SubmissionError({ _error: err.data || 'An unknown error occurred. Please try again later.' });
     }
-  );
-};
+  });
+
 
 const styles = StyleSheet.create({
   background: {
@@ -77,7 +81,7 @@ class Login extends Component {
       setTimeout(() => {
         LayoutAnimation.configureNext(animation);
         this.setState({
-          show: true
+          show: true,
         });
       });
     }
@@ -105,8 +109,12 @@ class Login extends Component {
             <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={80}>
               { _error ? <FormError error={_error}/> : null }
               <Field label="Username" name="username" component={AnimatedTextField}/>
-              <Field label="Password" secureTextEntry={true} name="password" component={AnimatedTextField}/>
-              <SubmitButton title="SIGN IN" onPress={handleSubmit(onSubmit)} submitting={submitting} submitSucceeded={submitSucceeded}/>
+              <Field label="Password" secureTextEntry name="password" component={AnimatedTextField}/>
+              <SubmitButton
+                title="SIGN IN"
+                onPress={handleSubmit(onSubmit)}
+                submitting={submitting}
+                submitSucceeded={submitSucceeded}/>
             </KeyboardAvoidingView>
           ) : null }
           { this.state.show ? (
@@ -120,12 +128,11 @@ class Login extends Component {
 
 Login.propTypes = {
   navigation: PropTypes.object.isRequired,
-  apiError: PropTypes.object
 };
 
 export default reduxForm({
   form: 'login',
-  validate: values => {
+  validate: (values) => {
     const errors = {};
 
     if (!values.username) {
@@ -137,5 +144,5 @@ export default reduxForm({
     }
 
     return errors;
-  }
+  },
 })(Login);

@@ -5,7 +5,7 @@ import timeago from 'timeago.js';
 class TimeAgo extends Component {
 
   state = {
-    date: new Date()
+    date: new Date(),
   }
 
   componentDidMount() {
@@ -17,7 +17,7 @@ class TimeAgo extends Component {
   }
 
   _tick = () => this.setState({
-    date: new Date()
+    date: new Date(),
   });
   
   render() {

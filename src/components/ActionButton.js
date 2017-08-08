@@ -38,6 +38,7 @@ if (Platform.OS === 'web') {
   );
 
 } else {
+  // eslint-disable-next-line global-require
   ActionButton = require('react-native-material-ui').ActionButton;
 }
 

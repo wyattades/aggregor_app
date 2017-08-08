@@ -1,8 +1,8 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { View, Text, Platform, StatusBar, StyleSheet } from 'react-native';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import Touchable from './Touchable';
-import Icon from 'react-native-vector-icons/MaterialIcons';
 import theme from '../utils/theme';
 
 const styles = StyleSheet.create({
@@ -60,36 +60,34 @@ if (Platform.OS === 'web') {
     }
   };
 
-  class _Toolbar extends Component {
-  
-    render() {
+  const _Toolbar = () => {
 
-      let {
-        leftElement,
-        onLeftElementPress,
-        centerElement,
-        rightElement,
-        onRightElementPress,
-      } = this.props;
+    let {
+      leftElement,
+      onLeftElementPress,
+      centerElement,
+      rightElement,
+      onRightElementPress,
+    } = this.props;
 
-      leftElement = iconFactory(leftElement, onLeftElementPress);
-      centerElement = textFactory(centerElement);
-      rightElement = iconFactory(rightElement, onRightElementPress);
+    leftElement = iconFactory(leftElement, onLeftElementPress);
+    centerElement = textFactory(centerElement);
+    rightElement = iconFactory(rightElement, onRightElementPress);
 
-      return (
-        <View style={styles.container}>
-          {leftElement}
-          {centerElement}
-          {rightElement}
-        </View>
-      );
-    }
-  }
+    return (
+      <View style={styles.container}>
+        {leftElement}
+        {centerElement}
+        {rightElement}
+      </View>
+    );
+  };
 
   Toolbar = _Toolbar;
 
 } else {
 
+  // eslint-disable-next-line global-require
   const _Toolbar = require('react-native-material-ui').Toolbar;
 
   // We need space for the statusBar to sit above the Toolbar

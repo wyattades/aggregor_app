@@ -58,10 +58,10 @@ exports.formatPluginSubtitle = (item) => {
   if (item.error) {
     subtitle = item.error;
   } else {
-    subtitle = 'Priority: ' + item.priority;
+    subtitle = `Priority: ${item.priority}`;
   }
   return subtitle;
-}
+};
 
 exports.username = (str) => {
   if (!/^[a-zA-Z0-9]*$/.test(str)) {
@@ -82,6 +82,7 @@ exports.password = (str) => {
 };
 
 exports.email = (str) => {
+  // eslint-disable-next-line
   if (!/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(str)) {
     return 'Please enter a valid email';
   } else {
@@ -89,11 +90,7 @@ exports.email = (str) => {
   }
 };
 
-exports.name = (str) => {
-  return /^[a-zA-Z-]*$/.test(str);
-};
+exports.name = (str) => /^[a-zA-Z-]*$/.test(str);
 
-exports.feedName = (str) => {
-  return /^[a-zA-Z0-9-_]{1,32}$/.test(str);
-};
+exports.feedName = (str) => /^[a-zA-Z0-9-_]{1,32}$/.test(str);
 

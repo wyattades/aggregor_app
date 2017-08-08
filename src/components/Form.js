@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { View, TextInput, Text, StyleSheet, Animated, ActivityIndicator, Easing } from 'react-native';
+import { View, TextInput, Text, StyleSheet, Animated, ActivityIndicator, Easing, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import Touchable from './Touchable';
@@ -8,23 +8,20 @@ import Picker from './Picker';
 import Slider from './Slider';
 import theme from '../utils/theme';
 
-// TODO: fix styles for web
-// - labels too low
-// - abrupt error msgs, i.e. have allocated space for error to show up (for web)
-// - SubmitButton margin is inside touchable
-// - Loading animations
-
 const styles = StyleSheet.create({
   inputGroup: {
-    paddingTop: 24,
+    marginTop: 24,
   },
 
   input: {
     padding: 8,
     color: theme.WHITE,
     fontSize: 18,
-    borderBottomWidth: 1,
+    borderBottomWidth: 2,
     borderBottomColor: theme.TEXT_SECOND,
+  },
+  inputFocused: {
+    borderBottomColor: theme.WHITE,
   },
 
   button: {
@@ -42,7 +39,7 @@ const styles = StyleSheet.create({
     fontWeight: '500',
   },
   disabled: {
-    backgroundColor: theme.SUPPORT
+    backgroundColor: theme.SUPPORT,
   },
 
   inputError: {
@@ -77,7 +74,7 @@ const styles = StyleSheet.create({
   formLink: {
     color: theme.WHITE,
     fontSize: 16,
-    padding: 8
+    padding: 8,
   },
 
   slider: {
@@ -98,13 +95,14 @@ const styles = StyleSheet.create({
   labelView: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    justifyContent: 'space-between'
+    justifyContent: 'space-between',
   },
   label: {
     fontSize: 16,
-    fontWeight: '500',
+    fontWeight: 'bold',
     color: theme.TEXT_SECOND,
     margin: 8,
+    position: 'absolute',
   },
   optional: {
     fontSize: 16,
@@ -131,22 +129,25 @@ const styles = StyleSheet.create({
   },
 });
 
+const __BLANK__ = '\u00a0';
+// const EMPTY_ERROR = Platform.OS === 'web' ? __BLANK__ : '';
+
 class PickerField extends PureComponent {
 
   constructor(props) {
     super(props);
 
     this.state = {
-      value: props.input.value
+      value: props.input.value,
     };
   }
 
-  _onValueChange = value => {
+  _onValueChange = (value) => {
     this.setState({ value });
     this.props.input.onChange(value);
   }
 
-  render () {
+  render() {
     const { label, values } = this.props;
 
     return (
@@ -155,7 +156,8 @@ class PickerField extends PureComponent {
         <Picker
           style={styles.pickerStyle}
           selectedValue={this.state.value}
-          onValueChange={this._onValueChange}>
+          onValueChange={this._onValueChange}
+        >
           {values.map(val => (
             <Picker.Item key={val.type} label={val.label} value={val.type}/>
           ))}
@@ -178,7 +180,6 @@ class SliderField extends PureComponent {
 
   static propTypes = {
     input: PropTypes.object.isRequired,
-    meta: PropTypes.object.isRequired,
     label: PropTypes.string,
     min: PropTypes.number,
     max: PropTypes.number,
@@ -218,13 +219,15 @@ class SliderField extends PureComponent {
   }
 }
 
-const TextField = ({ input: { onChange, ...restInput }, meta: { error, touched }, optional, label, secureTextEntry }) => {
+const TextField = ({
+  input: { onChange, ...restInput }, meta: { error, touched }, optional, label, secureTextEntry,
+}) => {
   const inputError = error && touched;
   return (
     <View>
       {label ? (
         <View style={styles.labelView}>
-          <Text style={styles.label}>{label}</Text> 
+          <Text style={styles.label}>{label}</Text>
           {optional ? <Text style={styles.optional}>(optional)</Text> : null}
         </View>
       ) : null}
@@ -232,7 +235,7 @@ const TextField = ({ input: { onChange, ...restInput }, meta: { error, touched }
         onChangeText={onChange}
         autoCorrect={false}
         underlineColorAndroid={'transparent'}
-        style={[styles.plainInput, inputError ? styles.plainInputError : null]}
+        style={[styles.plainInput, inputError && styles.plainInputError]}
         secureTextEntry={secureTextEntry || false}
         {...restInput}/>
       {inputError ? <Text style={styles.errorText}>{error}</Text> : null}
@@ -244,20 +247,21 @@ const easing = Easing.out(Easing.ease);
 
 class AnimatedTextField extends PureComponent {
 
-  static propTypes = {
-    input: PropTypes.object.isRequired,
-    meta: PropTypes.object.isRequired,
-    label: PropTypes.string,
-    secureTextEntry: PropTypes.any,
-  };
-
   constructor(props) {
     super(props);
 
     this.state = {
-      anim: new Animated.Value(props.input.value.length > 0 ? 0 : 1)
+      anim: new Animated.Value(props.input.value.length > 0 ? 0 : 1),
+      focused: false,
     };
   }
+
+  // Adjust animation when browser autocompletes
+  // componentDidMount(prevProps) {
+  //   if (prevProps.input.value.length === 0 && this.props.input.value.length > 0) {
+  //     this._animate(0);
+  //   }
+  // }
 
   _animate = toValue => Animated.timing(
     this.state.anim,
@@ -265,7 +269,7 @@ class AnimatedTextField extends PureComponent {
       toValue,
       duration: 300,
       easing,
-    }
+    },
   ).start();
 
   _onChangeText = onChange => value => {
@@ -284,62 +288,84 @@ class AnimatedTextField extends PureComponent {
     onChange(value);
   }
 
+  _onBlur = onBlur => () => {
+    this.setState({ focused: false });
+    onBlur();
+  }
+
+  _onFocus = onFocus => () => {
+    this.setState({ focused: true });
+    onFocus();
+  }
+
   render() {
-    const { input: { onChange, ...restInput }, meta: { error, touched }, label, secureTextEntry } = this.props;
+    const {
+      input: { onChange, onBlur, onFocus, ...restInput },
+      meta: { error, touched },
+      label,
+      secureTextEntry,
+    } = this.props;
+
     const inputError = error && touched;
 
     const labelStyle = {
-      position: 'absolute',
       transform: [{ translateY: this.state.anim.interpolate({
         inputRange: [0, 1],
-        outputRange: [0, 24]
+        outputRange: [-24, 0],
       }) }],
       fontSize: this.state.anim.interpolate({
         inputRange: [0, 1],
-        outputRange: [16, 18]
+        outputRange: [16, 18],
       }),
     };
 
     return (
       <View style={styles.inputGroup}>
-        { label ? <Animated.Text style={[styles.label, labelStyle]}>{label}</Animated.Text> : null}
-        <TextInput 
+        { label ? <Animated.Text pointerEvents="none" style={[styles.label, labelStyle]}>{label}</Animated.Text> : null}
+        <TextInput
+          onBlur={this._onBlur(onBlur)}
+          onFocus={this._onFocus(onFocus)}
           underlineColorAndroid="transparent"
           autoCorrect={false}
-          style={[styles.input, inputError ? styles.inputError : null]} 
-          onChangeText={this._onChangeText(onChange)} 
+          style={[styles.input, inputError && styles.inputError, this.state.focused && styles.inputFocused ]}
+          onChangeText={this._onChangeText(onChange)}
           secureTextEntry={secureTextEntry || false}
           {...restInput}/>
-        {inputError ? <Text style={styles.errorText}>{error}</Text> : null}
+        <ErrorText error={error} inputError={inputError}/>
       </View>
     );
   }
 }
 
+AnimatedTextField.propTypes = {
+  input: PropTypes.object.isRequired,
+  meta: PropTypes.object.isRequired,
+  label: PropTypes.string,
+  secureTextEntry: PropTypes.any,
+};
+
+const ErrorText = Platform.OS === 'web' ?
+  ({ error, inputError }) => (
+    <Text style={styles.errorText}>{inputError ? error : __BLANK__}</Text>
+  ) :
+  ({ error, inputError }) => (
+    inputError ? <Text style={styles.errorText}>{error}</Text> : null
+  );
+
 const SubmitButton = ({ title, onPress, submitting, submitSucceeded, disabled, style = null }) => (
-  <Touchable style={[styles.button, disabled ? styles.disabled : null, style]} onPress={onPress}>
+  <Touchable style={[styles.button, disabled && styles.disabled, style]} onPress={onPress}>
     { submitting ? <ActivityIndicator color={theme.WHITE}/> : null }
     { submitSucceeded ? <Icon name="check" color={theme.WHITE} size={24}/> : null }
     <Text style={styles.buttonText}>{title}</Text>
   </Touchable>
 );
 
-// const SubmitButton = ({ title, onPress, submitting, submitSucceeded, disabled, style = null }) => (
-//   <TouchableHighlight onPress={onPress}>
-//     <View style={[styles.button, disabled ? styles.disabled : null, style]}>
-//       { submitting ? <ActivityIndicator color={theme.WHITE}/> : null }
-//       { submitSucceeded ? <Icon name="check" color={theme.WHITE} size={24}/> : null }
-//       <Text style={styles.buttonText}>{title}</Text>
-//     </View>
-//   </TouchableHighlight>
-// );
-
 SubmitButton.propTypes = {
   title: PropTypes.string.isRequired,
   onPress: PropTypes.func.isRequired,
   submitSucceeded: PropTypes.bool,
   submitting: PropTypes.any,
-  disabled: PropTypes.bool
+  disabled: PropTypes.bool,
 };
 
 const FormError = ({ error }) => {
@@ -356,9 +382,9 @@ const FormError = ({ error }) => {
 
 FormError.propTypes = {
   error: PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.object
-    ])
+    PropTypes.string,
+    PropTypes.object,
+  ]),
 };
 
 const FormLink = ({ title, onPress }) => (

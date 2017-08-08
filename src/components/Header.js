@@ -63,7 +63,7 @@ const promptRename = (oldName, dispatch) => dispatch(prompt({
         }
       });
     }
-  }
+  },
 }));
 
 const handleFeedOptionsPress = (navigation, selectedFeed) => ({ action, index }) => {
@@ -88,7 +88,7 @@ const openDrawer = navigation => () => navigation.navigate('DrawerOpen');
 // NOTE: navigation.goBack() doesn't work for some reason
 const goBack = navigation => () => navigation.dispatch(NavigationActions.back());
 
-export const DashboardHeader = ({ navigation, scene }) => { 
+export const DashboardHeader = ({ navigation, scene }) => {
   const params = scene.route.params,
         selectedFeed = params && params.selectedFeed;
 
@@ -99,8 +99,8 @@ export const DashboardHeader = ({ navigation, scene }) => {
       centerElement={<HeaderTitle texts={[
         {
           title: selectedFeed,
-          highlight: true
-        }
+          highlight: true,
+        },
       ]}/>}
       rightElement="edit"
       onRightElementPress={goToFeedEdit(navigation, selectedFeed)}/>
@@ -109,7 +109,7 @@ export const DashboardHeader = ({ navigation, scene }) => {
   );
 };
 
-export const FeedEditHeader = ({ navigation, scene }) => { 
+export const FeedEditHeader = ({ navigation, scene }) => {
   const params = scene.route.params,
         selectedFeed = params && params.selectedFeed;
 
@@ -122,21 +122,21 @@ export const FeedEditHeader = ({ navigation, scene }) => {
           title: 'Edit',
         }, {
           title: selectedFeed,
-          highlight: true
-        }
+          highlight: true,
+        },
       ] : [
         {
-          title: 'Create Feed'
-        }
+          title: 'Create Feed',
+        },
       ]}/>}
-      rightElement={{ 
+      rightElement={{
         menu: {
           icon: 'more-vert',
           labels: [
             'Rename Feed',
-            'Delete Feed'
-          ]
-        }
+            'Delete Feed',
+          ],
+        },
       }}
       onRightElementPress={handleFeedOptionsPress(navigation, selectedFeed)}/>
   );
@@ -152,7 +152,7 @@ const handleDeletePlugin = (navigation, selectedFeed, id) => () => {
   });
 };
 
-export const PluginEditHeader = ({ navigation, scene }) => { 
+export const PluginEditHeader = ({ navigation, scene }) => {
   const params = scene.route.params,
         selectedFeed = params && params.selectedFeed,
         plugin = params && params.plugin;
@@ -166,11 +166,11 @@ export const PluginEditHeader = ({ navigation, scene }) => {
           title: plugin ? 'Edit Plugin in' : 'Add Plugin to',
         }, {
           title: selectedFeed,
-          highlight: true
-        }
-       ]}/>}
-       rightElement={plugin ? 'delete' : undefined}
-       onRightElementPress={plugin ? handleDeletePlugin(navigation, selectedFeed, plugin.id) : null}/>
+          highlight: true,
+        },
+      ]}/>}
+      rightElement={plugin ? 'delete' : undefined}
+      onRightElementPress={plugin ? handleDeletePlugin(navigation, selectedFeed, plugin.id) : null}/>
   );
 };
 

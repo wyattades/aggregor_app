@@ -13,7 +13,7 @@ import Touchable from '../components/Touchable';
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
 
   item: {
@@ -22,7 +22,7 @@ const styles = StyleSheet.create({
     padding: 15,
     borderBottomWidth: 1,
     borderBottomColor: theme.SUPPORT,
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   title: {
     color: theme.TEXT,
@@ -49,9 +49,9 @@ const styles = StyleSheet.create({
 
 class FeedEdit extends Component {
   
-  _pluginItem = (item, index) => {
+  _pluginItem = item => {
 
-    const plg = this.props.plugin_types[item.type], 
+    const plg = this.props.plugin_types[item.type],
           title = formatPluginTitle(plg, item),
           subtitle = formatPluginSubtitle(item);
 
@@ -66,9 +66,13 @@ class FeedEdit extends Component {
     );
   }
 
-  _addPlugin = () => this.props.navigation.navigate('PluginEdit', { selectedFeed: this.props.selectedFeed });
+  _addPlugin = () => this.props.navigation.navigate('PluginEdit', {
+    selectedFeed: this.props.selectedFeed,
+  });
 
-  _editPlugin = plugin => () => this.props.navigation.navigate('PluginEdit', { plugin, selectedFeed: this.props.selectedFeed });
+  _editPlugin = plugin => () => this.props.navigation.navigate('PluginEdit', {
+    plugin, selectedFeed: this.props.selectedFeed,
+  });
 
   _keyExtractor = item => item.id;
 
@@ -82,7 +86,7 @@ class FeedEdit extends Component {
           </MessageView>
         ) : (
           <ScrollView>
-            {plugins.map(this._pluginItem)}          
+            {plugins.map(this._pluginItem)}
           </ScrollView>
         )}
         <ActionButton
@@ -103,18 +107,18 @@ FeedEdit = connect(({ feeds, plugin_types }, { navigation }) => {
   };
 })(FeedEdit);
 
-FeedEdit.navigationOptions = { 
-  header: FeedEditHeader
+FeedEdit.navigationOptions = {
+  header: FeedEditHeader,
 };
 
 FeedEdit.propTypes = {
   navigation: PropTypes.shape({
     state: PropTypes.shape({
       params: PropTypes.shape({
-        selectedFeed: PropTypes.string.isRequired
-      }).isRequired
-    }).isRequired
-  }).isRequired
+        selectedFeed: PropTypes.string.isRequired,
+      }).isRequired,
+    }).isRequired,
+  }).isRequired,
 };
 
 export default FeedEdit;

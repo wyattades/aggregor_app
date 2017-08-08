@@ -17,7 +17,7 @@ import theme from '../utils/theme';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-  }, 
+  },
 
   message: {
     fontSize: 20,
@@ -74,11 +74,7 @@ const LoadingIndicator = () => (
   </View>
 );
 
-
-
 class NonemptyDashboard extends Component {
-
-  _page = 1
 
   state = {
     refreshing: false,
@@ -89,6 +85,8 @@ class NonemptyDashboard extends Component {
       this._entryList.scrollToIndex(0);
     }
   }
+
+  _page = 1
 
   _fetchFeed = () => {
     const { dispatch, selectedFeed } = this.props;
@@ -101,7 +99,7 @@ class NonemptyDashboard extends Component {
 
   _onRefresh = () => {
     this._requestMore();
-    this.setState({ 
+    this.setState({
       refreshing: true,
     });
   }
@@ -114,7 +112,7 @@ class NonemptyDashboard extends Component {
   _keyExtractor = item => item.id;
 
   _renderItem = ({ item }) => (
-    <Entry 
+    <Entry
       {...item.toObject()}
       plugin={this.props.plugin_types[item.plugin]}/>
   );
@@ -127,7 +125,9 @@ class NonemptyDashboard extends Component {
   _renderError = () => (
     <Touchable onPress={this._goToError} style={styles.errorView}>
       <Icon name="error" size={20} color={theme.WHITE}/>
-      <Text style={styles.errorText}>{this.props.errors} plugin{this.props.errors === 1 ? '' : 's'} failed to load</Text>
+      <Text style={styles.errorText}>
+        {this.props.errors} plugin{this.props.errors === 1 ? '' : 's'} failed to load
+      </Text>
     </Touchable>
   );
 
@@ -164,7 +164,7 @@ let Dashboard = ({ feeds, selectedFeed, plugin_types, dispatch, navigation }) =>
     return plugins.size === 0 ? (
       <NoPlugins/>
     ) : (
-      <NonemptyDashboard 
+      <NonemptyDashboard
         entries={entries}
         plugin_types={plugin_types}
         errors={errors}
@@ -173,11 +173,11 @@ let Dashboard = ({ feeds, selectedFeed, plugin_types, dispatch, navigation }) =>
         navigation={navigation}
         selectedFeed={selectedFeed}/>
     );
-  } else {
-    return (
-      <NoFeeds/>
-    );
   }
+  return (
+    <NoFeeds/>
+  );
+  
 };
 
 Dashboard = connect(({ feeds, plugin_types }, { navigation }) => ({
@@ -186,8 +186,8 @@ Dashboard = connect(({ feeds, plugin_types }, { navigation }) => ({
   plugin_types,
 }))(Dashboard);
 
-Dashboard.navigationOptions = { 
-  header: DashboardHeader
+Dashboard.navigationOptions = {
+  header: DashboardHeader,
 };
 
 Dashboard.propTypes = {

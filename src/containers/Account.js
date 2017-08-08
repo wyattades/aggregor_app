@@ -11,19 +11,19 @@ import { SubmitButton } from '../components/Form';
 import Touchable from '../components/Touchable';
 
 const styles = StyleSheet.create({
-  container:{
+  container: {
     flex: 1,
     flexDirection: 'column',
     justifyContent: 'space-between',
     padding: 16,
   },
-  label:{
+  label: {
     fontWeight: 'bold',
     marginBottom: 4,
     fontSize: 18,
-    color: theme.TEXT_SECOND
+    color: theme.TEXT_SECOND,
   },
-  value:{
+  value: {
     color: theme.TEXT,
     fontSize: 18,
     padding: 12,
@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
   
   dangerButton: {
     backgroundColor: theme.ERROR,
-  }
+  },
 });
 
 const handleDeleteUser = dispatch => () => {
@@ -52,7 +52,7 @@ const handleDeleteUser = dispatch => () => {
     },
     onSubmit: password => dispatch(deleteUser(password)).catch(() => {
       alert('Invalid password provided');
-    })
+    }),
   }));
 };
 
@@ -72,11 +72,11 @@ const handleChangePassword = dispatch => () => {
           console.log(err);
         }
       },
-    )
+    ),
   }));
 };
 
-const Account = ({ user, dispatch, navigation }) => (
+const Account = ({ user, dispatch }) => (
   <View style={styles.container}>
     <View>
       <View style={styles.textGroup}>
@@ -85,7 +85,7 @@ const Account = ({ user, dispatch, navigation }) => (
       </View>
       <View style={styles.textGroup}>
         <Text style={styles.label}>Name:</Text>
-        <Text style={styles.value}>{(user.first_name || '') + ' ' + (user.last_name || '')}</Text>
+        <Text style={styles.value}>{`${user.first_name || ''} ${user.last_name || ''}`}</Text>
       </View>
       <View style={styles.textGroup}>
         <Text style={styles.label}>Email:</Text>
@@ -99,8 +99,8 @@ const Account = ({ user, dispatch, navigation }) => (
         </Touchable>
       </View>
     </View>
-    <SubmitButton 
-      title="DELETE ACCOUNT" 
+    <SubmitButton
+      title="DELETE ACCOUNT"
       style={styles.dangerButton}
       onPress={handleDeleteUser(dispatch)}/>
   </View>
@@ -112,5 +112,5 @@ Account.propTypes = {
 };
 
 export default connect(state => ({
-  user: state.user
+  user: state.user,
 }))(Account);

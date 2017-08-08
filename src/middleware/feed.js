@@ -5,7 +5,7 @@ import { setFeed } from '../actions/navActions';
 // TODO: move these cases to their corresponding functions in api.js
 
 const loadInit = (dispatch, isLoggedIn) => Promise.all([
-  dispatch(fetchAvailablePlugins()), 
+  dispatch(fetchAvailablePlugins()),
   isLoggedIn ? dispatch(fetchUser()) : true,
   isLoggedIn ? dispatch(fetchFeeds()) : true,
 ])
@@ -22,7 +22,7 @@ export default store => next => action => {
     case 'persist/REHYDRATE':
       const isLoggedIn = action.payload && action.payload.user && action.payload.user.isLoggedIn === true;
       loadInit(store.dispatch, isLoggedIn);
-      break;      
+      break;
     case 'SET_USER':
       loadInit(store.dispatch, true);
       break;

@@ -2,12 +2,12 @@ import React from 'react';
 import MaterialIcon from 'react-native-vector-icons/MaterialIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 
+import theme from '../utils/theme';
+
 const iconFamilies = {
   FontAwesome,
   MaterialIcon,
 };
-
-import theme from '../utils//theme';
 
 export default ({ plugin, size = 40 }) => {
   if (plugin) {

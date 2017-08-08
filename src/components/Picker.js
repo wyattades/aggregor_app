@@ -1,11 +1,11 @@
 import React from 'react';
-import { Platform, Text, Picker as NativePicker } from 'react-native';
+import { Platform, Picker as NativePicker } from 'react-native';
 
 let Picker;
 
 if (Platform.OS === 'web') {
 
-  Picker = ({ style, selectedValue, onValueChange, children }) => {
+  Picker = ({ selectedValue, onValueChange, children }) => {
 
     const handleChange = e => {
       onValueChange(e.target.value);

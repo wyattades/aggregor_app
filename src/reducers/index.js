@@ -14,5 +14,5 @@ export default combineReducers({
   feeds,
   prompt,
   plugin_types,
-  plugin_array
+  plugin_array,
 });

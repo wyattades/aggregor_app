@@ -12,32 +12,31 @@ let composeEnhancers = compose;
 if (__DEV__) {
   console.log('Starting devtools...');
 
+  // eslint-disable-next-line global-require
   const installDevTools = require('immutable-devtools');
 
   installDevTools(Immutable);
   // Use it if Remote debugging with RNDebugger, otherwise use remote-redux-devtools
-  composeEnhancers = (
-    window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ||
-    require('remote-redux-devtools').composeWithDevTools
-  )({
+  composeEnhancers = (window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ ||
+    // eslint-disable-next-line global-require
+    require('remote-redux-devtools').composeWithDevTools)({
     name: Platform.OS,
+    // eslint-disable-next-line global-require
     ...require('../package.json').remotedev,
     actionCreators,
   });
 }
 
-const enhancer = composeEnhancers(
-  applyMiddleware(thunk, ...middleware),
-  autoRehydrate()
-);
+const enhancer = composeEnhancers(applyMiddleware(thunk, ...middleware), autoRehydrate());
 
 const configureStore = (initialState = {}) => {
-  
+  const store = createStore(reducers, initialState, enhancer);
+
   if (module.hot) {
     // Enable hot module replacement for reducers
     module.hot.accept('./reducers', () => {
       try {
-        // eslint-disable-next-line import/newline-after-import
+        // eslint-disable-next-line global-require
         const _reducers = require('./reducers').default;
         store.replaceReducer(_reducers);
       } catch (error) {
@@ -46,12 +45,10 @@ const configureStore = (initialState = {}) => {
     });
   }
 
-  const store = createStore(reducers, initialState, enhancer);
-  
   // Persist user state
   persistStore(store, {
-    whitelist: [ 'user' ],
-    storage: AsyncStorage
+    whitelist: ['user'],
+    storage: AsyncStorage,
   });
 
   return store;

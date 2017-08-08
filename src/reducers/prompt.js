@@ -9,7 +9,7 @@ export default (state = initialState, action) => {
     case 'SET_PROMPT':
       return {
         ...action.options,
-        visible: true
+        visible: true,
       };
     default:
       return state;

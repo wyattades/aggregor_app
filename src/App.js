@@ -2,32 +2,31 @@ import React, { Component } from 'react';
 import { NativeModules, View, StatusBar, BackHandler, Platform, StyleSheet } from 'react-native';
 import { Provider } from 'react-redux';
 
-const _Temp = ({ children }) => <View children={children}/>;
-const ThemeProvider = Platform.OS === 'web' ? _Temp : require('react-native-material-ui').ThemeProvider; 
-
 import { PromptView } from './utils/prompt';
 import Navigator from './navigator';
 import configureStore from './configureStore';
 import { uiTheme } from './utils/theme';
 
+const _Temp = ({ children }) => <View children={children} />;
+/* eslint-disable-next-line global-require */
+const ThemeProvider = Platform.OS === 'web' ? _Temp : require('react-native-material-ui').ThemeProvider;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-  }
+  },
 });
 
 const store = configureStore();
 
 class App extends Component {
-
   componentWillMount() {
     if (Platform.OS !== 'web') {
-
       // Set android status bar to translucent grey
       StatusBar.setTranslucent(true);
       StatusBar.setBackgroundColor('rgba(0,0,0,0.3)');
-      
+
       if (NativeModules.UIManager.setLayoutAnimationEnabledExperimental) {
         NativeModules.UIManager.setLayoutAnimationEnabledExperimental(true);
       }
@@ -37,16 +36,15 @@ class App extends Component {
   render() {
     return (
       <Provider store={store}>
-        <ThemeProvider uiTheme={uiTheme}> 
+        <ThemeProvider uiTheme={uiTheme}>
           <View style={styles.container}>
-            <Navigator backHandler={BackHandler}/> 
-            <PromptView/> 
+            <Navigator backHandler={BackHandler} />
+            <PromptView />
           </View>
-        </ThemeProvider> 
+        </ThemeProvider>
       </Provider>
     );
   }
 }
 
 export default App;
-

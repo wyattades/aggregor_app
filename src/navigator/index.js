@@ -28,72 +28,66 @@ import { MainHeader } from '../components/Header';
 
 const largeScreen = Dimensions.get('screen').width > 500;
 
-const MainPage = (Content, title) => (
-  class extends Component {
-    render() {
-      return (
-        <View style={{ flex: 1 }}>
-          <MainHeader 
-            navigation={this.props.navigation}
-            title={title}/>
-          <Content/>
-        </View>
-      );
-    }
-  }
+const MainPage = (Content, title) => () => (
+  <View style={{ flex: 1 }}>
+    <MainHeader
+      navigation={this.props.navigation}
+      title={title}/>
+    <Content/>
+  </View>
 );
 
 const HomeNavigator = new StackNavigator({
   Dashboard: {
-    screen : Dashboard,
-    path: ''
+    screen: Dashboard,
+    path: '',
   },
   FeedEdit: {
     screen: FeedEdit,
-    path: ':feed/edit'
+    path: ':feed/edit',
   },
   PluginEdit: {
     screen: PluginEdit,
-    path: ':feed/edit/:plugin'
+    path: ':feed/edit/:plugin',
   },
 }, {
   initialRouteName: 'Dashboard',
 });
 
 const MainNavigator = new DrawerNavigator({
-  Home: { 
+  Home: {
     screen: HomeNavigator,
-    path: 'feed'
+    path: 'feed',
   },
-  Account: { 
+  Account: {
     screen: MainPage(Account, 'Account'),
-    path: 'account'
+    path: 'account',
   },
-  About: { 
+  About: {
     screen: MainPage(About, 'About'),
-    path: 'about'
+    path: 'about',
   },
 }, Object.assign({
   initialRouteName: 'Home',
   contentComponent: Drawer,
 }, largeScreen ? {
-  drawerWidth: 400
+  drawerWidth: 400,
 } : undefined));
 
 export const AppNavigator = new StackNavigator({
-  Register: { 
+  Register: {
     screen: Register,
-    path: 'register'
+    path: 'register',
   },
-  Login: { 
+  Login: {
     screen: Login,
-    path: 'login'
+    path: 'login',
   },
-  Main: { 
+  Main: {
     screen: MainNavigator,
   },
-  Loading: { 
-    screen: Loading
+  Loading: {
+    screen: Loading,
   },
 }, {
   headerMode: 'none',
@@ -102,6 +96,18 @@ export const AppNavigator = new StackNavigator({
 });
 
 class Navigator extends Component {
+
+  componentWillMount() {
+    if (this.props.backHandler) {
+      this.props.backHandler.addEventListener('hardwareBackPress', this._handleBack);
+    }
+  }
+
+  componentWillUnmount() {
+    if (this.props.backHandler) {
+      this.props.backHandler.removeEventListener('hardwareBackPress', this._handleBack);
+    }
+  }
 
   _handleBack = () => {
 
@@ -113,18 +119,6 @@ class Navigator extends Component {
       return true; // do not exit app
     } else {
       return false; // exit app
-    }
-  }
-
-  componentWillMount() {
-    if (this.props.backHandler) {
-      this.props.backHandler.addEventListener('hardwareBackPress', this._handleBack);
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.props.backHandler) {
-      this.props.backHandler.removeEventListener('hardwareBackPress', this._handleBack);
     }
   }
 
@@ -142,5 +136,5 @@ Navigator.propTypes = {
 };
 
 export default connect(({ nav }) => ({
-  nav
+  nav,
 }))(Navigator);
