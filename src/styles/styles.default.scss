@@ -10,6 +10,15 @@ html, body, body * {
 #react-root > div > div > div {
   height: 100%;
   overflow-y: auto;
+
+  // Prevent horizontal scrollbar
+  overflow-x: hidden !important;
+}
+
+input[type=text], 
+input[type=password], 
+input[type=email] {
+  outline: none;
 }
 
 // TODO: Slider styles

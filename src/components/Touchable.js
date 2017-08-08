@@ -1,20 +1,34 @@
 import React from 'react';
-import { TouchableNativeFeedback, TouchableOpacity, View, Platform } from 'react-native';
+import { TouchableNativeFeedback, TouchableOpacity, View, Platform, StyleSheet } from 'react-native';
 
-const WebTouchable = ({ onPress, feedback, ...rest }) => (
-  <TouchableOpacity
-    onPress={onPress}
-    activeOpacity={0.8}
-    focusedOpacity={0.8}>
-    <View {...rest}/>
-  </TouchableOpacity>
-);
+const extractMargins = ({ marginTop, marginLeft, marginRight, marginBottom, margin, ...otherStyles }) => [
+  { marginTop, marginLeft, marginRight, marginBottom, margin },
+  { ...otherStyles }
+];
+
+const WebTouchable = ({ onPress, feedback, style = {}, ...rest }) => {
+
+  const flattenedStyle = StyleSheet.flatten(style);
+  
+  const [ outerStyles, innerStyles ] = extractMargins(flattenedStyle);
+  
+  return (
+    <View style={outerStyles}>
+      <TouchableOpacity
+        onPress={onPress}
+        activeOpacity={0.8}
+        focusedOpacity={0.8}>
+        <View style={innerStyles} {...rest}/>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 const IosTouchable = WebTouchable;
 
 const getBackground = (type = 'contained') => {
   if (type === 'uncontained') {
-    return TouchableNativeFeedback.SelectableBackground();
+    return TouchableNativeFeedback.SelectableBackgroundBorderless();
   } else if (type === 'none') {
     return undefined;
   } else { // 'contained'

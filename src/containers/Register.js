@@ -1,4 +1,5 @@
-import React, { PropTypes } from 'react';
+import React from 'react';
+import PropTypes from 'prop-types';
 import { Text, View, StyleSheet, Platform, KeyboardAvoidingView as NativeKeyboardAvoidingView } from 'react-native';
 import { reduxForm, Field, SubmissionError } from 'redux-form';
 
@@ -8,6 +9,7 @@ import { createUser } from '../actions/api';
 import format from '../utils/format';
 import { AnimatedTextField, SubmitButton, FormError, FormLink } from '../components/Form';
 import theme from '../utils/theme';
+import Container from '../components/Container';
   
 const onSubmit = (values, dispatch) => {
   return dispatch(createUser(values))
@@ -27,11 +29,13 @@ const onSubmit = (values, dispatch) => {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: 'space-between',
-    backgroundColor: theme.PRIMARY_DARK,
     paddingVertical: 80,
     paddingHorizontal: 40,
+    justifyContent: 'space-between',
+  },
+  background: {
+    flex: 1,
+    backgroundColor: theme.PRIMARY_DARK,
   },
   title: {
     alignSelf: 'center',
@@ -49,20 +53,22 @@ const styles = StyleSheet.create({
 const goToLogin = navigation => () => navigation.goBack();
 
 const RegisterForm = ({ handleSubmit, submitting, submitSucceeded, error, navigation }) => (
-  <View style={styles.container}>
-    <View>
-      <Text style={[styles.title, styles.subtitle]}>Sign up</Text>
-      <Text style={styles.title}>Aggregor</Text>
-    </View>
-    <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={80}>
-      { error ? <FormError error={error}/> : null }
-      <Field label="Username" name="username" component={AnimatedTextField}/>
-      <Field label="Email" name="email" component={AnimatedTextField}/>
-      <Field label="Password" secureTextEntry={true} name="password" component={AnimatedTextField}/>
-      {/*<Field label="Password" secureTextEntry={true} name="passwordConfirm" component={renderInput}/>*/}
-      <SubmitButton title="SIGN UP" onPress={handleSubmit(onSubmit)} submitting={submitting} submitSucceeded={submitSucceeded}/>
-    </KeyboardAvoidingView>
-    <FormLink title="Sign in to Aggregor" onPress={goToLogin(navigation)}/>
+  <View style={styles.background}>
+    <Container style={styles.container}>
+      <View>
+        <Text style={[styles.title, styles.subtitle]}>Sign up</Text>
+        <Text style={styles.title}>Aggregor</Text>
+      </View>
+      <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={80}>
+        { error ? <FormError error={error}/> : null }
+        <Field label="Username" name="username" component={AnimatedTextField}/>
+        <Field label="Email" name="email" component={AnimatedTextField}/>
+        <Field label="Password" secureTextEntry={true} name="password" component={AnimatedTextField}/>
+        {/*<Field label="Password" secureTextEntry={true} name="passwordConfirm" component={renderInput}/>*/}
+        <SubmitButton title="SIGN UP" onPress={handleSubmit(onSubmit)} submitting={submitting} submitSucceeded={submitSucceeded}/>
+      </KeyboardAvoidingView>
+      <FormLink title="Sign in to Aggregor" onPress={goToLogin(navigation)}/>
+    </Container>
   </View>
 );
 

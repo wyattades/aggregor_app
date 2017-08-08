@@ -1,4 +1,5 @@
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { View, TextInput, Text, StyleSheet, Animated, ActivityIndicator, Easing } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -9,7 +10,7 @@ import theme from '../utils/theme';
 
 // TODO: fix styles for web
 // - labels too low
-// - abrupt error msgs???
+// - abrupt error msgs, i.e. have allocated space for error to show up (for web)
 // - SubmitButton margin is inside touchable
 // - Loading animations
 

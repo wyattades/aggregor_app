@@ -2,6 +2,9 @@ const fs = require('fs');
 if (fs.existsSync('./.env')) {
   require('dotenv').config();
 }
+
+//TODO: output fonts to ./fonts folder
+
 const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
@@ -164,6 +167,7 @@ if (process.env.NODE_ENV === 'production') {
     ],
     plugins: [
       ...sharedPlugins,
+      new webpack.NamedModulesPlugin(),
       new webpack.HotModuleReplacementPlugin(),
       new webpack.DefinePlugin({
         'process.env': {

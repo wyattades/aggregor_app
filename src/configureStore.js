@@ -4,7 +4,7 @@ import thunk from 'redux-thunk';
 import { persistStore, autoRehydrate } from 'redux-persist';
 import { Platform, AsyncStorage } from 'react-native';
 
-import reducer from './reducers';
+import reducers from './reducers';
 import middleware from './middleware';
 import * as actionCreators from './actions';
 
@@ -35,18 +35,18 @@ const configureStore = (initialState = {}) => {
   
   if (module.hot) {
     // Enable hot module replacement for reducers
-    module.hot.accept(() => {
+    module.hot.accept('./reducers', () => {
       try {
         // eslint-disable-next-line import/newline-after-import
-        const reducers = require('./reducers').default;
-        store.replaceReducer(reducers);
+        const _reducers = require('./reducers').default;
+        store.replaceReducer(_reducers);
       } catch (error) {
         console.error(`Reducer hot reloading error: ${error}`);
       }
     });
   }
 
-  const store = createStore(reducer, initialState, enhancer);
+  const store = createStore(reducers, initialState, enhancer);
   
   // Persist user state
   persistStore(store, {

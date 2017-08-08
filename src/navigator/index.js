@@ -1,5 +1,6 @@
-import React, { Component, PropTypes } from 'react';
-import { View, Platform } from 'react-native';
+import React, { Component } from 'react';
+import { View, Dimensions } from 'react-native';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { addNavigationHelpers, NavigationActions } from 'react-navigation';
 import StackNavigator from 'react-navigation/lib/navigators/StackNavigator';
@@ -19,6 +20,13 @@ import Drawer from '../components/Drawer';
 import { MainHeader } from '../components/Header';
 // import StackNavigator from './StackNavigator';
 // import DrawerNavigator from './DrawerNavigator';
+
+// TODO: implement browserAppContainer for web (for hash routing)
+
+// TODO: StackNavigator and DrawerNavigator should be less "mobile" focused
+// - Drawer menu shouldn't blur app, should stay open, content should be less wide (like youtube)
+
+const largeScreen = Dimensions.get('screen').width > 500;
 
 const MainPage = (Content, title) => (
   class extends Component {
@@ -68,8 +76,8 @@ const MainNavigator = new DrawerNavigator({
 }, Object.assign({
   initialRouteName: 'Home',
   contentComponent: Drawer,
-}, Platform.OS === 'web' ? { // TODO: instead test for Dimensions.width???
-  drawerWidth: 360
+}, largeScreen ? {
+  drawerWidth: 400
 } : undefined));
 
 export const AppNavigator = new StackNavigator({
@@ -94,11 +102,6 @@ export const AppNavigator = new StackNavigator({
 });
 
 class Navigator extends Component {
-
-  static propTypes = {
-    dispatch: PropTypes.func.isRequired,
-    nav: PropTypes.object.isRequired,
-  }
 
   _handleBack = () => {
 
@@ -132,6 +135,11 @@ class Navigator extends Component {
     );
   }
 }
+
+Navigator.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+  nav: PropTypes.object.isRequired,
+};
 
 export default connect(({ nav }) => ({
   nav

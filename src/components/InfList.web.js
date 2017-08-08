@@ -5,6 +5,8 @@ import { List, InfiniteLoader, AutoSizer } from 'react-virtualized';
 // import 'react-virtualized/styles.css';
 import { getRowHeight } from './Entry';
 
+// TODO: scrolling, row height, and onEndReached don't work correctly
+
 // class InfList extends Component {
 
 //   _list = null

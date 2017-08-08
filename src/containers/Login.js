@@ -1,10 +1,12 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Text, View, StyleSheet, Platform, LayoutAnimation as NativeLayoutAnimation, KeyboardAvoidingView as NativeKeyboardAvoidingView } from 'react-native';
 import { reduxForm, SubmissionError, Field } from 'redux-form';
 
 import { login } from '../actions/api';
 import { AnimatedTextField, SubmitButton, FormError, FormLink } from '../components/Form';
 import theme from '../utils/theme';
+import Container from '../components/Container';
   
 // TEMP
 const LayoutAnimation = Platform.OS === 'web' ? { Types: {}, Properties: {}, configureNext: ()=>{} } : NativeLayoutAnimation;
@@ -28,10 +30,12 @@ const onSubmit = (values, dispatch) => {
 };
 
 const styles = StyleSheet.create({
-  container: {
+  background: {
     flex: 1,
     justifyContent: 'center',
     backgroundColor: theme.PRIMARY_DARK,
+  },
+  container: {
     paddingVertical: 80,
     paddingHorizontal: 40,
   },
@@ -64,6 +68,7 @@ class Login extends Component {
     const init = props.navigation.state.params && props.navigation.state.params.init;
     this.state = {
       show: !init,
+      // show: true,
     };
   }
 
@@ -93,19 +98,21 @@ class Login extends Component {
     }
 
     return (
-      <View style={[styles.container, this.state.show ? { justifyContent: 'space-between' } : null]}>
-        <Text style={styles.title}>Aggregor</Text>
-        { this.state.show ? (
-          <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={80}>
-            { _error ? <FormError error={_error}/> : null }
-            <Field label="Username" name="username" component={AnimatedTextField}/>
-            <Field label="Password" secureTextEntry={true} name="password" component={AnimatedTextField}/>
-            <SubmitButton title="SIGN IN" onPress={handleSubmit(onSubmit)} submitting={submitting} submitSucceeded={submitSucceeded}/>
-          </KeyboardAvoidingView>
-         ) : null }
-        { this.state.show ? (
-          <FormLink title="Sign up for Aggregor" onPress={goToRegister(navigation)}/>
-         ) : null }
+      <View style={styles.background}>
+        <Container style={[ styles.container, this.state.show && { justifyContent: 'space-between' } ]} adjust={450}>
+          <Text style={styles.title}>Aggregor</Text>
+          { this.state.show ? (
+            <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={80}>
+              { _error ? <FormError error={_error}/> : null }
+              <Field label="Username" name="username" component={AnimatedTextField}/>
+              <Field label="Password" secureTextEntry={true} name="password" component={AnimatedTextField}/>
+              <SubmitButton title="SIGN IN" onPress={handleSubmit(onSubmit)} submitting={submitting} submitSucceeded={submitSucceeded}/>
+            </KeyboardAvoidingView>
+          ) : null }
+          { this.state.show ? (
+            <FormLink title="Sign up for Aggregor" onPress={goToRegister(navigation)}/>
+          ) : null }
+        </Container>
       </View>
     );
   }

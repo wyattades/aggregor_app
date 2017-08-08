@@ -1,4 +1,5 @@
 {
   "presets": ["react-native", "react-native-dotenv"],
+  "plugins": ["react-hot-loader/babel"],
   "sourceMaps": true
 }

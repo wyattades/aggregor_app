@@ -1,4 +1,5 @@
-import React, { PropTypes, PureComponent } from 'react';
+import React, { PureComponent } from 'react';
+import PropTypes from 'prop-types';
 import { View, Text, StyleSheet, Image, Linking, Share } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -63,12 +64,6 @@ const sharePost = url => () => {
   .catch(() => alert('Failed to share link'));
 };
 
-const Link = ({ onPress, style, children, containRipple }) => (
-  <Touchable onPress={onPress} feedback={containRipple ? undefined : 'uncontained'} style={style}>
-    {children}
-  </Touchable>
-);
-
 const pressLink = url => () => {
 // NOTE: for now don't use WebContent container when opening links
 
@@ -100,11 +95,11 @@ class Entry extends PureComponent {
     const { title, author, date, thumbnailURL, plugin, category, commentAmount, link, commentURL, authorURL, categoryURL } = this.props;
 
     return (
-      <Link containRipple={true} onPress={pressLink(link)} style={[styles.container, styles.flexCol, { height: getEntryHeight(this.props) }]}>
+      <Touchable onPress={pressLink(link)} style={[styles.container, styles.flexCol, { height: getEntryHeight(this.props) }]}>
         <View style={[styles.flexRow, styles.spaceBetween, {flexWrap: 'wrap'}]}>
           <View style={{ flex: 1 }}>
             <Text numberOfLines={4} style={styles.title}>{title}</Text>
-            {category ? <Link onPress={pressLink(categoryURL)} style={styles.category}><Text style={styles.secondaryText}>({category})</Text></Link> : null}   
+            {category ? <Touchable feedback="uncontained" onPress={pressLink(categoryURL)} style={styles.category}><Text style={styles.secondaryText}>({category})</Text></Touchable> : null}   
           </View>
           {thumbnailURL ? <Image source={{ uri: thumbnailURL }} style={[styles.thumbnail]}/> : null}
         </View>
@@ -114,26 +109,26 @@ class Entry extends PureComponent {
             <View style={[styles.flexCol, {marginLeft: 5}]}>
               <View style={styles.flexRow}>
                 <Text style={styles.secondaryText}>by </Text>
-                <Link onPress={pressLink(authorURL)} style={styles.flexRow}>
+                <Touchable feedback="uncontained" onPress={pressLink(authorURL)} style={styles.flexRow}>
                   <Text style={[styles.secondaryText, styles.secondaryEmphasis]}>{author}</Text>
-                </Link>
+                </Touchable>
               </View>
               {date ? <TimeAgo style={styles.secondaryText} time={date}/> : <Text style={styles.secondaryText}>{__BLANK__}</Text>}
             </View>
           </View>
           <View style={[styles.flexCol, {justifyContent: 'flex-end'}]}>
             <View style={styles.flexRow}>
-              <Link onPress={pressLink(commentURL)} style={styles.flexRow}>
+              <Touchable feedback="uncontained" onPress={pressLink(commentURL)} style={styles.flexRow}>
                 <Icon name="comment" size={22} style={{marginRight: 5}} color={theme.TEXT_SECOND}/>
                 <Text style={[styles.secondaryText]}>{commentAmount}</Text>
-              </Link>
-              <Link onPress={sharePost(link)} style={{marginLeft: 10}}>
+              </Touchable>
+              <Touchable feedback="uncontained" onPress={sharePost(link)} style={{marginLeft: 10}}>
                 <Icon name="share" size={22} color={theme.TEXT_SECOND}/>
-              </Link>
+              </Touchable>
             </View>
           </View>
         </View>
-      </Link>
+      </Touchable>
     );
   }
 }
