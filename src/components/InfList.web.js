@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
-import { View } from 'react-native'; // or can i just use div cause its a web.js file?
+import { View, StyleSheet, Dimensions } from 'react-native'; // or can i just use div cause its a web.js file?
 
 import { List, InfiniteLoader, AutoSizer } from 'react-virtualized';
 // import 'react-virtualized/styles.css';
 import { getRowHeight } from './Entry';
+
+// try react-infinite ???
 
 // TODO: scrolling, row height, and onEndReached don't work correctly
 
@@ -50,12 +52,23 @@ import { getRowHeight } from './Entry';
 //   }
 // }
 
+
+const WIDTH = 1000;
+
+const styles = StyleSheet.create({
+  centered: {
+    marginHorizontal: 40,
+    maxWidth: WIDTH,
+    left: '50%',
+    marginLeft: -WIDTH * 0.5,
+  },
+});
+
 class InfList extends Component {
+  
+  scrollToIndex = index => {}; // this._list.scrollToRow(index);
 
-  // TODO
-  scrollToIndex = index => {}
-
-  _isRowLoaded = ({ index }) => !!this.props.data[index];// !this.props.hasNextPage || index < this.props.data.length;
+  _isRowLoaded = ({ index }) => !!this.props.data[index];
 
   _renderRow = ({ index, key, style }) => {
     let content;
@@ -69,36 +82,37 @@ class InfList extends Component {
     return (
       <View
         key={key}
-        style={style}
+        style={[ style, Dimensions.get('window').width > WIDTH && styles.centered ]}
       >
         {content}
       </View>
     );
   };
+  
+  _loadMore = ({ startIndex, stopIndex }) => {
+    console.log(startIndex, stopIndex);
+
+    const { refreshing, onEndReached } = this.props;
+
+    (refreshing ? () => {} : onEndReached)();
+  }
 
   _rowHeight = ({ index }) => getRowHeight(this.props.data[index]);
 
-  _loadMore = ({ startIndex, stopIndex }) => this.props.onEndReached();
-
   render() {
-    const { refreshing, onEndReached, data } = this.props;
-
-    const hasNextPage = false;
+    const { refreshing, onEndThreshold, data } = this.props;
 
     // If there are more items to be loaded then add an extra row to hold a loading indicator.
-    const rowCount = hasNextPage ? data.length + 1 : data.length;
-
-    // Only load 1 page of items at a time.
-    // Pass an empty callback to InfiniteLoader in case it asks us to load more than once.
-    const loadMoreRows = refreshing ? () => {} : onEndReached;
+    const rowCount = refreshing ? data.length + 1 : data.length;
 
     return (
       <AutoSizer>
         {({ width, height }) => (
           <InfiniteLoader
             isRowLoaded={this._isRowLoaded}
-            loadMoreRows={loadMoreRows}
+            loadMoreRows={this._loadMore}
             rowCount={rowCount}
+            threshold={onEndThreshold}
           >
             {({ onRowsRendered, registerChild }) => (
               <List

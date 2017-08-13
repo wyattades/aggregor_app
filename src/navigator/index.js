@@ -24,9 +24,9 @@ import { MainHeader } from '../components/Header';
 // TODO: implement browserAppContainer for web (for hash routing)
 
 // TODO: StackNavigator and DrawerNavigator should be less "mobile" focused
-// - Drawer menu shouldn't blur app, should stay open, content should be less wide (like youtube)
+// - Drawer menu shouldn't blur app, should stay open
 
-const largeScreen = Dimensions.get('screen').width > 500;
+const largeScreen = Dimensions.get('window').width > 500;
 
 const MainPage = (Content, title) => () => (
   <View style={{ flex: 1 }}>

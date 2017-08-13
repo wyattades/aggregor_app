@@ -32,11 +32,11 @@ if (__DEV__) {
 
 if (Platform.OS === 'web') {
   const render = (name, RootComponent) => {
-    AppRegistry.registerComponent(name, () => () =>
-      (<AppContainer>
+    AppRegistry.registerComponent(name, () => () => (
+      <AppContainer>
         <RootComponent />
-      </AppContainer>),
-    );
+      </AppContainer>
+    ));
 
     AppRegistry.runApplication(name, { rootTag: document.getElementById('react-root') });
   };

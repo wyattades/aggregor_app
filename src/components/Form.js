@@ -102,7 +102,6 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: theme.TEXT_SECOND,
     margin: 8,
-    position: 'absolute',
   },
   optional: {
     fontSize: 16,
@@ -309,6 +308,7 @@ class AnimatedTextField extends PureComponent {
     const inputError = error && touched;
 
     const labelStyle = {
+      position: 'absolute',
       transform: [{ translateY: this.state.anim.interpolate({
         inputRange: [0, 1],
         outputRange: [-24, 0],

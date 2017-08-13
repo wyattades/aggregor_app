@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
 class Container extends Component {
 
   state = {
-    large: Dimensions.get('screen').width > this.props.testWidth,
+    large: Dimensions.get('window').width > this.props.testWidth,
   }
 
   _onLayout = ({ nativeEvent: { layout: { width } } }) => {
@@ -31,12 +31,14 @@ class Container extends Component {
 
     const inner = {
       flex: (this.state.large && adjust <= 1) ? adjust : 1,
-      maxWidth: (this.state.large && adjust > 1) && adjust,
+      maxWidth: (this.state.large && adjust > 1) ? adjust : undefined,
     };
 
     return (
-      <View style={[ styles.outer ]} onLayout={this._onLayout}>
-        <View style={[ inner, ..._style ]} children={children}/>
+      <View style={styles.outer} onLayout={this._onLayout}>
+        <View style={[ inner, ..._style ]}>
+          {children}
+        </View>
       </View>
     );
   }

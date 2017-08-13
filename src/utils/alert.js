@@ -6,7 +6,7 @@ let alert;
 
 if (Platform.OS === 'web') {
   alert = msg => {
-    console.log(msg);
+    console.log('alert', msg);
     // window.alert(msg);
   };
 } else {

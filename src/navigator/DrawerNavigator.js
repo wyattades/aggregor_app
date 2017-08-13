@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Platform } from 'react-native';
-import { addNavigationHelpers, createNavigator, TabRouter, createNavigationContainer, DrawerNavigator as NativeDrawerNavigator } from 'react-navigation';
+import { addNavigationHelpers, createNavigator, TabRouter, createNavigationContainer,
+  DrawerNavigator as NativeDrawerNavigator } from 'react-navigation';
 import WebDrawerNavigator from 'react-navigation/lib/navigators/DrawerNavigator';
 
 let DrawerNavigator;

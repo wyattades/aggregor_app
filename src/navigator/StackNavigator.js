@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Platform } from 'react-native';
-import { addNavigationHelpers, createNavigator, StackRouter, createNavigationContainer, StackNavigator as NativeStackNavigator } from 'react-navigation';
+import { addNavigationHelpers, createNavigator, StackRouter, createNavigationContainer,
+  StackNavigator as NativeStackNavigator } from 'react-navigation';
 
 import WebStackNavigator from 'react-navigation/lib/navigators/StackNavigator';
 

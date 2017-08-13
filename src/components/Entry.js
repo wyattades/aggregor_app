@@ -1,6 +1,6 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet, Image, Linking, Share } from 'react-native';
+import { View, Text, StyleSheet, Image, Linking, Share, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import theme from '../utils/theme';
@@ -9,19 +9,48 @@ import PluginIcon from './PluginIcon';
 import TimeAgo from './TimeAgo';
 import Touchable from './Touchable';
 
-const MARGIN = 6;
+const MARGIN = Platform.OS === 'web' ? 12 : 6;
 const __BLANK__ = '\u00a0';
 
-const getEntryHeight = data => data.thumbnailURL ? 200 : 166;
-export const getRowHeight = data => (data.thumbnailURL ? 200 : 166) + MARGIN;
+const getEntryHeight = data => {
+  const length = data.title.length;
+
+  let height = 120 + (Math.floor(length / 100.0) * 20);
+
+  if (data.thumbnailURL) {
+    height += 34;
+  }
+
+  return height;
+};
+
+export const getRowHeight = data => getEntryHeight(data) + MARGIN;
 
 const styles = StyleSheet.create({
-  container: {
+  container: Object.assign({
     marginBottom: MARGIN,
-    padding: 16,
+    padding: 8,
     backgroundColor: theme.WHITE,
     flexDirection: 'column',
     justifyContent: 'space-between',
+  }, Platform.OS === 'web' ? {
+    borderColor: theme.SUPPORT,
+    borderWidth: 1,
+    padding: 16,
+  } : {}),
+  iconLabel: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  iconRow: {
+    width: 80,
+    paddingHorizontal: 2,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  contentCenter: {
+    justifyContent: 'center',
   },
   flexRow: {
     flexDirection: 'row',
@@ -29,11 +58,14 @@ const styles = StyleSheet.create({
   flexCol: {
     flexDirection: 'column',
   },
+  flexEnd: {
+    justifyContent: 'flex-end',
+  },
   spaceBetween: {
     justifyContent: 'space-between',
   },
   title: {
-    fontWeight: '500',
+    fontWeight: Platform.OS === 'web' ? 'bold' : '500',
     fontSize: 18,
     color: theme.TEXT,
   },
@@ -46,15 +78,22 @@ const styles = StyleSheet.create({
   secondaryText: {
     fontSize: 13,
     color: theme.TEXT_SECOND,
-    fontWeight: '400',
+    fontWeight: 'regular',
   },
   secondaryEmphasis: {
-    fontWeight: '500',
+    fontWeight: Platform.OS === 'web' ? 'bold' : '500',
   },
   category: {
     alignSelf: 'flex-start',
   },
 });
+
+const IconLabel = ({ icon, label, onPress }) => (
+  <Touchable feedback="uncontained" onPress={onPress} style={styles.iconLabel}>
+    <Icon name={icon} size={22} color={theme.TEXT_SECOND}/>
+    {label !== undefined ? <Text style={[styles.secondaryText, { marginLeft: 2 }]}>{label}</Text> : null}
+  </Touchable>
+);
 
 const sharePost = url => () => {
   Share.share({
@@ -99,7 +138,7 @@ class Entry extends PureComponent {
     return (
       <Touchable
         onPress={pressLink(link)}
-        style={[styles.container, styles.flexCol, { height: getEntryHeight(this.props) }]}>
+        style={[styles.container, styles.flexCol, { minHeight: getEntryHeight(this.props) }]}>
         <View style={[styles.flexRow, styles.spaceBetween, { flexWrap: 'wrap' }]}>
           <View style={{ flex: 1 }}>
             <Text numberOfLines={4} style={styles.title}>{title}</Text>
@@ -111,8 +150,8 @@ class Entry extends PureComponent {
           </View>
           {thumbnailURL ? <Image source={{ uri: thumbnailURL }} style={[styles.thumbnail]}/> : null}
         </View>
-        <View style={[styles.flexRow, styles.spaceBetween]}>
-          <View style={styles.flexRow}>
+        <View style={[ styles.flexRow, styles.spaceBetween ]}>
+          <View style={[ styles.flexRow, styles.contentCenter ]}>
             <PluginIcon plugin={plugin} size={35}/>
             <View style={[styles.flexCol, { marginLeft: 5 }]}>
               <View style={styles.flexRow}>
@@ -126,15 +165,10 @@ class Entry extends PureComponent {
                 <Text style={styles.secondaryText}>{__BLANK__}</Text>}
             </View>
           </View>
-          <View style={[styles.flexCol, { justifyContent: 'flex-end' }]}>
-            <View style={styles.flexRow}>
-              <Touchable feedback="uncontained" onPress={pressLink(commentURL)} style={styles.flexRow}>
-                <Icon name="comment" size={22} style={{ marginRight: 5 }} color={theme.TEXT_SECOND}/>
-                <Text style={[styles.secondaryText]}>{commentAmount}</Text>
-              </Touchable>
-              <Touchable feedback="uncontained" onPress={sharePost(link)} style={{ marginLeft: 10 }}>
-                <Icon name="share" size={22} color={theme.TEXT_SECOND}/>
-              </Touchable>
+          <View style={[styles.flexCol, styles.flexEnd ]}>
+            <View style={styles.iconRow}>
+              <IconLabel icon="comment" label={commentAmount} onPress={pressLink(commentURL)}/>
+              <IconLabel icon="share" onPress={sharePost(link)}/>
             </View>
           </View>
         </View>

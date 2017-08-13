@@ -24,6 +24,18 @@ const styles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
   },
+
+  title: {
+    color: theme.WHITE,
+    fontSize: 32,
+    fontWeight: 'bold',
+    marginRight: 20,
+  },
+
+  titleView: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
 });
 
 let Toolbar;
@@ -60,15 +72,13 @@ if (Platform.OS === 'web') {
     }
   };
 
-  const _Toolbar = () => {
-
-    let {
-      leftElement,
-      onLeftElementPress,
-      centerElement,
-      rightElement,
-      onRightElementPress,
-    } = this.props;
+  const _Toolbar = ({
+    leftElement,
+    onLeftElementPress,
+    centerElement,
+    rightElement,
+    onRightElementPress,
+  }) => {
 
     leftElement = iconFactory(leftElement, onLeftElementPress);
     centerElement = textFactory(centerElement);
@@ -77,7 +87,10 @@ if (Platform.OS === 'web') {
     return (
       <View style={styles.container}>
         {leftElement}
-        {centerElement}
+        <View style={styles.titleView}>
+          <Text style={styles.title}>Aggregor</Text>
+          {centerElement}
+        </View>
         {rightElement}
       </View>
     );

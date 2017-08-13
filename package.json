@@ -4,6 +4,7 @@
   "scripts": {
     "postinstall": "rm -rf ./node_modules/redux-form/node_modules/react && rm -rf ./node_modules/react-native-timeago/node_modules/react",
     "test": "jest",
+    "lint": "node node_modules/eslint/bin/eslint.js ./src",
     "android": "adb uninstall \"com.aggregor\"; node node_modules/react-native/local-cli/cli.js run-android",
     "android-prod": "adb uninstall \"com.aggregor\"; cd android && ./gradlew assembleRelease && ./gradlew installRelease",
     "emulator": "$ANDROID_HOME/emulator/emulator -avd nexus",
