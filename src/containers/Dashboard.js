@@ -76,8 +76,14 @@ const LoadingIndicator = () => (
 
 class NonemptyDashboard extends Component {
 
-  state = {
-    refreshing: false,
+  constructor(props) {
+    super(props);
+    
+    this.state = {
+      refreshing: false,
+    };
+
+    this.setRefreshing = this.setRefreshing.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -86,22 +92,24 @@ class NonemptyDashboard extends Component {
     }
   }
 
+  setRefreshing(refreshing) {
+    this.setState({
+      refreshing,
+    });
+  }
+
   _page = 1
 
   _fetchFeed = () => {
     const { dispatch, selectedFeed } = this.props;
 
     return dispatch(fetchFeed(selectedFeed, this._page))
-    .then(() => this.setState({
-      refreshing: false,
-    }));
+    .then(() => this.setRefreshing(false));
   }
 
   _onRefresh = () => {
     this._requestMore();
-    this.setState({
-      refreshing: true,
-    });
+    this.setRefreshing(true);
   }
 
   _requestMore = () => {
