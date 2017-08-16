@@ -178,5 +178,5 @@ export const MainHeader = ({ navigation, title }) => (
   <Toolbar
     leftElement="menu"
     onLeftElementPress={openDrawer(navigation)}
-    centerElement={<HeaderTitle texts={[{ title: 'Home' }]}/>}/>
+    centerElement={<HeaderTitle texts={[{ title }]}/>}/>
 );

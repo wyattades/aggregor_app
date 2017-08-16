@@ -9,6 +9,7 @@ import { prompt } from '../utils/prompt';
 import alert from '../utils/alert';
 import { SubmitButton } from '../components/Form';
 import Touchable from '../components/Touchable';
+import Container from '../components/Container';
 
 const styles = StyleSheet.create({
   container: {
@@ -77,7 +78,7 @@ const handleChangePassword = dispatch => () => {
 };
 
 const Account = ({ user, dispatch }) => (
-  <View style={styles.container}>
+  <Container style={styles.container} adjust={0.6}>
     <View>
       <View style={styles.textGroup}>
         <Text style={styles.label}>Username:</Text>
@@ -103,7 +104,7 @@ const Account = ({ user, dispatch }) => (
       title="DELETE ACCOUNT"
       style={styles.dangerButton}
       onPress={handleDeleteUser(dispatch)}/>
-  </View>
+  </Container>
 );
 
 Account.propTypes = {

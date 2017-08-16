@@ -100,10 +100,11 @@ PluginEdit = reduxForm({
 const selector = formValueSelector('pluginEdit');
 
 PluginEdit = connect((state, ownProps) => {
-  let { plugin, selectedFeed } = ownProps.navigation.state.params;
-  const id = plugin && plugin.id;
+  const { plugin: id, selectedFeed } = ownProps.navigation.state.params;
 
-  let newPlugin;
+  let newPlugin = false,
+      plugin = state.feeds.getIn([ selectedFeed, 'plugins', id ]);
+
   if (!plugin) {
     plugin = new PluginRecord({});
     newPlugin = true;
@@ -143,12 +144,7 @@ PluginEdit.propTypes = {
     state: PropTypes.shape({
       params: PropTypes.shape({
         selectedFeed: PropTypes.string.isRequired,
-        plugin: PropTypes.shape({
-          id: PropTypes.string.isRequired,
-          type: PropTypes.string.isRequired,
-          priority: PropTypes.number.isRequired,
-          data: PropTypes.object.isRequired,
-        }),
+        plugin: PropTypes.string.isRequired,
       }).isRequired,
     }).isRequired,
   }).isRequired,

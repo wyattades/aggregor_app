@@ -1,8 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
 import { View, Dimensions } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { addNavigationHelpers, NavigationActions } from 'react-navigation';
 import StackNavigator from 'react-navigation/lib/navigators/StackNavigator';
 import DrawerNavigator from 'react-navigation/lib/navigators/DrawerNavigator';
 
@@ -18,37 +17,41 @@ import About from '../containers/About';
 import PushTransition from '../components/Transition';
 import Drawer from '../components/Drawer';
 import { MainHeader } from '../components/Header';
+import navigatorWrapper from './navigatorWrapper';
 // import StackNavigator from './StackNavigator';
 // import DrawerNavigator from './DrawerNavigator';
 
-// TODO: implement browserAppContainer for web (for hash routing)
-
 // TODO: StackNavigator and DrawerNavigator should be less "mobile" focused
 // - Drawer menu shouldn't blur app, should stay open
+// - Drawer state should not show in url
 
 const largeScreen = Dimensions.get('window').width > 500;
 
-const MainPage = (Content, title) => () => (
+const MainPage = (Content, title) => ({ navigation }) => (
   <View style={{ flex: 1 }}>
     <MainHeader
-      navigation={this.props.navigation}
+      navigation={navigation}
       title={title}/>
     <Content/>
   </View>
 );
 
+MainPage.propTypes = {
+  navigation: PropTypes.object.isRequired,
+};
+
 const HomeNavigator = new StackNavigator({
   Dashboard: {
     screen: Dashboard,
-    path: '',
+    path: ':selectedFeed',
   },
   FeedEdit: {
     screen: FeedEdit,
-    path: ':feed/edit',
+    path: ':selectedFeed/edit',
   },
   PluginEdit: {
     screen: PluginEdit,
-    path: ':feed/edit/:plugin',
+    path: ':selectedFeed/edit/:plugin',
   },
 }, {
   initialRouteName: 'Dashboard',
@@ -85,9 +88,11 @@ export const AppNavigator = new StackNavigator({
   },
   Main: {
     screen: MainNavigator,
+    path: 'main',
   },
   Loading: {
     screen: Loading,
+    path: 'loading',
   },
 }, {
   headerMode: 'none',
@@ -95,46 +100,13 @@ export const AppNavigator = new StackNavigator({
   initialRouteName: 'Loading',
 });
 
-class Navigator extends Component {
-
-  componentWillMount() {
-    if (this.props.backHandler) {
-      this.props.backHandler.addEventListener('hardwareBackPress', this._handleBack);
-    }
-  }
-
-  componentWillUnmount() {
-    if (this.props.backHandler) {
-      this.props.backHandler.removeEventListener('hardwareBackPress', this._handleBack);
-    }
-  }
-
-  _handleBack = () => {
-
-    const { nav: { routes }, dispatch } = this.props;
-    const route = routes[0].routes && routes[0].routes[0];
-
-    if ((routes[0].index > 0) || (route && route.routes && route.routes[0].index > 0)) {
-      dispatch(NavigationActions.back());
-      return true; // do not exit app
-    } else {
-      return false; // exit app
-    }
-  }
-
-  render() {
-    const { dispatch, nav } = this.props;
-    return (
-      <AppNavigator navigation={addNavigationHelpers({ dispatch, state: nav })} />
-    );
-  }
-}
+const Navigator = navigatorWrapper(AppNavigator);
 
 Navigator.propTypes = {
   dispatch: PropTypes.func.isRequired,
-  nav: PropTypes.object.isRequired,
+  state: PropTypes.object.isRequired,
 };
 
 export default connect(({ nav }) => ({
-  nav,
+  state: nav,
 }))(Navigator);

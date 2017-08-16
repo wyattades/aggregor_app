@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { View, StyleSheet } from 'react-native'; // or can i just use div cause its a web.js file?
+import { View, StyleSheet } from 'react-native';
 
 import List from 'react-infinite';
 import { getRowHeight } from './Entry';
@@ -7,6 +7,10 @@ import { getRowHeight } from './Entry';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+  },
+  item: {
+    maxWidth: 1000,
+    marginHorizontal: 'auto',
   },
 });
 
@@ -17,11 +21,10 @@ class InfList extends Component {
   }
 
   componentDidMount() {
-    /* eslint-disable */
+    // eslint-disable-next-line react/no-did-mount-set-state
     this.setState({
       height: document.getElementById('InfListWeb').clientHeight,
     });
-    /* eslint-enable */
   }
 
   scrollToIndex = index => window.scrollTo(0, index * 150);
@@ -36,11 +39,15 @@ class InfList extends Component {
           elementHeight={data.map(item => getRowHeight(item))}
           infiniteLoadBeginEdgeOffset={onEndThreshold * 130}
           onInfiniteLoad={onEndReached}
-          loadingSpinnerDelegate={<ListFooterComponent/>}
+          loadingSpinnerDelegate={ListFooterComponent ? <ListFooterComponent/> : null}
           isInfiniteLoading={refreshing || data.length === 0}
           containerHeight={this.state.height}
         >
-          {data.map(item => <Item key={keyExtractor(item)} item={item}/>)}
+          {data.map(item => (
+            <View style={styles.item} key={keyExtractor(item)}>
+              <Item item={item}/>
+            </View>
+          ))}
         </List>
       </View>
     );

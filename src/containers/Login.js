@@ -17,7 +17,7 @@ const LayoutAnimation = Platform.OS === 'web' ?
 
 // TODO: figure out better keyboardAvoiding
 const KeyboardAvoidingView = Platform.OS === 'web' ?
-  ({ children }) => <View children={children}/> :
+  ({ children }) => <View>{children}</View> :
   NativeKeyboardAvoidingView;
 
 const onSubmit = (values, dispatch) =>

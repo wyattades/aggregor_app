@@ -41,7 +41,13 @@ const plugins = (state, action) => {
     case 'DELETE_PLUGIN':
       return state.remove(action.id);
     case 'SET_ERRORS':
-      return state.map((_plugin, id) => _plugin.set('error', action.errors[id]));
+      if (action.errors) {
+        return state.map((_plugin, id) => _plugin.set('error', action.errors[id]));
+      } else if (action.err) {
+        return state.map(_plugin => _plugin.set('error', action.err));
+      } else {
+        return state;
+      }
     default:
       return state;
   }

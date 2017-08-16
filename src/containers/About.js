@@ -3,6 +3,7 @@ import { View, Text, StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
 
 import theme from '../utils/theme';
+import Container from '../components/Container';
 
 const styles = StyleSheet.create({
   container: {
@@ -32,7 +33,7 @@ const styles = StyleSheet.create({
 });
 
 const About = ({ plugin_array }) => (
-  <View style={styles.container}>
+  <Container style={styles.container} adjust={0.6}>
     <View>
       <View style={styles.textGroup}>
         <Text style={styles.title}>The Idea:</Text>
@@ -57,7 +58,7 @@ const About = ({ plugin_array }) => (
     <Text style={styles.noteText}>
       *Aggregor is a proof of concept app and may or may not support more sources in the future
     </Text>
-  </View>
+  </Container>
 );
 
 export default connect(state => ({

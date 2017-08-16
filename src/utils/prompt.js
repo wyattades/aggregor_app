@@ -9,8 +9,9 @@ let prompt;
 
 if (Platform.OS === 'web') {
 
-  prompt = options => dispatch => {
+  prompt = options => () => {
     // TEMP
+    // eslint-disable-next-line no-alert
     let value = window.prompt(options.title);
     if (value) {
       options.onSubmit(value);
@@ -21,7 +22,10 @@ if (Platform.OS === 'web') {
 
 } else {
 
-  prompt = options => dispatch => dispatch({ type: 'SET_PROMPT', options });
+  prompt = options => dispatch => dispatch({
+    type: 'SET_PROMPT',
+    options,
+  });
 
   // eslint-disable-next-line global-require
   const Prompt = require('react-native-prompt').default;

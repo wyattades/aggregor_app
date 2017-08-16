@@ -68,10 +68,12 @@ class FeedEdit extends Component {
 
   _addPlugin = () => this.props.navigation.navigate('PluginEdit', {
     selectedFeed: this.props.selectedFeed,
+    plugin: 'new',
   });
 
   _editPlugin = plugin => () => this.props.navigation.navigate('PluginEdit', {
-    plugin, selectedFeed: this.props.selectedFeed,
+    plugin: plugin.id,
+    selectedFeed: this.props.selectedFeed,
   });
 
   _keyExtractor = item => item.id;

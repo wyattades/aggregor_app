@@ -5,6 +5,7 @@ import nav from './nav';
 import user from './user';
 import feeds from './feeds';
 import prompt from './prompt';
+import alert from './alert';
 import { plugin_types, plugin_array } from './plugin_types';
 
 export default combineReducers({
@@ -13,6 +14,7 @@ export default combineReducers({
   user,
   feeds,
   prompt,
+  alert,
   plugin_types,
   plugin_array,
 });

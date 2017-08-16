@@ -5,7 +5,8 @@ import { setFeed } from './navActions';
 const ADDRESS = __DEV__ ? 'http://localhost:3000' : API_URL,
       TOKEN = API_KEY;
 
-// TODO: many actions do not handle errors correctly, fix
+// TODO: many actions do not handle errors correctly, 
+// TODO: set max timeout for api calls
 
 const request = (dispatch, method, route, token, data) => fetch(ADDRESS + route, {
   method,
@@ -133,7 +134,12 @@ export const fetchFeed = (feed, page = 1) => (dispatch, getState) => {
       dispatch({ type: 'APPEND_ENTRIES', feed, page, entries });
       dispatch({ type: 'SET_ERRORS', feed, page, errors });
     },
-  );
+  )
+  .catch(err => {
+    if (err.code === 0) {
+      dispatch({ type: 'SET_ERRORS', feed, page, err });
+    }
+  });
 };
 
 export const updateFeed = (feed, name) => (dispatch, getState) => {
@@ -159,7 +165,7 @@ export const fetchPlugins = feed => (dispatch, getState) => {
 export const savePlugin = (feed, data, pluginId) => (dispatch, getState) => {
   const user = getState().user;
 
-  if (typeof pluginId === 'string' && pluginId.length > 0) {
+  if (typeof pluginId === 'string' && pluginId.length > 0 && pluginId !== 'new') {
     return request(dispatch, 'PUT', `/user/${user.username}/feed/${feed}/plugin/${pluginId}`, user.token, data).then(
       () => {
         dispatch({ type: 'UPDATE_PLUGIN', feed, id: pluginId, data });
