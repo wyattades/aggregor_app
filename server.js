@@ -12,12 +12,12 @@ new WebpackDevServer(webpack(config), {
     timings: true,
     chunks: false,
     chunkModules: false,
-    modules: false
+    modules: false,
   },
   historyApiFallback: {
-    index: 'index.html'
-  }
-}).listen(8080, '0.0.0.0', function(err, result) {
+    index: 'index.html',
+  },
+}).listen(8080, '0.0.0.0', (err, result) => {
   if (err) {
     return console.log(err);
   }

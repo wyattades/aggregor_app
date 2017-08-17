@@ -7,8 +7,9 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { createFeed, logout } from '../actions/api';
 import theme from '../utils/theme';
-import { prompt } from '../utils/prompt';
+import prompt from '../utils/prompt';
 import alert from '../utils/alert';
+import { feedName } from '../utils/format';
 import Touchable from './Touchable';
 
 const styles = StyleSheet.create({
@@ -84,12 +85,10 @@ const styles = StyleSheet.create({
   },
 });
 
-const handleCreateFeed = dispatch => feed => {
-  dispatch(createFeed(feed))
-  .catch(err => {
-    alert(err.data);
-  });
-};
+const handleCreateFeed = dispatch => feed => dispatch(createFeed(feed))
+.catch(err => {
+  alert(err.data);
+});
 
 const promptNewFeed = navigation => () => {
   navigation.navigate('DrawerClose');
@@ -97,6 +96,7 @@ const promptNewFeed = navigation => () => {
     title: 'Create New Feed',
     placeholder: 'Name',
     submitText: 'Create',
+    match: feedName,
     onSubmit: handleCreateFeed(navigation.dispatch),
   }));
 };

@@ -1,14 +1,13 @@
-import injectStyle from './src/utils/injectStyle';
+// Inject required fonts into css
+import fontAwesome from 'react-native-vector-icons/Fonts/FontAwesome.ttf';
+import materialIcons from 'react-native-vector-icons/Fonts/MaterialIcons.ttf';
 
 // Load css files
 import 'normalize.css';
 import './src/styles/styles.default.scss';
+import './src';
 
-// Inject required fonts into css
-import fontAwesome from 'react-native-vector-icons/Fonts/FontAwesome.ttf';
-import materialIcons from 'react-native-vector-icons/Fonts/MaterialIcons.ttf';
+import injectStyle from './src/utils/injectStyle';
+
 injectStyle('FontAwesome', fontAwesome);
 injectStyle('Material Icons', materialIcons);
-
-// Run app
-import './src';

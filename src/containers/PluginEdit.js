@@ -31,7 +31,6 @@ class PluginEdit extends Component {
     return dispatch(savePlugin(selectedFeed, values, id)).then(
       () => navigation.goBack(),
       err => {
-        console.log('pluginErr: ', err);
         throw new SubmissionError({ _error: err.data });
       },
     );

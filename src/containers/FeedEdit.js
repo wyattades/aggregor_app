@@ -76,8 +76,6 @@ class FeedEdit extends Component {
     selectedFeed: this.props.selectedFeed,
   });
 
-  _keyExtractor = item => item.id;
-
   render() {
     const { plugins } = this.props;
     return (

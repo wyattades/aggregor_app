@@ -1,59 +1,114 @@
-import React from 'react';
-import { Platform, View } from 'react-native';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
+import { View, Text, StyleSheet, TouchableWithoutFeedback } from 'react-native';
 import { connect } from 'react-redux';
+import { reduxForm, Field } from 'redux-form';
 
-// TODO: remake prompt: styles, allow regex matching, custom buttons
+import { TextField, SubmitButton } from '../components/Form';
+import theme from './theme';
 
-let PromptView;
-let prompt;
+export default options => dispatch => dispatch({
+  type: 'SET_PROMPT',
+  options,
+});
 
-if (Platform.OS === 'web') {
+const styles = StyleSheet.create({
+  container: {
+    ...StyleSheet.absoluteFillObject,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.4)',
 
-  prompt = options => () => {
-    // TEMP
-    // eslint-disable-next-line no-alert
-    let value = window.prompt(options.title);
-    if (value) {
-      options.onSubmit(value);
-    }
-  };
+  },
+  prompt: {
+    backgroundColor: theme.WHITE,
+    width: 300,
+    height: 250,
+    padding: 20,
+    borderRadius: 10,
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  title: {
+    color: theme.TEXT,
+    fontWeight: 'bold',
+    fontSize: 18,
+  },
+  input: {
+    alignSelf: 'stretch',
+  },
+  button: {
+    alignSelf: 'stretch',
+    marginTop: -20,
+  },
+});
 
-  PromptView = () => <View/>;
+class PromptView extends Component {
+  
+  _onSubmit = ({ input }) =>
+    this.props.options.onSubmit(input)
+    .then(() => {
+      this.props.dispatch({ type: 'UNSET_PROMPT' });
+      this.props.reset();
+    });
 
-} else {
+  render() {
+    const { options: { submitText, title, visible, placeholder },
+      handleSubmit, pristine, submitting, submitSucceeded, dispatch } = this.props;
 
-  prompt = options => dispatch => dispatch({
-    type: 'SET_PROMPT',
-    options,
-  });
-
-  // eslint-disable-next-line global-require
-  const Prompt = require('react-native-prompt').default;
-
-  PromptView = ({ dispatch, options: { onSubmit, onCancel, title, textInputProps = {}, ...rest } }) => {
-    const handleSubmit = value => {
-      onSubmit && onSubmit(value);
-      dispatch({ type: 'UNSET_PROMPT' });
-    };
-    const handleCancel = () => {
-      onCancel && onCancel();
-      dispatch({ type: 'UNSET_PROMPT' });
-    };
-
-    return (
-      <Prompt
-        {...rest}
-        title={title || ''}
-        onSubmit={handleSubmit}
-        onCancel={handleCancel}
-        textInputProps={{ maxLength: 32, ...textInputProps }}/>
+    return !visible ? null : (
+      <TouchableWithoutFeedback onPress={() => dispatch({ type: 'UNSET_PROMPT' })}>
+        <View style={styles.container}>
+          <TouchableWithoutFeedback>
+            <View style={styles.prompt}>
+              <Text style={styles.title}>{title}</Text>
+              <View style={styles.input}>
+                <Field label={placeholder} name="input" component={TextField}/>
+              </View>
+              <View style={styles.button}>
+                <SubmitButton
+                  title={submitText}
+                  disabled={pristine}
+                  onPress={handleSubmit(this._onSubmit)}
+                  submitting={submitting}
+                  submitSucceeded={submitSucceeded}
+                />
+              </View>
+            </View>
+          </TouchableWithoutFeedback>
+        </View>
+      </TouchableWithoutFeedback>
     );
-  };
-
-  PromptView = connect(state => ({
-    options: state.prompt,
-  }))(PromptView);
-
+  }
 }
 
-export { PromptView, prompt };
+PromptView = reduxForm({
+  form: 'prompt',
+  validate: ({ input }, { options: { match, placeholder } }) => {
+    const errors = {};
+
+    if (typeof match === 'function' && !match(input)) {
+      errors.input = `Invalid ${placeholder}`;
+    }
+
+    return errors;
+  },
+})(PromptView);
+
+PromptView.propTypes = {
+  options: PropTypes.oneOfType([
+    PropTypes.shape({
+      visible: PropTypes.oneOf([ true ]).isRequired,
+    }).isRequired,
+    PropTypes.shape({
+      visible: PropTypes.oneOf([ false ]).isRequired,
+    }).isRequired,
+  ]).isRequired,
+};
+
+PromptView = connect(({ prompt: options }) => ({
+  options,
+}))(PromptView);
+
+export { PromptView };

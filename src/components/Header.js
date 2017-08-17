@@ -76,7 +76,7 @@ const handleFeedOptionsPress = (navigation, selectedFeed) => ({ action, index })
       dispatch(deleteFeed(selectedFeed))
       .then(() => {
         alert('Feed succesfully deleted');
-      }, err => console.log(err));
+      });
     }
   }
 };
@@ -155,7 +155,7 @@ const handleDeletePlugin = (navigation, selectedFeed, id) => () => {
 export const PluginEditHeader = ({ navigation, scene }) => {
   const params = scene.route.params,
         selectedFeed = params && params.selectedFeed,
-        plugin = params && params.plugin;
+        plugin = params && params.plugin !== 'new' && params.plugin;
 
   return (
     <Toolbar
@@ -170,7 +170,7 @@ export const PluginEditHeader = ({ navigation, scene }) => {
         },
       ]}/>}
       rightElement={plugin ? 'delete' : undefined}
-      onRightElementPress={plugin ? handleDeletePlugin(navigation, selectedFeed, plugin.id) : null}/>
+      onRightElementPress={plugin ? handleDeletePlugin(navigation, selectedFeed, plugin) : null}/>
   );
 };
 

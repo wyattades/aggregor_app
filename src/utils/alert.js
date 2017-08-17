@@ -69,8 +69,8 @@ class AlertView extends Component {
   }
 }
 
-AlertView = connect(state => ({
-  options: state.alert,
+AlertView = connect(({ alert: options }) => ({
+  options,
 }))(AlertView);
 
 export { AlertView };

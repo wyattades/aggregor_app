@@ -11,7 +11,7 @@ export default (fontName, url) => {
   }`;
 
   if (style.styleSheet) {
-    style.styleSheet.cssText = iconFontStyles;
+    style.styleSheet.cssText = (style.styleSheet.cssText || '') + iconFontStyles;
   } else {
     style.appendChild(document.createTextNode(iconFontStyles));
   }

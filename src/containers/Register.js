@@ -17,7 +17,6 @@ const KeyboardAvoidingView =
 const onSubmit = (values, dispatch) =>
   dispatch(createUser(values))
   .catch(err => {
-    console.log(err);
     if (err.code === 409) {
       throw new SubmissionError({ _error: 'Uh oh, this username is already taken!' });
     } else if (err.code === 0) {

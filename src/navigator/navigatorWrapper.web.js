@@ -114,7 +114,6 @@ export default NavigationAwareView => {
 
       const uri = getUri(path, params);
       
-      console.log('update', { hash: window.location.hash, uri });
       if (window.location.hash !== uri) {
         window.history.pushState({}, undefined, uri);
       }
@@ -176,9 +175,11 @@ export default NavigationAwareView => {
     }
 
     render() {
-      const { dispatch, state } = this;
       return (
-        <NavigationAwareView navigation={addNavigationHelpers({ dispatch, state })}/>
+        <NavigationAwareView navigation={addNavigationHelpers({
+          dispatch: this.props.dispatch,
+          state: this.state,
+        })}/>
       );
     }
   };

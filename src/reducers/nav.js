@@ -70,10 +70,6 @@ export default (state, action) => {
     //   const currentRoute = routes[index];
     //   const lastScene = currentRoute.routes[currentRoute.routes.length - 1];
 
-    //   // console.log(lastScene.routeName, routeName, lastScene.params, params);
-
-    //   console.log(state, AppNavigator.router.getStateForAction(action, state));
-
     //   // Check for duplication
     //   if (!lastScene.routeName === routeName || !shallowEqual(lastScene.params, params)) {
     //       nextState = AppNavigator.router.getStateForAction(action, state);

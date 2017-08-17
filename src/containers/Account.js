@@ -69,8 +69,6 @@ const handleChangePassword = dispatch => () => {
       err => {
         if (err.code === 400) {
           alert('Sorry, invalid password.');
-        } else {
-          console.log(err);
         }
       },
     ),

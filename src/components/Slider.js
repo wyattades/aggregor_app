@@ -12,7 +12,6 @@ if (Platform.OS === 'web') {
 
     const onChange = e => {
       let val = e.target.value;
-      console.log(val);
       if (isNaN(val)) {
         val = parseFloat(val);
       }

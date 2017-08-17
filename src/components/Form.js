@@ -353,7 +353,7 @@ const ErrorText = Platform.OS === 'web' ?
   );
 
 const SubmitButton = ({ title, onPress, submitting, submitSucceeded, disabled, style = null }) => (
-  <Touchable style={[styles.button, disabled && styles.disabled, style]} onPress={onPress}>
+  <Touchable style={[styles.button, disabled && styles.disabled, style]} onPress={disabled ? null : onPress}>
     { submitting ? <ActivityIndicator color={theme.WHITE}/> : null }
     { submitSucceeded ? <Icon name="check" color={theme.WHITE} size={24}/> : null }
     <Text style={styles.buttonText}>{title}</Text>
