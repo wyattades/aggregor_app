@@ -16,7 +16,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.WHITE,
-    paddingTop: 32,
   },
 
   divider: {
@@ -68,6 +67,7 @@ const styles = StyleSheet.create({
 
   billboard: {
     height: 128,
+    marginTop: 32,
     marginBottom: 16,
     padding: 16,
     flexDirection: 'column',
@@ -94,7 +94,7 @@ const promptNewFeed = navigation => () => {
   navigation.navigate('DrawerClose');
   navigation.dispatch(prompt({
     title: 'Create New Feed',
-    placeholder: 'Name',
+    label: 'Name',
     submitText: 'Create',
     match: feedName,
     onSubmit: handleCreateFeed(navigation.dispatch),

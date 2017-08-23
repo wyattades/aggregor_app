@@ -1,28 +1,37 @@
 import React from 'react';
-import { View, Text, Platform, StatusBar, StyleSheet } from 'react-native';
+import { View, Text, StatusBar, StyleSheet, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import Touchable from './Touchable';
 import theme from '../utils/theme';
 
+const [ HEIGHT, ICON_SIZE ] = Platform.OS === 'web' ?
+  [ 60, 32 ] :
+  [ 56, 24 ];
+
 const styles = StyleSheet.create({
+  
   statusBar: {
     height: StatusBar.currentHeight,
     backgroundColor: theme.PRIMARY_DARK,
   },
 
   container: {
-    height: 60,
+    height: HEIGHT,
     backgroundColor: theme.PRIMARY_DARK,
     paddingHorizontal: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     // equivalent to: boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.3)',
-    shadowColor: '#000',
+    shadowColor: '#000000',
     shadowOpacity: 0.3,
     shadowOffset: { width: 0, height: 2 },
     shadowRadius: 4,
+    elevation: 5,
+  },
+  iconMargin: {
+    marginLeft: 16,
   },
 
   title: {
@@ -36,81 +45,72 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
+  iconArray: {
+    flexDirection: 'row',
+    width: 24 + 16 + 24,
+  },
 });
 
-let Toolbar;
+const TouchIcon = ({ name, onPress, style }) => (
+  <Touchable onPress={onPress} feedback="uncontained" style={style || {}}>
+    <Icon name={name} color={theme.WHITE} size={ICON_SIZE}/>
+  </Touchable>
+);
 
-if (Platform.OS === 'web') {
-
-  const createIcon = name => (
-    <Icon name={name} color={theme.WHITE} size={32}/>
-  );
-
-  const iconFactory = (element, onPress) => {
-    if (typeof element === 'string') {
-      element = createIcon(element);
-    } else if (typeof element === 'object') {
-      const menu = element.menu ? createIcon(element.menu.icon) : null;
-      element = menu;
-    } else if (!React.isValidElement(element)) {
-      return <View/>;
-    }
-
-    return (
-      <Touchable onPress={onPress}>
-        {element}
-      </Touchable>
+const iconFactory = (element, onPress, flex) => {
+  if (typeof element === 'string') {
+    element = (
+      <TouchIcon name={element} onPress={onPress}/>
     );
-  };
+  } else if (Array.isArray(element)) {
+    element = element.map((icon, index) => (
+      <TouchIcon key={index} style={index > 0 && styles.iconMargin} name={icon} onPress={() => onPress({ index, icon })}/>
+    ));
+  } else if (!React.isValidElement(element)) {
+    element = null;
+  }
 
-  const textFactory = element => {
+  return (
+    <View style={[ styles.iconArray, { justifyContent: `flex-${flex}` }]}>
+      {element}
+    </View>
+  );
+};
 
-    if (React.isValidElement(element)) {
-      return element;
-    } else {
-      return <Text/>;
-    }
-  };
+const textFactory = element => {
 
-  const _Toolbar = ({
-    leftElement,
-    onLeftElementPress,
-    centerElement,
-    rightElement,
-    onRightElementPress,
-  }) => {
+  if (React.isValidElement(element)) {
+    return element;
+  } else {
+    return <Text/>;
+  }
+};
 
-    leftElement = iconFactory(leftElement, onLeftElementPress);
-    centerElement = textFactory(centerElement);
-    rightElement = iconFactory(rightElement, onRightElementPress);
+const Toolbar = ({
+  leftElement,
+  onLeftElementPress,
+  centerElement,
+  rightElement,
+  onRightElementPress,
+}) => {
 
-    return (
+  leftElement = iconFactory(leftElement, onLeftElementPress, 'start');
+  centerElement = textFactory(centerElement);
+  rightElement = iconFactory(rightElement, onRightElementPress, 'end');
+
+  return (
+    <View>
+      { Platform.OS !== 'web' ? <View style={styles.statusBar}/> : null }
       <View style={styles.container}>
         {leftElement}
         <View style={styles.titleView}>
-          <Text style={styles.title}>Aggregor</Text>
+          { Platform.OS === 'web' ? <Text style={styles.title}>Aggregor</Text> : null }
           {centerElement}
         </View>
         {rightElement}
       </View>
-    );
-  };
-
-  Toolbar = _Toolbar;
-
-} else {
-
-  // eslint-disable-next-line global-require
-  const _Toolbar = require('react-native-material-ui').Toolbar;
-
-  // We need space for the statusBar to sit above the Toolbar
-  Toolbar = props => (
-    <View>
-      <View style={styles.statusBar}/>
-      <_Toolbar {...props}/>
     </View>
   );
-
-}
+};
 
 export default Toolbar;

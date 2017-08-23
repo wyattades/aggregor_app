@@ -233,7 +233,7 @@ const TextField = ({
       <TextInput
         onChangeText={onChange}
         autoCorrect={false}
-        underlineColorAndroid={'transparent'}
+        underlineColorAndroid="transparent"
         style={[styles.plainInput, inputError && styles.plainInputError]}
         secureTextEntry={secureTextEntry || false}
         {...restInput}/>

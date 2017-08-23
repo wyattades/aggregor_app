@@ -44,27 +44,29 @@ const styles = StyleSheet.create({
   },
 });
 
-class PromptView extends Component {
+// TODO: initial value isn't working. Need to reset form???
+
+class Prompt extends Component {
   
   _onSubmit = ({ input }) =>
-    this.props.options.onSubmit(input)
+    this.props.prompt.onSubmit(input)
     .then(() => {
       this.props.dispatch({ type: 'UNSET_PROMPT' });
       this.props.reset();
     });
 
   render() {
-    const { options: { submitText, title, visible, placeholder },
+    const { prompt: { submitText = 'Submit', title, label },
       handleSubmit, pristine, submitting, submitSucceeded, dispatch } = this.props;
 
-    return !visible ? null : (
+    return (
       <TouchableWithoutFeedback onPress={() => dispatch({ type: 'UNSET_PROMPT' })}>
         <View style={styles.container}>
           <TouchableWithoutFeedback>
             <View style={styles.prompt}>
               <Text style={styles.title}>{title}</Text>
               <View style={styles.input}>
-                <Field label={placeholder} name="input" component={TextField}/>
+                <Field label={label} name="input" component={TextField}/>
               </View>
               <View style={styles.button}>
                 <SubmitButton
@@ -83,23 +85,33 @@ class PromptView extends Component {
   }
 }
 
-PromptView = reduxForm({
+Prompt = reduxForm({
   form: 'prompt',
-  validate: ({ input }, { options: { match, placeholder } }) => {
+  fields: [ 'input' ],
+  validate: ({ input }, { prompt: { match, label = 'input' } }) => {
     const errors = {};
 
     if (typeof match === 'function' && !match(input)) {
-      errors.input = `Invalid ${placeholder}`;
+      errors.input = `Invalid ${label}`;
     }
 
     return errors;
   },
-})(PromptView);
+})(Prompt);
+
+let PromptView = ({ prompt, initialValues }) => !prompt.visible ? null : (
+  <Prompt prompt={prompt} initialValues={initialValues}/>
+);
 
 PromptView.propTypes = {
-  options: PropTypes.oneOfType([
+  prompt: PropTypes.oneOfType([
     PropTypes.shape({
       visible: PropTypes.oneOf([ true ]).isRequired,
+      match: PropTypes.function,
+      label: PropTypes.string,
+      title: PropTypes.string.isRequired,
+      submitText: PropTypes.string,
+      defaultValue: PropTypes.string,
     }).isRequired,
     PropTypes.shape({
       visible: PropTypes.oneOf([ false ]).isRequired,
@@ -107,8 +119,11 @@ PromptView.propTypes = {
   ]).isRequired,
 };
 
-PromptView = connect(({ prompt: options }) => ({
-  options,
+PromptView = connect(({ prompt }) => ({
+  prompt,
+  initialValues: {
+    input: prompt.defaultValue,
+  },
 }))(PromptView);
 
 export { PromptView };

@@ -90,7 +90,7 @@ class FeedEdit extends Component {
           </ScrollView>
         )}
         <ActionButton
-          style={{ container: styles.button }}
+          style={styles.button}
           onPress={this._addPlugin}/>
       </View>
     );

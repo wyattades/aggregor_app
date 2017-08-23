@@ -11,3 +11,9 @@ import injectStyle from './src/utils/injectStyle';
 
 injectStyle('FontAwesome', fontAwesome);
 injectStyle('Material Icons', materialIcons);
+
+let l = window.location.href;
+const newL = l.replace('www.', '');
+if (newL !== l) {
+  window.location.replace(newL);
+}

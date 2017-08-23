@@ -5,18 +5,26 @@ import { connect } from 'react-redux';
 import { store } from '../App';
 import theme from './theme';
 
+const HEIGHT = 40;
+
 const styles = StyleSheet.create({
   container: {
     position: 'absolute',
-    bottom: 0,
     left: 0,
     right: 0,
-    height: 40,
+    bottom: 0,
+    height: HEIGHT,
+    flexDirection: 'column',
+    justifyContent: 'flex-end',
+  },
+  alert: {
     backgroundColor: theme.PRIMARY,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    opacity: 0.6,
+    opacity: 0.8,
+    overflow: 'hidden',
+    paddingHorizontal: 16,
   },
   text: {
     color: theme.WHITE,
@@ -27,44 +35,42 @@ const styles = StyleSheet.create({
 /* eslint-disable react/prefer-stateless-function */
 class AlertView extends Component {
 
-  // constructor(props) {
-  //   super(props);
+  constructor(props) {
+    super(props);
 
-  //   this.state = {
-  //     fade: new Animated.Value(props.options.visible ? 1 : 0),
-  //   };
-  // }
+    this._fade = new Animated.Value(props.options.visible ? 1 : 0);
+  }
 
-  // componentDidMount() {
-  //   this._animate(this.props.options.visible);
-  // }
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.options.visible !== this.props.options.visible) {
+      this._animate(nextProps.options.visible);
+    }
+  }
 
-  // componentWillReceiveProps(nextProps) {
-  //   this._animate(nextProps.options.visible);
-  // }
-
-  // _animate = visible => Animated.timing(
-  //   this.state.fade,
-  //   {
-  //     toValue: visible ? 1 : 0,
-  //     duration: 600,
-  //   },
-  // );
+  _animate = visible => Animated.timing(
+    this._fade,
+    {
+      toValue: visible ? 1 : 0,
+      duration: 400,
+    },
+  ).start();
 
   render() {
-    const { dispatch, options: { msg, visible } } = this.props;
+    const { options: { msg } } = this.props;
 
-    // const style = {
-    //   opacity: this.state.fade.interpolate({
-    //     inputRange: [0, 1],
-    //     outputRange: [0, 1],
-    //   }),
-    // };
+    const style = {
+      height: this._fade.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, HEIGHT],
+      }),
+    };
 
-    return !visible ? null : (
-      <Animated.View style={[ styles.container ]}>
-        <Text style={styles.text}>{msg}</Text>
-      </Animated.View>
+    return (
+      <View style={styles.container}>
+        <Animated.View style={[ styles.alert, style ]}>
+          <Text style={styles.text}>{msg}</Text>
+        </Animated.View>
+      </View>
     );
   }
 }

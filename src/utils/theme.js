@@ -27,12 +27,4 @@ Backup
 };
 */
 
-// Color pallete of ToolBar by 'react-native-material-ui';
-export const uiTheme = {
-  palette: {
-    primaryColor: theme.PRIMARY_DARK,
-    accentColor: theme.WHITE,
-  },
-};
-
 export default theme;

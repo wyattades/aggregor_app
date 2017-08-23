@@ -29,14 +29,13 @@ export const getRowHeight = data => getEntryHeight(data) + MARGIN;
 const styles = StyleSheet.create({
   container: Object.assign({
     marginBottom: MARGIN,
-    padding: 8,
+    padding: 16,
     backgroundColor: theme.WHITE,
     flexDirection: 'column',
     justifyContent: 'space-between',
   }, Platform.OS === 'web' ? {
     borderColor: theme.SUPPORT,
     borderWidth: 1,
-    padding: 16,
   } : {}),
   iconLabel: {
     flexDirection: 'row',
@@ -78,7 +77,7 @@ const styles = StyleSheet.create({
   secondaryText: {
     fontSize: 13,
     color: theme.TEXT_SECOND,
-    fontWeight: 'regular',
+    fontWeight: '400',
   },
   secondaryEmphasis: {
     fontWeight: Platform.OS === 'web' ? 'bold' : '500',

@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 
 import theme from '../utils/theme';
 import { deleteUser, updateUser } from '../actions/api';
-import { prompt } from '../utils/prompt';
+import prompt from '../utils/prompt';
 import alert from '../utils/alert';
 import { SubmitButton } from '../components/Form';
 import Touchable from '../components/Touchable';

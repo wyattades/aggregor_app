@@ -92,13 +92,6 @@ class Login extends Component {
     let _error;
     if (error) {
       _error = error;
-    } else {
-      const apiError = navigation.state.params && navigation.state.params.apiError;
-      if (apiError instanceof Error) {
-        _error = apiError.toString();
-      } else if (typeof apiError === 'object') {
-        _error = apiError.data;
-      }
     }
 
     return (

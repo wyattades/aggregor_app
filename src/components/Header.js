@@ -4,7 +4,7 @@ import { NavigationActions } from 'react-navigation';
 
 import Toolbar from './Toolbar';
 import theme from '../utils/theme';
-import { prompt } from '../utils/prompt';
+import prompt from '../utils/prompt';
 import alert from '../utils/alert';
 import { deleteFeed, removePlugin, updateFeed } from '../actions/api';
 
@@ -49,35 +49,35 @@ const HeaderTitle = ({ texts }) => (
 
 const promptRename = (oldName, dispatch) => dispatch(prompt({
   title: 'Rename Feed',
-  placeholder: 'name',
+  label: 'Name',
   defaultValue: oldName,
   submitText: 'Rename',
   onSubmit: newName => {
     if (oldName !== newName) {
-      dispatch(updateFeed(oldName, newName))
+      return dispatch(updateFeed(oldName, newName))
       .catch(err => {
         if (err.code === 400) {
           alert('Sorry, invalid feed name');
         } else if (err.code === 409) {
           alert('Sorry, feed name already taken');
         }
+        throw err;
       });
     }
+    return Promise.resolve();
   },
 }));
 
-const handleFeedOptionsPress = (navigation, selectedFeed) => ({ action, index }) => {
+const handleFeedOptionsPress = (navigation, selectedFeed) => ({ index }) => {
   const dispatch = navigation.dispatch;
 
-  if (action === 'menu') {
-    if (index === 0) {
-      promptRename(selectedFeed, dispatch);
-    } else if (index === 1) {
-      dispatch(deleteFeed(selectedFeed))
-      .then(() => {
-        alert('Feed succesfully deleted');
-      });
-    }
+  if (index === 0) {
+    promptRename(selectedFeed, dispatch);
+  } else if (index === 1) {
+    dispatch(deleteFeed(selectedFeed))
+    .then(() => {
+      alert('Feed succesfully deleted');
+    });
   }
 };
 
@@ -102,7 +102,7 @@ export const DashboardHeader = ({ navigation, scene }) => {
           highlight: true,
         },
       ]}/>}
-      rightElement="edit"
+      rightElement="playlist-add"
       onRightElementPress={goToFeedEdit(navigation, selectedFeed)}/>
   ) : (
     <MainHeader navigation={navigation} title="Home"/>
@@ -129,15 +129,7 @@ export const FeedEditHeader = ({ navigation, scene }) => {
           title: 'Create Feed',
         },
       ]}/>}
-      rightElement={{
-        menu: {
-          icon: 'more-vert',
-          labels: [
-            'Rename Feed',
-            'Delete Feed',
-          ],
-        },
-      }}
+      rightElement={[ 'edit', 'delete' ]}
       onRightElementPress={handleFeedOptionsPress(navigation, selectedFeed)}/>
   );
 };

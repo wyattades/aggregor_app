@@ -86,7 +86,7 @@ export default (state, action) => {
       break;
 
     case 'UNSET_USER':
-      nextState = AppNavigator.router.getStateForAction(goLogin({ apiError: action.err }));
+      nextState = AppNavigator.router.getStateForAction(goLogin(action.err ? { apiError: action.err } : {}));
       break;
 
     case 'SET_FEED':

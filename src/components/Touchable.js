@@ -35,10 +35,11 @@ const IosTouchable = ({ feedback, onPress, ...rest }) => (
 
 const getBackground = (type = 'contained') => {
   if (type === 'uncontained') {
+    // return TouchableNativeFeedback.Ripple('#AAF', true);
     return TouchableNativeFeedback.SelectableBackgroundBorderless();
   } else if (type === 'none') {
     return undefined;
-  } else { // 'contained'
+  } else { // 'contained' (default)
     return TouchableNativeFeedback.SelectableBackground();
   }
 };
