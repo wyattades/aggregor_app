@@ -32,18 +32,20 @@ const styles = StyleSheet.create({
   },
 });
 
-/* eslint-disable react/prefer-stateless-function */
 class AlertView extends Component {
 
   constructor(props) {
     super(props);
 
     this._fade = new Animated.Value(props.options.visible ? 1 : 0);
+    this._last_message = props.options.msg || '';
   }
 
   componentWillReceiveProps(nextProps) {
     if (nextProps.options.visible !== this.props.options.visible) {
       this._animate(nextProps.options.visible);
+
+      this._last_message = nextProps.options.msg || this._last_message;
     }
   }
 
@@ -56,19 +58,21 @@ class AlertView extends Component {
   ).start();
 
   render() {
-    const { options: { msg } } = this.props;
-
     const style = {
       height: this._fade.interpolate({
         inputRange: [0, 1],
         outputRange: [0, HEIGHT],
+      }),
+      opacity: this._fade.interpolate({
+        inputRange: [0, 1],
+        outputRange: [0, 1],
       }),
     };
 
     return (
       <View style={styles.container}>
         <Animated.View style={[ styles.alert, style ]}>
-          <Text style={styles.text}>{msg}</Text>
+          <Text style={styles.text}>{this._last_message}</Text>
         </Animated.View>
       </View>
     );

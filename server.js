@@ -17,9 +17,10 @@ new WebpackDevServer(webpack(config), {
   historyApiFallback: {
     index: 'index.html',
   },
-}).listen(8080, '0.0.0.0', (err, result) => {
+}).listen(8080, '0.0.0.0', (err) => {
   if (err) {
-    return console.log(err);
+    console.log(err);
+    return;
   }
   
   console.log('Listening at http://0.0.0.0:8080/');

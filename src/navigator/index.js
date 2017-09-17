@@ -41,6 +41,11 @@ MainPage.propTypes = {
 };
 
 const HomeNavigator = new StackNavigator({
+ 
+  EmptyDashboard: {
+    screen: Dashboard,
+    path: '',
+  },
   Dashboard: {
     screen: Dashboard,
     path: ':selectedFeed',

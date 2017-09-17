@@ -11,7 +11,7 @@ const goLogin = (params = {}) =>
 const goHome = (selectedFeed, goToEdit) => {
   const homeActions = [
     NavigationActions.navigate({
-      routeName: 'Dashboard',
+      routeName: selectedFeed ? 'Dashboard' : 'EmptyDashboard',
       params: { selectedFeed },
     }),
   ];

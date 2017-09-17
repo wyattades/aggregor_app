@@ -1,9 +1,9 @@
+@import '~normalize.css/normalize.css';
+
 html, body, body * {
   // clear padding and margins
   margin: 0;
   padding: 0;
-  // display mode flex by default
-  // display: flex;
 }
 
 // Force this element to fill page (NOTE: verbose)

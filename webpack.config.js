@@ -1,14 +1,12 @@
-const fs = require('fs');
-
-if (fs.existsSync('./.env')) {
-  // eslint-disable-next-line global-require
-  require('dotenv').config();
-}
+require('dotenv').config();
 
 const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const PATHS = {};
 PATHS.rn_uncompiled = path.resolve(__dirname, 'node_modules/react-native-uncompiled');
@@ -21,12 +19,6 @@ PATHS.imageName = 'images/[name].[ext]';
 PATHS.index = './index';
 
 const baseConfig = {
-
-  output: {
-    path: PATHS.dist,
-    filename: 'bundle.js',
-    publicPath: '/',
-  },
 
   resolve: {
     // Maps react-native imports for react-native-web
@@ -51,7 +43,7 @@ const baseConfig = {
             query: {
               babelrc: false,
               cacheDirectory: true,
-              presets: [ 'es2015', 'stage-0', 'react' ],
+              presets: [ 'env', 'stage-0', 'react' ],
             },
           },
         ],
@@ -61,57 +53,23 @@ const baseConfig = {
         ],
       }, {
         test: /\.s?css$/,
-        loaders: [
-          'style-loader',
-          'css-loader',
-          'sass-loader',
-        ],
+        loaders: ExtractTextPlugin.extract({ fallback: 'style-loader', use: ['css-loader', 'sass-loader'] }),
         include: PATHS.css,
       }, {
         test: /\.(gif|jpe?g|png|svg)$/,
         loader: 'url-loader',
         query: {
           name: PATHS.imageName,
+          limit: 10000,
         },
-      }, {
-        test: /\.woff2$/,
-        loader: 'url-loader',
-        query: {
-          name: PATHS.fontName,
-          limit: 5000,
-          mimetype: 'application/font-woff2',
-        },
-        include: PATHS.fonts,
-      }, {
-        test: /\.woff$/,
-        loader: 'url-loader',
-        query: {
-          name: PATHS.fontName,
-          limit: 5000,
-          mimetype: 'application/font-woff',
-        },
-        include: PATHS.fonts,
-      }, {
-        test: /\.eot$/,
-        loader: 'file-loader',
-        query: {
-          name: PATHS.fontName,
-        },
-        include: PATHS.fonts,
-      }, {
-        test: /\.ttf$/,
-        loader: 'file-loader',
-        query: {
-          name: '[name].[ext]',
-        },
-        include: path.resolve(__dirname, 'node_modules/react-native-vector-icons'),
       }, {
         test: /\.ttf$/,
         loader: 'url-loader',
         query: {
           name: PATHS.fontName,
+          limit: 10000,
         },
-        include: PATHS.fonts,
+        include: [ path.resolve(__dirname, 'node_modules/react-native-vector-icons'), PATHS.fonts ],
       },
     ],
   },
@@ -121,9 +79,15 @@ const sharedPlugins = [
 
   new HtmlWebpackPlugin({
     title: 'Aggregor',
-    template: path.resolve(PATHS.src, 'index.template.ejs'),
+    template: path.resolve(PATHS.src, 'index.web.ejs'),
     favicon: path.resolve(PATHS.images, 'favicon.ico'),
     inject: 'body',
+  }),
+
+  new ExtractTextPlugin({
+    filename: '[contenthash].css',
+    allChunks: true,
+    disable: process.env.NODE_ENV !== 'production',
   }),
 
 ];
@@ -131,15 +95,40 @@ const sharedPlugins = [
 if (process.env.NODE_ENV === 'production') {
 
   module.exports = Object.assign({ // PRODUCTION CONFIG
+    
     entry: [
       PATHS.index,
     ],
+
+    output: {
+      path: PATHS.dist,
+      filename: '[name].[chunkhash].js',
+      publicPath: './',
+    },
+
     plugins: [
       ...sharedPlugins,
+
+      new CleanWebpackPlugin([ 'web' ]),
       
       new webpack.optimize.OccurrenceOrderPlugin(),
+
       new UglifyJsPlugin({
         parallel: true,
+      }),
+
+      // CommonsChunkPlugin: vendor must come before runtime
+      new webpack.optimize.CommonsChunkPlugin({
+        name: 'vendor',
+        minChunks: ({ resource }) => /node_modules/.test(resource),
+      }),
+      
+      new webpack.optimize.CommonsChunkPlugin({
+        name: 'runtime',
+      }),
+
+      new OptimizeCssAssetsPlugin({
+        cssProcessorOptions: { discardComments: { removeAll: true } },
       }),
       
       new webpack.DefinePlugin({
@@ -167,9 +156,13 @@ if (process.env.NODE_ENV === 'production') {
       PATHS.index,
     ],
     plugins: [
+
       ...sharedPlugins,
+
       new webpack.NamedModulesPlugin(),
+
       new webpack.HotModuleReplacementPlugin(),
+
       new webpack.DefinePlugin({
         'process.env': {
           API_URL: JSON.stringify('http://localhost:3000'),
@@ -178,6 +171,7 @@ if (process.env.NODE_ENV === 'production') {
         },
         __DEV__: true,
       }),
+
     ],
   }, baseConfig);
 

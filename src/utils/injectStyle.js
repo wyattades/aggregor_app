@@ -1,7 +1,7 @@
 // Create and inject stylesheet
 const style = document.createElement('style');
 style.type = 'text/css';
-document.head.appendChild(style);
+document.head.insertBefore(style, document.head.children[0]);
 
 export default (fontName, url) => {
 
