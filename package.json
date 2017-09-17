@@ -11,7 +11,7 @@
     "start": "adb reverse tcp:3000 tcp:3000; adb reverse tcp:8081 tcp:8081; node node_modules/react-native/local-cli/cli.js start",
     "build": "export NODE_ENV=production && node ./node_modules/webpack/bin/webpack.js --progress --profile --colors",
     "dev": "export NODE_ENV=development && node server.js",
-    "deploy": "aws s3 sync web s3://aggregor.com/ --delete --recursive && cf-invalidate --wait -- E2QMYOILA6VFSB index.html"
+    "deploy": "aws s3 sync web s3://aggregor.com/ --delete && cf-invalidate --wait -- E2QMYOILA6VFSB index.html"
   },
   "repository": {
     "type": "git",
