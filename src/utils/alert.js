@@ -5,7 +5,8 @@ import { connect } from 'react-redux';
 import { store } from '../App';
 import theme from './theme';
 
-const HEIGHT = 60;
+const HEIGHT = 60,
+      DEFAULT_TIMEOUT = 6000;
 
 const styles = StyleSheet.create({
   container: {
@@ -38,6 +39,7 @@ class AlertView extends Component {
 
     this._fade = new Animated.Value(props.options.visible ? 1 : 0);
     this._last_message = props.options.msg || '';
+    this._setTimeout(props.options);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -45,6 +47,17 @@ class AlertView extends Component {
       this._animate(nextProps.options.visible);
 
       this._last_message = nextProps.options.msg || this._last_message;
+
+      this._setTimeout(nextProps.options);
+    }
+  }
+
+  _setTimeout = options => {
+    if (options.visible) {
+      setTimeout(
+        () => this.props.dispatch({ type: 'UNSET_ALERT' }),
+        options.timeout || DEFAULT_TIMEOUT,
+      );
     }
   }
 

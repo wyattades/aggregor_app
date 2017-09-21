@@ -41,12 +41,6 @@ export default store => next => action => {
     case 'NETWORK_ERROR':
       alert('Failed to connect to Aggregor server. Please try again later.');
       break;
-    case 'SET_ALERT':
-      setTimeout(
-        () => store.dispatch({ type: 'UNSET_ALERT' }),
-        action.timeout || 6000,
-      );
-      break;
     default:
       break;
   }

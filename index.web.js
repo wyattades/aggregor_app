@@ -1,7 +1,6 @@
 // Inject required fonts into css
 import fontAwesome from 'react-native-vector-icons/Fonts/FontAwesome.ttf';
 import materialIcons from 'react-native-vector-icons/Fonts/MaterialIcons.ttf';
-import { Platform } from 'react-native';
 
 // Load styles
 import './src/styles/styles.scss';
@@ -9,9 +8,7 @@ import './src/styles/styles.scss';
 // Load js
 import './src';
 
-import injectStyle from './src/utils/injectStyle';
+import injectFont from './src/utils/injectFont';
 
-injectStyle('FontAwesome', fontAwesome);
-injectStyle('Material Icons', materialIcons);
-
-global.mobile = true;
+injectFont('FontAwesome', fontAwesome);
+injectFont('Material Icons', materialIcons);

@@ -4,6 +4,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { NavigationActions, addNavigationHelpers } from 'react-navigation';
 
+// TODO: entering custom url doesn't work
+
 function getUri(path, params) {
 
   const queries = [];

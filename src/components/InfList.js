@@ -8,7 +8,7 @@ const ITEM_HEIGHT = 300;
 
 class InfList extends Component {
 
-  scrollToIndex = index => this._list.scrollTo(index)
+  scrollToIndex = index => this._list.scrollTo({ y: index, animated: false })
 
   _renderRow = (rowData, sectionID, rowID) => (
     <this.props.renderItem

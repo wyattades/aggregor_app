@@ -4,9 +4,6 @@ html, body, body * {
   padding: 0;
 }
 
-// @import '~normalize.css/normalize.css';
-@import 'range.scss';
-
 // Force this element to fill page (NOTE: verbose)
 #react-root > div > div > div {
   height: 100%;
@@ -32,3 +29,5 @@ select {
   }
 }
 
+// Import other styles
+@import 'range.scss';

@@ -1,8 +1,9 @@
 import React, { PureComponent } from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, StyleSheet, Image, Linking, Share, Platform } from 'react-native';
+import { View, Text, StyleSheet, Image, Linking, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
+import Share from '../utils/Share';
 import theme from '../utils/theme';
 import alert from '../utils/alert';
 import PluginIcon from './PluginIcon';
@@ -97,13 +98,11 @@ const IconLabel = ({ icon, label, onPress, title }) => (
   </Touchable>
 );
 
-const sharePost = url => () => {
-  Share.share({
-    message: url,
-  })
-  .then(() => {})
-  .catch(() => alert('Failed to share link'));
-};
+const sharePost = url => () => Share.share({
+  message: url,
+})
+.then(() => {})
+.catch(() => alert('Failed to share link'));
 
 const favoritePost = data => () => {
   alert('Sorry, favoriting is not yet supported!');

@@ -9,6 +9,7 @@ export default (state = initialState, action) => {
     case 'SET_ALERT':
       return {
         msg: action.msg,
+        timeout: action.timeout,
         visible: true,
       };
     default:

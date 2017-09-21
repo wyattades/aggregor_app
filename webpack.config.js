@@ -9,6 +9,7 @@ const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const PATHS = {};
+PATHS.rnvi_fonts = path.resolve(__dirname, 'node_modules/react-native-vector-icons/Fonts');
 PATHS.rn_uncompiled = path.resolve(__dirname, 'node_modules/react-native-uncompiled');
 PATHS.dist = path.resolve(__dirname, 'web');
 PATHS.src = path.resolve(__dirname, 'src');
@@ -23,9 +24,9 @@ const baseConfig = {
   resolve: {
     // Maps react-native imports for react-native-web
     alias: {
+      'react-native$': 'react-native-web',
       'react-native-vector-icons/FontAwesome': 'react-native-vector-icons/dist/FontAwesome',
       'react-native-vector-icons/MaterialIcons': 'react-native-vector-icons/dist/MaterialIcons',
-      'react-native$': 'react-native-web',
       'react-navigation/StackNavigator': 'react-navigation/lib/navigators/StackNavigator',
       'react-navigation/DrawerNavigator': 'react-navigation/lib/navigators/DrawerNavigator',
     },
@@ -37,16 +38,15 @@ const baseConfig = {
     rules: [
       {
         test: /\.js$/,
-        use: [
-          {
-            loader: 'babel-loader',
-            query: {
-              babelrc: false,
-              cacheDirectory: true,
-              presets: [ 'env', 'stage-0', 'react' ],
-            },
+        use: [{
+          loader: 'babel-loader',
+          options: {
+            babelrc: false,
+            cacheDirectory: true,
+            plugins: [ 'react-native-web/babel' ],
+            presets: [ 'react-native' ],
           },
-        ],
+        }],
         include: [
           PATHS.src,
           PATHS.rn_uncompiled,
@@ -69,7 +69,10 @@ const baseConfig = {
           name: PATHS.fontName,
           limit: 10000,
         },
-        include: [ path.resolve(__dirname, 'node_modules/react-native-vector-icons'), PATHS.fonts ],
+        include: [
+          PATHS.rnvi_fonts,
+          PATHS.fonts,
+        ],
       },
     ],
   },
