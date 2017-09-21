@@ -19,10 +19,10 @@ if (Platform.OS === 'web') {
     };
 
     return (
-      <View style={[style]}>
+      <View style={style}>
         <input
-          className="slider"
           type="range"
+          style={{ color: maximumTrackTintColor }}
           defaultValue={value}
           min={minimumValue}
           max={maximumValue}

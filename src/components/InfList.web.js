@@ -43,9 +43,9 @@ class InfList extends Component {
           isInfiniteLoading={refreshing || data.length === 0}
           containerHeight={this.state.height}
         >
-          {data.map(item => (
+          {data.map((item, index) => (
             <View style={styles.item} key={keyExtractor(item)}>
-              <Item item={item}/>
+              <Item item={item} index={index}/>
             </View>
           ))}
         </List>

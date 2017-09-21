@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Dimensions, View, StyleSheet } from 'react-native';
+import { Dimensions, View, StyleSheet, TextStyle } from 'react-native';
 
 const styles = StyleSheet.create({
   outer: {
@@ -29,24 +29,41 @@ class Container extends Component {
     const { adjust, children, style } = this.props;
     const _style = Array.isArray(style) ? style : [style];
 
-    const inner = {
-      flex: (this.state.large && adjust <= 1) ? adjust : 1,
-      maxWidth: (this.state.large && adjust > 1) ? adjust : undefined,
-    };
+    let inner;
+    let spacerFlex = 0.0;
+
+    if (this.state.large) {
+      if (adjust <= 1.0) {
+        inner = {
+          flex: adjust,
+        };
+        spacerFlex = (1.0 - adjust) * 0.5;
+      } else {
+        inner = {
+          width: adjust,
+        };
+      }
+    } else {
+      inner = {
+        flex: 1,
+      };
+    }
 
     return (
       <View style={styles.outer} onLayout={this._onLayout}>
+        <View style={{ flex: spacerFlex }}/>
         <View style={[ inner, ..._style ]}>
           {children}
         </View>
+        <View style={{ flex: spacerFlex }}/>
       </View>
     );
   }
 }
 
 Container.defaultProps = {
-  testWidth: 500,
-  adjust: 450,
+  testWidth: 600,
+  adjust: 500,
 };
 
 Container.propTypes = {

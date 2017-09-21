@@ -44,9 +44,13 @@ function getAction(router, path, params = {}) {
       ],
     });
   }
-  return NavigationActions.navigate({
-    params: { path },
-    routeName: 'NotFound',
+
+  return NavigationActions.reset({
+    index: 0,
+    actions: [ NavigationActions.navigate({
+      params: { code: 404, path },
+      routeName: 'Error',
+    }) ],
   });
 }
 

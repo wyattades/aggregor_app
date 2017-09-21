@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import { store } from '../App';
 import theme from './theme';
 
-const HEIGHT = 40;
+const HEIGHT = 60;
 
 const styles = StyleSheet.create({
   container: {
@@ -13,7 +13,6 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    height: HEIGHT,
     flexDirection: 'column',
     justifyContent: 'flex-end',
   },

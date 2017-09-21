@@ -24,7 +24,7 @@ const WebTouchable = ({ onPress, feedback, style = {}, ...rest }) => {
   );
 };
 
-const IosTouchable = ({ feedback, onPress, ...rest }) => (
+const IosTouchable = ({ feedback, onPress, title, ...rest }) => (
   <TouchableOpacity
     onPress={onPress}
     activeOpacity={0.8}
@@ -44,7 +44,7 @@ const getBackground = (type = 'contained') => {
   }
 };
 
-const AndroidTouchable = ({ feedback, onPress, ...rest }) => (
+const AndroidTouchable = ({ feedback, onPress, title, ...rest }) => (
   <TouchableNativeFeedback
     background={getBackground(feedback)}
     onPress={onPress}>

@@ -1,5 +1,3 @@
-// import validUrl from 'valid-url';
-
 // exports.defaultPlugin = (pluginData) => {
 //     return ({
 //         ...pluginData,
@@ -14,9 +12,31 @@
 //     return !!pluginData && !!pluginData.type && !!pluginData.data;
 // };
 
-// exports.validURL = (str) => {
-//     return validUrl.isWebUri(str);
-// };
+
+exports.formatError = _err => {
+
+  if (typeof _err === 'string') {
+    return _err;
+  }
+
+  let err,
+      code;
+
+  if (typeof _err === 'object') {
+    if (_err.code) {
+      code = _err.code;
+    }
+    if (typeof _err.data === 'object') {
+      if (_err.code) {
+        err = `Error ${_err.code}`;
+      }
+    } else if (typeof _err.data === 'string') {
+      err = _err.data;
+    }
+  }
+
+  return `${err || 'Unknown Error'}: ${code || 0}`;
+};
 
 exports.formatPluginTitle = (plg, item) => {
   let label;

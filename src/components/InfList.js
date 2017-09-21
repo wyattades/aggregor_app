@@ -6,12 +6,15 @@ const ds = new ListView.DataSource({ rowHasChanged: (r1, r2) => r1 !== r2 });
 // approximate item height
 const ITEM_HEIGHT = 300;
 
-class FlatList extends Component {
+class InfList extends Component {
 
-  scrollToIndex = index => this._list.scrollTo({ x: index })
+  scrollToIndex = index => this._list.scrollTo(index)
 
-  _renderRow = (rowData) => (
-    <this.props.renderItem item={rowData}/>
+  _renderRow = (rowData, sectionID, rowID) => (
+    <this.props.renderItem
+      item={rowData}
+      index={rowID}
+    />
   )
 
   render() {
@@ -40,4 +43,4 @@ class FlatList extends Component {
   }
 }
 
-export default FlatList;
+export default InfList;

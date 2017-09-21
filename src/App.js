@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { NativeModules, View, StatusBar, Platform, StyleSheet } from 'react-native';
+import { UIManager, View, StatusBar, Platform, StyleSheet } from 'react-native';
 import { Provider } from 'react-redux';
 
 import { PromptView } from './utils/prompt';
@@ -23,8 +23,9 @@ class App extends Component {
       StatusBar.setTranslucent(true);
       StatusBar.setBackgroundColor('rgba(0,0,0,0.3)');
 
-      if (NativeModules.UIManager.setLayoutAnimationEnabledExperimental) {
-        NativeModules.UIManager.setLayoutAnimationEnabledExperimental(true);
+      if (UIManager.setLayoutAnimationEnabledExperimental) {
+        console.log('Setting experimental layout to true.');
+        UIManager.setLayoutAnimationEnabledExperimental(true);
       }
     }
   }

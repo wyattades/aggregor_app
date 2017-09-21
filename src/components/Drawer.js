@@ -132,20 +132,21 @@ const NavItem = ({ title, onPress, iconLeft, iconRight, selected, onIconPress })
   </View>
 );
 
-const goToFeed = (selectedFeed, dispatch) => () => dispatch(NavigationActions.reset({
-  index: 0,
-  actions: [
-    NavigationActions.navigate({ routeName: 'Dashboard', params: { selectedFeed } }),
-  ],
-}));
+const goHome = (dispatch, selectedFeed, goToEdit) => () => {
 
-const goToFeedEdit = (selectedFeed, dispatch) => () => dispatch(NavigationActions.reset({
-  index: 1,
-  actions: [
+  const actions = [
     NavigationActions.navigate({ routeName: 'Dashboard', params: { selectedFeed } }),
-    NavigationActions.navigate({ routeName: 'FeedEdit', params: { selectedFeed } }),
-  ],
-}));
+  ];
+
+  if (goToEdit) {
+    actions.push(NavigationActions.navigate({ routeName: 'FeedEdit', params: { selectedFeed } }));
+  }
+
+  dispatch(NavigationActions.reset({
+    index: goToEdit ? 1 : 0,
+    actions,
+  }));
+};
 
 const navigate = (navigation, screen) => () => navigation.navigate(screen);
 
@@ -169,8 +170,9 @@ let Drawer = ({ feeds, navigation, dispatch }) => {
           iconRight="edit"
           selected={index === 0 && feed === selectedFeed}
           key={feed}
-          onPress={goToFeed(feed, dispatch)}
-          onIconPress={goToFeedEdit(feed, dispatch)}/>
+          onPress={goHome(dispatch, feed)}
+          onIconPress={goHome(dispatch, feed, true)}
+        />
       ))}
       <NavItem
         title="Create new feed"

@@ -9,10 +9,18 @@ import Slider from './Slider';
 import theme from '../utils/theme';
 
 const styles = StyleSheet.create({
+
+  // Input group
   inputGroup: {
-    marginTop: 24,
+    marginBottom: 8,
   },
 
+  // Animated and plain textinput error
+  inputError: {
+    borderColor: theme.ERROR,
+  },
+
+  // Animated textinput
   input: {
     padding: 8,
     color: theme.WHITE,
@@ -24,6 +32,7 @@ const styles = StyleSheet.create({
     borderBottomColor: theme.WHITE,
   },
 
+  // Button
   button: {
     marginTop: 32,
     backgroundColor: theme.ACCENT,
@@ -42,19 +51,13 @@ const styles = StyleSheet.create({
     backgroundColor: theme.SUPPORT,
   },
 
-  inputError: {
-    borderColor: theme.ERROR,
-  },
+  // Error text
   errorText: {
     color: theme.ERROR,
     padding: 5,
   },
-  dark: {
-    color: theme.TEXT,
-    borderBottomColor: theme.DIVIDER,
-    borderBottomWidth: 2,
-  },
 
+  // Main error
   mainErrorText: {
     color: theme.ERROR,
     textAlign: 'center',
@@ -67,6 +70,7 @@ const styles = StyleSheet.create({
     marginVertical: 16,
   },
 
+  // Plain link
   formLinkContainer: {
     alignSelf: 'center',
     margin: 8,
@@ -77,21 +81,22 @@ const styles = StyleSheet.create({
     padding: 8,
   },
 
+  // Slider
   slider: {
-    flex: 0.9,
+    flex: 1,
   },
   sliderValue: {
-    paddingVertical: 6,
-    flex: 0.1,
-    textAlign: 'center',
-    fontWeight: '500',
+    paddingHorizontal: 12,
+    fontWeight: Platform.OS === 'web' ? 'bold' : '500',
     fontSize: 16,
     color: theme.TEXT_SECOND,
   },
   sliderRow: {
     flexDirection: 'row',
+    alignItems: 'center',
   },
 
+  // Label
   labelView: {
     flexDirection: 'row',
     alignItems: 'flex-end',
@@ -101,35 +106,29 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
     color: theme.TEXT_SECOND,
-    margin: 8,
+    padding: 8,
   },
   optional: {
     fontSize: 16,
-    margin: 8,
-    marginLeft: 0,
+    padding: 8,
+    paddingLeft: 0,
     color: theme.DIVIDER,
   },
 
-  pickerStyle: {
-    marginTop: -8,
-    marginBottom: 0,
-  },
-
+  // Plain textinput
   plainInput: {
     backgroundColor: theme.WHITE,
-    marginBottom: 8,
     borderColor: theme.SUPPORT,
     borderWidth: 1,
     padding: 8,
     paddingHorizontal: 12,
   },
-  plainInputError: {
-    borderColor: theme.ERROR,
+  plainInputFocused: {
+    borderColor: theme.PRIMARY,
   },
 });
 
 const __BLANK__ = '\u00a0';
-// const EMPTY_ERROR = Platform.OS === 'web' ? __BLANK__ : '';
 
 class PickerField extends PureComponent {
 
@@ -150,7 +149,7 @@ class PickerField extends PureComponent {
     const { label, values } = this.props;
 
     return (
-      <View>
+      <View style={styles.inputGroup}>
         {label ? <Text style={styles.label}>{label}</Text> : null}
         <Picker
           style={styles.pickerStyle}
@@ -198,7 +197,7 @@ class SliderField extends PureComponent {
   render() {
     const { input: { value }, label, min, max, step } = this.props;
     return (
-      <View>
+      <View style={styles.inputGroup}>
         {label ? <Text style={styles.label}>{label}</Text> : null}
         <View style={styles.sliderRow}>
           <Slider
@@ -211,36 +210,59 @@ class SliderField extends PureComponent {
             step={step}
             style={styles.slider}
             onValueChange={this._onValueChange}/>
-          <Text style={styles.sliderValue}>{value}</Text>
+          <Text style={styles.sliderValue}>{value.toFixed(1)}</Text>
         </View>
       </View>
     );
   }
 }
 
-const TextField = ({
-  input: { onChange, ...restInput }, meta: { error, touched }, optional, label, secureTextEntry,
-}) => {
-  const inputError = error && touched;
-  return (
-    <View>
-      {label ? (
-        <View style={styles.labelView}>
-          <Text style={styles.label}>{label}</Text>
-          {optional ? <Text style={styles.optional}>(optional)</Text> : null}
-        </View>
-      ) : null}
-      <TextInput
-        onChangeText={onChange}
-        autoCorrect={false}
-        underlineColorAndroid="transparent"
-        style={[styles.plainInput, inputError && styles.plainInputError]}
-        secureTextEntry={secureTextEntry || false}
-        {...restInput}/>
-      {inputError ? <Text style={styles.errorText}>{error}</Text> : null}
-    </View>
-  );
-};
+class TextField extends PureComponent {
+
+  state = {
+    focused: false,
+  }
+
+  _onBlur = onBlur => () => {
+    this.setState({ focused: false });
+    onBlur();
+  }
+
+  _onFocus = onFocus => () => {
+    this.setState({ focused: true });
+    onFocus();
+  }
+
+  render() {
+    const {
+      input: { onChange, onBlur, onFocus, ...restInput },
+      meta: { error, touched }, optional, label, secureTextEntry,
+    } = this.props;
+    
+    const inputError = error && touched;
+
+    return (
+      <View style={styles.inputGroup}>
+        {label ? (
+          <View style={styles.labelView}>
+            <Text style={styles.label}>{label}</Text>
+            {optional ? <Text style={styles.optional}>(optional)</Text> : null}
+          </View>
+        ) : null}
+        <TextInput
+          onBlur={this._onBlur(onBlur)}
+          onFocus={this._onFocus(onFocus)}
+          onChangeText={onChange}
+          autoCorrect={false}
+          underlineColorAndroid="transparent"
+          style={[ styles.plainInput, this.state.focused && styles.plainInputFocused, inputError && styles.inputError ]}
+          secureTextEntry={secureTextEntry || false}
+          {...restInput}/>
+        {inputError ? <Text style={styles.errorText}>{error}</Text> : null}
+      </View>
+    );
+  }
+}
 
 const easing = Easing.out(Easing.ease);
 
@@ -320,7 +342,7 @@ class AnimatedTextField extends PureComponent {
     };
 
     return (
-      <View style={styles.inputGroup}>
+      <View style={[ styles.inputGroup, { marginTop: 14 /* Make space for position:absolute label */ } ]}>
         { label ? <Animated.Text pointerEvents="none" style={[styles.label, labelStyle]}>{label}</Animated.Text> : null}
         <TextInput
           onBlur={this._onBlur(onBlur)}

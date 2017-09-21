@@ -1,8 +1,7 @@
 import { Animated, Easing } from 'react-native';
 
 // Side to side transition
-
-export default () => ({
+export const pushTransition = () => ({
 
   transitionSpec: {
     duration: 250,
@@ -29,3 +28,6 @@ export default () => ({
   },
 
 });
+
+export const stackTransition = () => ({});
+

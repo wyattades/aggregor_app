@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, ActivityIndicator, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
@@ -17,6 +17,7 @@ import theme from '../utils/theme';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: theme.WHITE,
   },
 
   message: {
@@ -50,6 +51,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginLeft: 8,
   },
+
+  itemIndexContainer: {
+    position: 'absolute',
+    top: 0,
+    left: -150,
+    width: 150,
+    padding: 16,
+  },
+  itemIndex: {
+    fontWeight: 'bold',
+    fontSize: 32,
+    lineHeight: 32,
+    color: theme.SUPPORT,
+    textAlign: 'right',
+  },
 });
 
 const NoFeeds = () => (
@@ -76,40 +92,30 @@ const LoadingIndicator = () => (
 
 class NonemptyDashboard extends Component {
 
-  constructor(props) {
-    super(props);
-    
-    this.state = {
-      refreshing: false,
-    };
-
-    this.setRefreshing = this.setRefreshing.bind(this);
+  state = {
+    refreshing: false,
   }
-
+  
   componentWillReceiveProps(nextProps) {
     if (nextProps.entries.length < this.props.entries.length) {
       this._entryList.scrollToIndex(0);
     }
   }
 
-  setRefreshing(refreshing) {
-    this.setState({
-      refreshing,
-    });
-  }
-
   _page = 1
+
+  _setRefreshing = refreshing => this.setState({ refreshing });
 
   _fetchFeed = () => {
     const { dispatch, selectedFeed } = this.props;
 
     return dispatch(fetchFeed(selectedFeed, this._page))
-    .then(() => this.setRefreshing(false));
+    .then(() => this._setRefreshing(false));
   }
 
   _onRefresh = () => {
     this._requestMore();
-    this.setRefreshing(true);
+    this._setRefreshing(true);
   }
 
   _requestMore = () => {
@@ -119,10 +125,17 @@ class NonemptyDashboard extends Component {
 
   _keyExtractor = item => item.id;
 
-  _renderItem = ({ item }) => (
-    <Entry
-      {...item.toObject()}
-      plugin={this.props.plugin_types[item.plugin]}/>
+  _renderItem = ({ item, index }) => (
+    <View>
+      { Platform.OS === 'web' ? (
+        <View style={styles.itemIndexContainer}>
+          <Text style={styles.itemIndex}>{index + 1}</Text>
+        </View>
+      ) : null }
+      <Entry
+        {...item.toObject()}
+        plugin={this.props.plugin_types[item.plugin]}/>
+    </View>
   );
 
   _goToError = () => {

@@ -10,6 +10,7 @@ import alert from '../utils/alert';
 import { SubmitButton } from '../components/Form';
 import Touchable from '../components/Touchable';
 import Container from '../components/Container';
+import headerWrapper from '../components/HeaderWrapper';
 
 const styles = StyleSheet.create({
   container: {
@@ -68,7 +69,7 @@ const handleChangePassword = dispatch => () => {
       () => alert('Password successfully changed.'),
       err => {
         if (err.code === 400) {
-          alert('Sorry, invalid password.');
+          alert('Invalid password: must be atleast 8 characters and contain both a number and letter');
         }
       },
     ),
@@ -76,7 +77,7 @@ const handleChangePassword = dispatch => () => {
 };
 
 const Account = ({ user, dispatch }) => (
-  <Container style={styles.container} adjust={0.6}>
+  <Container style={styles.container} adjust={600}>
     <View>
       <View style={styles.textGroup}>
         <Text style={styles.label}>Username:</Text>
@@ -110,6 +111,6 @@ Account.propTypes = {
   user: PropTypes.object.isRequired,
 };
 
-export default connect(state => ({
+export default headerWrapper(connect(state => ({
   user: state.user,
-}))(Account);
+}))(Account), 'Account');

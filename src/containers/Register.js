@@ -11,7 +11,7 @@ import Container from '../components/Container';
 
 const KeyboardAvoidingView =
   Platform.OS === 'web' ?
-    ({ children }) => <View children={children} /> :
+    ({ children }) => <View>{children}</View> :
     NativeKeyboardAvoidingView;
 
 const onSubmit = (values, dispatch) =>

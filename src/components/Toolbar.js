@@ -64,7 +64,11 @@ const iconFactory = (element, onPress, flex) => {
     );
   } else if (Array.isArray(element)) {
     element = element.map((icon, index) => (
-      <TouchIcon key={index} style={index > 0 && styles.iconMargin} name={icon} onPress={() => onPress({ index, icon })}/>
+      <TouchIcon
+        key={index}
+        style={index > 0 && styles.iconMargin}
+        name={icon}
+        onPress={() => onPress({ index, icon })}/>
     ));
   } else if (!React.isValidElement(element)) {
     element = null;

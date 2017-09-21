@@ -1,6 +1,6 @@
 import alert from '../utils/alert';
 import { fetchFeeds, fetchUser, fetchAvailablePlugins } from '../actions/api';
-import { setFeed } from '../actions/navActions';
+import { setFeed, goLogin } from '../actions/navActions';
 
 // TODO: move these cases to their corresponding functions in api.js
 
@@ -11,7 +11,7 @@ const loadInit = (dispatch, isLoggedIn) => Promise.all([
 ])
 .catch(err => {
   if (err.code === 401 || err.code === 0) {
-    dispatch({ type: 'UNSET_USER' });
+    dispatch(goLogin());
   }
 });
 
@@ -21,7 +21,12 @@ export default store => next => action => {
   switch (action.type) {
     case 'persist/REHYDRATE':
       const isLoggedIn = action.payload && action.payload.user && action.payload.user.isLoggedIn === true;
-      loadInit(store.dispatch, isLoggedIn);
+      loadInit(store.dispatch, isLoggedIn)
+      .then(() => {
+        if (!isLoggedIn) {
+          store.dispatch(goLogin({ init: true }));
+        }
+      });
       break;
     case 'SET_USER':
       loadInit(store.dispatch, true);

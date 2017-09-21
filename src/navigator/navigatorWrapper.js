@@ -13,8 +13,13 @@ export default NavComponent => class extends Component {
   }
 
   _handleBack = () => {
+    const { state: { routes }, dispatch, isPromptOpen } = this.props;
 
-    const { nav: { routes }, dispatch } = this.props;
+    if (isPromptOpen) {
+      dispatch({ type: 'UNSET_PROMPT' });
+      return true;
+    }
+
     const route = routes[0].routes && routes[0].routes[0];
 
     if ((routes[0].index > 0) || (route && route.routes && route.routes[0].index > 0)) {

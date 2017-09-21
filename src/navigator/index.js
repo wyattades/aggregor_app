@@ -1,5 +1,3 @@
-import React from 'react';
-import { View, Dimensions } from 'react-native';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import StackNavigator from 'react-navigation/lib/navigators/StackNavigator';
@@ -13,35 +11,17 @@ import PluginEdit from '../containers/PluginEdit';
 import Loading from '../containers/Loading';
 import Account from '../containers/Account';
 import About from '../containers/About';
+import ErrorPage from '../containers/ErrorPage';
 
-import PushTransition from '../components/Transition';
+import { pushTransition } from '../utils/transitions';
 import Drawer from '../components/Drawer';
-import { MainHeader } from '../components/Header';
 import navigatorWrapper from './navigatorWrapper';
-// import StackNavigator from './StackNavigator';
-// import DrawerNavigator from './DrawerNavigator';
 
 // TODO: StackNavigator and DrawerNavigator should be less "mobile" focused
 // - Drawer menu shouldn't blur app, should stay open
 // - Drawer state should not show in url
 
-const largeScreen = Dimensions.get('window').width > 500;
-
-const MainPage = (Content, title) => ({ navigation }) => (
-  <View style={{ flex: 1 }}>
-    <MainHeader
-      navigation={navigation}
-      title={title}/>
-    <Content/>
-  </View>
-);
-
-MainPage.propTypes = {
-  navigation: PropTypes.object.isRequired,
-};
-
 const HomeNavigator = new StackNavigator({
- 
   EmptyDashboard: {
     screen: Dashboard,
     path: '',
@@ -68,19 +48,17 @@ const MainNavigator = new DrawerNavigator({
     path: 'feed',
   },
   Account: {
-    screen: MainPage(Account, 'Account'),
+    screen: Account,
     path: 'account',
   },
   About: {
-    screen: MainPage(About, 'About'),
+    screen: About,
     path: 'about',
   },
-}, Object.assign({
+}, {
   initialRouteName: 'Home',
   contentComponent: Drawer,
-}, largeScreen ? {
-  drawerWidth: 400,
-} : undefined));
+});
 
 export const AppNavigator = new StackNavigator({
   Register: {
@@ -99,9 +77,13 @@ export const AppNavigator = new StackNavigator({
     screen: Loading,
     path: 'loading',
   },
+  Error: {
+    screen: ErrorPage,
+    path: 'error',
+  },
 }, {
   headerMode: 'none',
-  transitionConfig: PushTransition,
+  transitionConfig: pushTransition,
   initialRouteName: 'Loading',
 });
 
@@ -112,6 +94,7 @@ Navigator.propTypes = {
   state: PropTypes.object.isRequired,
 };
 
-export default connect(({ nav }) => ({
+export default connect(({ nav, prompt }) => ({
   state: nav,
+  isPromptOpen: prompt.visible,
 }))(Navigator);

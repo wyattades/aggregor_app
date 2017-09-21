@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 
 import theme from '../utils/theme';
 import Container from '../components/Container';
+import headerWrapper from '../components/HeaderWrapper';
 
 const styles = StyleSheet.create({
   container: {
@@ -33,7 +34,7 @@ const styles = StyleSheet.create({
 });
 
 const About = ({ plugin_array }) => (
-  <Container style={styles.container} adjust={0.6}>
+  <Container style={styles.container} adjust={600}>
     <View>
       <View style={styles.textGroup}>
         <Text style={styles.title}>The Idea:</Text>
@@ -61,6 +62,6 @@ const About = ({ plugin_array }) => (
   </Container>
 );
 
-export default connect(state => ({
+export default headerWrapper(connect(state => ({
   plugin_array: state.plugin_array,
-}))(About);
+}))(About), 'About');

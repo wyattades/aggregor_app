@@ -9,7 +9,7 @@ import PluginIcon from './PluginIcon';
 import TimeAgo from './TimeAgo';
 import Touchable from './Touchable';
 
-const MARGIN = Platform.OS === 'web' ? 12 : 6;
+const MARGIN = Platform.OS === 'web' ? 1 : 6;
 const __BLANK__ = '\u00a0';
 
 const getEntryHeight = data => {
@@ -26,23 +26,22 @@ const getEntryHeight = data => {
 
 export const getRowHeight = data => getEntryHeight(data) + MARGIN;
 
+const THUMBNAIL = Platform.OS === 'web' ? 100 : 80;
 const styles = StyleSheet.create({
-  container: Object.assign({
-    marginBottom: MARGIN,
+  container: {
     padding: 16,
     backgroundColor: theme.WHITE,
     flexDirection: 'column',
     justifyContent: 'space-between',
-  }, Platform.OS === 'web' ? {
-    borderColor: theme.SUPPORT,
-    borderWidth: 1,
-  } : {}),
+    borderBottomColor: theme.SUPPORT,
+    borderBottomWidth: MARGIN,
+  },
   iconLabel: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   iconRow: {
-    width: 80,
+    width: 128,
     paddingHorizontal: 2,
     flexDirection: 'row',
     alignItems: 'center',
@@ -57,6 +56,9 @@ const styles = StyleSheet.create({
   flexCol: {
     flexDirection: 'column',
   },
+  itemsCenter: {
+    alignItems: 'center',
+  },
   flexEnd: {
     justifyContent: 'flex-end',
   },
@@ -69,10 +71,11 @@ const styles = StyleSheet.create({
     color: theme.TEXT,
   },
   thumbnail: {
-    width: 80,
-    height: 80,
+    width: THUMBNAIL,
+    height: THUMBNAIL,
     marginLeft: 16,
     borderRadius: 4,
+    backgroundColor: theme.SUPPORT,
   },
   secondaryText: {
     fontSize: 13,
@@ -87,8 +90,8 @@ const styles = StyleSheet.create({
   },
 });
 
-const IconLabel = ({ icon, label, onPress }) => (
-  <Touchable feedback="uncontained" onPress={onPress} style={styles.iconLabel}>
+const IconLabel = ({ icon, label, onPress, title }) => (
+  <Touchable feedback="uncontained" onPress={onPress} style={styles.iconLabel} title={title}>
     <Icon name={icon} size={22} color={theme.TEXT_SECOND}/>
     {label !== undefined ? <Text style={[styles.secondaryText, { marginLeft: 2 }]}>{label}</Text> : null}
   </Touchable>
@@ -100,6 +103,10 @@ const sharePost = url => () => {
   })
   .then(() => {})
   .catch(() => alert('Failed to share link'));
+};
+
+const favoritePost = data => () => {
+  alert('Sorry, favoriting is not yet supported!');
 };
 
 const pressLink = url => () => {
@@ -132,14 +139,14 @@ class Entry extends PureComponent {
 
   render() {
     const { title, author, date, thumbnailURL, plugin, category,
-      commentAmount, link, commentURL, authorURL, categoryURL } = this.props;
+      commentAmount, link, commentURL, authorURL, categoryURL, id } = this.props;
 
     return (
       <Touchable
         onPress={pressLink(link)}
         style={[styles.container, styles.flexCol, { minHeight: getEntryHeight(this.props) }]}>
         <View style={[styles.flexRow, styles.spaceBetween, { flexWrap: 'wrap' }]}>
-          <View style={{ flex: 1 }}>
+          <View style={{ flex: 1, marginBottom: 16 }}>
             <Text numberOfLines={4} style={styles.title}>{title}</Text>
             {category ? (
               <Touchable feedback="uncontained" onPress={pressLink(categoryURL)} style={styles.category}>
@@ -149,14 +156,14 @@ class Entry extends PureComponent {
           </View>
           {thumbnailURL ? <Image source={{ uri: thumbnailURL }} style={[styles.thumbnail]}/> : null}
         </View>
-        <View style={[ styles.flexRow, styles.spaceBetween ]}>
-          <View style={[ styles.flexRow, styles.contentCenter ]}>
+        <View style={[ styles.flexRow, styles.spaceBetween, { flexWrap: 'nowrap' } ]}>
+          <View style={[ styles.flexRow, styles.itemsCenter ]}>
             <PluginIcon plugin={plugin} size={35}/>
             <View style={[styles.flexCol, { marginLeft: 5 }]}>
               <View style={styles.flexRow}>
                 <Text style={styles.secondaryText}>by </Text>
                 <Touchable feedback="uncontained" onPress={pressLink(authorURL)} style={styles.flexRow}>
-                  <Text style={[styles.secondaryText, styles.secondaryEmphasis]}>{author}</Text>
+                  <Text style={[styles.secondaryText, styles.secondaryEmphasis]} numberOfLines={1}>{author}</Text>
                 </Touchable>
               </View>
               {date ?
@@ -166,8 +173,12 @@ class Entry extends PureComponent {
           </View>
           <View style={[styles.flexCol, styles.flexEnd ]}>
             <View style={styles.iconRow}>
-              <IconLabel icon="comment" label={commentAmount} onPress={pressLink(commentURL)}/>
-              <IconLabel icon="share" onPress={sharePost(link)}/>
+              <IconLabel
+                icon="favorite"
+                title="Favorite"
+                onPress={favoritePost(this.props)}/>
+              <IconLabel icon="comment" title="Comments" label={commentAmount} onPress={pressLink(commentURL)}/>
+              <IconLabel icon="share" title="Share" onPress={sharePost(link)}/>
             </View>
           </View>
         </View>

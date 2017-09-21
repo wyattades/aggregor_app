@@ -52,7 +52,7 @@ const styles = StyleSheet.create({
 });
 
 const animation = {
-  duration: 800,
+  duration: 700,
   create: {
     type: LayoutAnimation.Types.easeInEaseOut,
     property: LayoutAnimation.Properties.opacity,
@@ -72,7 +72,6 @@ class Login extends Component {
     const init = props.navigation.state.params && props.navigation.state.params.init;
     this.state = {
       show: !init,
-      // show: true,
     };
   }
 
@@ -89,18 +88,19 @@ class Login extends Component {
 
   render() {
     const { handleSubmit, submitting, submitSucceeded, error, navigation } = this.props;
-    let _error;
-    if (error) {
-      _error = error;
-    }
+
+    const animated = !this.state.show && {
+      height: 0,
+      opacity: 0,
+    };
 
     return (
       <View style={styles.background}>
-        <Container style={[ styles.container, this.state.show && { justifyContent: 'space-between' } ]} adjust={450}>
+        <Container style={[ styles.container, { justifyContent: this.state.show ? 'space-between' : 'center' } ]}>
           <Text style={styles.title}>Aggregor</Text>
-          { this.state.show ? (
+          <View style={animated}>
             <KeyboardAvoidingView behavior="padding" keyboardVerticalOffset={80}>
-              { _error ? <FormError error={_error}/> : null }
+              { error ? <FormError error={error}/> : null }
               <Field label="Username" name="username" component={AnimatedTextField}/>
               <Field label="Password" secureTextEntry name="password" component={AnimatedTextField}/>
               <SubmitButton
@@ -109,10 +109,10 @@ class Login extends Component {
                 submitting={submitting}
                 submitSucceeded={submitSucceeded}/>
             </KeyboardAvoidingView>
-          ) : null }
-          { this.state.show ? (
+          </View>
+          <View style={animated}>
             <FormLink title="Sign up for Aggregor" onPress={goToRegister(navigation)}/>
-          ) : null }
+          </View>
         </Container>
       </View>
     );
