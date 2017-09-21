@@ -9,7 +9,7 @@ const iconFamilies = {
   MaterialIcon,
 };
 
-export default ({ plugin, size = 40 }) => {
+export default ({ plugin, size = 36 }) => {
   if (plugin) {
     const Icon = iconFamilies[plugin.iconFamily] || FontAwesome;
     return <Icon name={plugin.icon} color={plugin.color} size={size}/>;

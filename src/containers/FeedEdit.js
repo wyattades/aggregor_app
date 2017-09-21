@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { View, Text, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Platform } from 'react-native';
 import { connect } from 'react-redux';
 
 import theme from '../utils/theme';
@@ -11,6 +11,8 @@ import { FeedEditHeader } from '../components/Header';
 import ActionButton from '../components/ActionButton';
 import Touchable from '../components/Touchable';
 
+const ICON_SIZE = Platform.OS === 'web' ? 48 : 40;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -19,10 +21,11 @@ const styles = StyleSheet.create({
   item: {
     height: 72,
     backgroundColor: theme.WHITE,
-    padding: 15,
+    paddingHorizontal: 15,
     borderBottomWidth: 1,
     borderBottomColor: theme.SUPPORT,
     flexDirection: 'row',
+    alignItems: 'center',
   },
   title: {
     color: theme.TEXT,
@@ -57,7 +60,7 @@ class FeedEdit extends Component {
 
     return (
       <Touchable key={item.id} onPress={this._editPlugin(item)} style={styles.item}>
-        <PluginIcon plugin={plg} size={40}/>
+        <PluginIcon plugin={plg} size={ICON_SIZE}/>
         <View style={styles.textView}>
           <Text style={[styles.title]} numberOfLines={1}>{title}</Text>
           <Text style={[styles.subtitle, item.error ? styles.error : null]} numberOfLines={1}>{subtitle}</Text>

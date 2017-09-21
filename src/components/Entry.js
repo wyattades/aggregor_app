@@ -13,19 +13,16 @@ import Touchable from './Touchable';
 const MARGIN = Platform.OS === 'web' ? 1 : 6;
 const __BLANK__ = '\u00a0';
 
-const getEntryHeight = data => {
+// (padding * 3) + smallText + pluginIcon + MARGIN
+const ROW_BASE = (16 * 3) + 17 + 36 + MARGIN;
+
+export const getRowHeight = data => {
   const length = data.title.length;
 
-  let height = 120 + (Math.floor(length / 100.0) * 20);
+  const charsPerRow = data.thumbnailURL ? 60.0 : 100.0;
 
-  if (data.thumbnailURL) {
-    height += 34;
-  }
-
-  return height;
+  return ROW_BASE + (Math.ceil(length / charsPerRow) * 24);
 };
-
-export const getRowHeight = data => getEntryHeight(data) + MARGIN;
 
 const THUMBNAIL = Platform.OS === 'web' ? 100 : 80;
 const styles = StyleSheet.create({
@@ -37,16 +34,19 @@ const styles = StyleSheet.create({
     borderBottomColor: theme.SUPPORT,
     borderBottomWidth: MARGIN,
   },
-  iconLabel: {
+  iconLabelContainer: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginLeft: 16,
+  },
+  iconLabel: {
+    marginLeft: 2,
+    marginTop: Platform.OS === 'web' ? -4 : 0,
   },
   iconRow: {
-    width: 128,
-    paddingHorizontal: 2,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
   },
   contentCenter: {
     justifyContent: 'center',
@@ -74,8 +74,14 @@ const styles = StyleSheet.create({
   thumbnail: {
     width: THUMBNAIL,
     height: THUMBNAIL,
+    borderRadius: 4,
+  },
+  thumbnailContainer: {
+    width: THUMBNAIL,
+    height: THUMBNAIL,
     marginLeft: 16,
     borderRadius: 4,
+    overflow: 'hidden',
     backgroundColor: theme.SUPPORT,
   },
   secondaryText: {
@@ -92,9 +98,9 @@ const styles = StyleSheet.create({
 });
 
 const IconLabel = ({ icon, label, onPress, title }) => (
-  <Touchable feedback="uncontained" onPress={onPress} style={styles.iconLabel} title={title}>
-    <Icon name={icon} size={22} color={theme.TEXT_SECOND}/>
-    {label !== undefined ? <Text style={[styles.secondaryText, { marginLeft: 2 }]}>{label}</Text> : null}
+  <Touchable feedback="uncontained" onPress={onPress} style={styles.iconLabelContainer} title={title}>
+    <Icon name={icon} size={24} color={theme.TEXT_SECOND}/>
+    {label !== undefined ? <Text style={[ styles.secondaryText, styles.iconLabel ]}>{label}</Text> : null}
   </Touchable>
 );
 
@@ -143,7 +149,7 @@ class Entry extends PureComponent {
     return (
       <Touchable
         onPress={pressLink(link)}
-        style={[styles.container, styles.flexCol, { minHeight: getEntryHeight(this.props) }]}>
+        style={[ styles.container, styles.flexCol ]}>
         <View style={[styles.flexRow, styles.spaceBetween, { flexWrap: 'wrap' }]}>
           <View style={{ flex: 1, marginBottom: 16 }}>
             <Text numberOfLines={4} style={styles.title}>{title}</Text>
@@ -153,11 +159,15 @@ class Entry extends PureComponent {
               </Touchable>
             ) : null}
           </View>
-          {thumbnailURL ? <Image source={{ uri: thumbnailURL }} style={[styles.thumbnail]}/> : null}
+          {thumbnailURL ? (
+            <View style={styles.thumbnailContainer}>
+              <Image source={{ uri: thumbnailURL }} style={[styles.thumbnail]}/>
+            </View>
+          ) : null}
         </View>
         <View style={[ styles.flexRow, styles.spaceBetween, { flexWrap: 'nowrap' } ]}>
           <View style={[ styles.flexRow, styles.itemsCenter ]}>
-            <PluginIcon plugin={plugin} size={35}/>
+            <PluginIcon plugin={plugin} size={36}/>
             <View style={[styles.flexCol, { marginLeft: 5 }]}>
               <View style={styles.flexRow}>
                 <Text style={styles.secondaryText}>by </Text>
@@ -176,7 +186,7 @@ class Entry extends PureComponent {
                 icon="favorite"
                 title="Favorite"
                 onPress={favoritePost(this.props)}/>
-              <IconLabel icon="comment" title="Comments" label={commentAmount} onPress={pressLink(commentURL)}/>
+              <IconLabel icon="comment" title={`${commentAmount} Comments`} onPress={pressLink(commentURL)}/>
               <IconLabel icon="share" title="Share" onPress={sharePost(link)}/>
             </View>
           </View>

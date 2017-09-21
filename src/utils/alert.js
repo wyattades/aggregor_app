@@ -52,9 +52,13 @@ class AlertView extends Component {
     }
   }
 
+  componentWillUnmount() {
+    clearTimeout(this._timer);
+  }
+
   _setTimeout = options => {
     if (options.visible) {
-      setTimeout(
+      this._timer = setTimeout(
         () => this.props.dispatch({ type: 'UNSET_ALERT' }),
         options.timeout || DEFAULT_TIMEOUT,
       );

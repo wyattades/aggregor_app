@@ -5,9 +5,8 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 import Touchable from './Touchable';
 import theme from '../utils/theme';
 
-const [ HEIGHT, ICON_SIZE ] = Platform.OS === 'web' ?
-  [ 60, 32 ] :
-  [ 56, 24 ];
+const HEIGHT = 56,
+      ICON_SIZE = 24;
 
 const styles = StyleSheet.create({
   
@@ -37,6 +36,7 @@ const styles = StyleSheet.create({
   title: {
     color: theme.WHITE,
     fontSize: 32,
+    lineHeight: 32,
     fontWeight: 'bold',
     marginRight: 20,
   },

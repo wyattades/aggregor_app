@@ -8,7 +8,7 @@
     "android-prod": "adb uninstall \"com.aggregor\"; cd android && ./gradlew assembleRelease && ./gradlew installRelease",
     "emulator": "$ANDROID_HOME/emulator/emulator -avd nexus",
     "debug": "~/Documents/RNDebugger/React_Native_Debugger",
-    "start": "adb reverse tcp:3000 tcp:3000; adb reverse tcp:8081 tcp:8081; node node_modules/react-native/local-cli/cli.js start",
+    "start": "adb reverse tcp:3000 tcp:3000; node node_modules/react-native/local-cli/cli.js start",
     "build": "export NODE_ENV=production && node ./node_modules/webpack/bin/webpack.js --progress --profile --colors",
     "dev": "export NODE_ENV=development && node server.js",
     "deploy": "aws s3 sync web s3://aggregor.com/ --delete && cf-invalidate --wait -- E2QMYOILA6VFSB index.html"
@@ -18,21 +18,12 @@
     "url": "https://github.com/wyattades/aggregor_app"
   },
   "license": "MIT",
-  "remotedev": {
-    "hostname": "localhost",
-    "port": 5678
-  },
-  "rnpm": {
-    "assets": [
-      "./src/fonts"
-    ]
-  },
   "dependencies": {
     "immutable": "^3.8.1",
     "prop-types": "^15.5.10",
     "react": "~15.6.1",
     "react-dom": "~15.6.1",
-    "react-hot-loader": "^3.0.0-beta.7",    
+    "react-hot-loader": "^3.0.0-beta.7",
     "react-infinite": "^0.12.1",
     "react-native": "0.42.0",
     "react-native-config": "^0.6.1",
@@ -55,8 +46,8 @@
     "babel-preset-react": "^6.24.1",
     "babel-preset-react-native": "^4.0.0",
     "babel-preset-stage-0": "^6.24.1",
-    "css-loader": "^0.28.7",
     "clean-webpack-plugin": "^0.1.16",
+    "css-loader": "^0.28.7",
     "dotenv": "^4.0.0",
     "eslint": "^4.7.1",
     "eslint-config-airbnb": "^15.1.0",

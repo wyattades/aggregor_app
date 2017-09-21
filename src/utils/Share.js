@@ -4,7 +4,10 @@ let Share;
 if (Platform.OS === 'web') {
 
   const share = (content, options) => {
+    
     alert(content.message);
+
+    return Promise.resolve();
   };
 
   Share = {
