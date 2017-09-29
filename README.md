@@ -16,44 +16,51 @@
 ### Build Producton App to Connected Device:
 - ```npm run android-prod```
 ## TODO
-#1	file:///c%3A/Users/Wyatt/Github/aggregor_app/src/containers/Dashboard.js#15
-	TODO: don't allow viewing of NoFeeds???
 
-#2	file:///c%3A/Users/Wyatt/Github/aggregor_app/src/actions/api.js#5
-	TODO: many actions do not handle errors correctly, 
+- Route with react-router
+- Use react-motion-drawer and react-native-drawer for small screens (for web and native respectively)
+- Let client handle all url paths with custom Cloudfront error handler: 404 -> index.html
+- Add Media component that works for native and web
+- Prettify empty feed/plugin messages
 
-#3	file:///c%3A/Users/Wyatt/Github/aggregor_app/src/actions/api.js#6
-	TODO: set max timeout for api calls
-
-#4	file:///c%3A/Users/Wyatt/Github/aggregor_app/src/components/Drawer.js#192
+#1	file:///home/wyatt/Github/aggregor_app/src/components/Drawer.js#194
 	TODO: component should not be 'smart' (by using connect), only containers
 
-#5	file:///c%3A/Users/Wyatt/Github/aggregor_app/src/containers/Loading.js#6
+#2	file:///home/wyatt/Github/aggregor_app/src/containers/Loading.js#6
 	TODO: remove loading container, just use login?
 
-#6	file:///c%3A/Users/Wyatt/Github/aggregor_app/src/containers/Login.js#18
+#3	file:///home/wyatt/Github/aggregor_app/src/containers/Dashboard.js#15
+	TODO: don't allow viewing of NoFeeds???
+
+#4	file:///home/wyatt/Github/aggregor_app/src/containers/Login.js#18
 	TODO: figure out better keyboardAvoiding
 
-#7	file:///c%3A/Users/Wyatt/Github/aggregor_app/src/middleware/feed.js#5
+#5	file:///home/wyatt/Github/aggregor_app/src/middleware/feed.js#5
 	TODO: move these cases to their corresponding functions in api.js
 
-#8	file:///c%3A/Users/Wyatt/Github/aggregor_app/src/navigator/index.js#22
+#6	file:///home/wyatt/Github/aggregor_app/src/utils/prompt.js#47
+	TODO: initial value isn't working. Need to reset form???
+
+#7	file:///home/wyatt/Github/aggregor_app/src/navigator/index.js#20
 	TODO: StackNavigator and DrawerNavigator should be less "mobile" focused
 
-#9	file:///c%3A/Users/Wyatt/Github/aggregor_app/src/navigator/index.web.js#25
-	TODO: StackNavigator and DrawerNavigator should be less "mobile" focused
+#8	file:///home/wyatt/Github/aggregor_app/src/navigator/navigatorWrapper.web.js#7
+	TODO: entering custom url doesn't work
 
-#10	file:///c%3A/Users/Wyatt/Github/aggregor_app/src/navigator/navigatorWrapper.web.js#17
+#9	file:///home/wyatt/Github/aggregor_app/src/navigator/navigatorWrapper.web.js#19
 	TODO: better way to check for built-in params?
 
-#11	file:///c%3A/Users/Wyatt/Github/aggregor_app/src/navigator/navigatorWrapper.web.js#91
+#10	file:///home/wyatt/Github/aggregor_app/src/navigator/navigatorWrapper.web.js#97
 	TODO: don't go back to loading screen if coming from aggregor.com ???
 
-#12	file:///c%3A/Users/Wyatt/Github/aggregor_app/src/reducers/feeds.js#5
+#11	file:///home/wyatt/Github/aggregor_app/src/reducers/feeds.js#5
 	TODO: flatten reducers... maybe in my next lifetime
 
-#13	file:///c%3A/Users/Wyatt/Github/aggregor_app/src/reducers/nav.js#43
+#12	file:///home/wyatt/Github/aggregor_app/src/reducers/nav.js#42
 	TODO: prevent duplicate route transtions
 
-#14	file:///c%3A/Users/Wyatt/Github/aggregor_app/src/utils/prompt.js#47
-	TODO: initial value isn't working. Need to reset form???
+#13	file:///home/wyatt/Github/aggregor_app/src/actions/api.js#5
+	TODO: many actions do not handle errors correctly, 
+
+#14	file:///home/wyatt/Github/aggregor_app/src/actions/api.js#6
+	TODO: set max timeout for api calls

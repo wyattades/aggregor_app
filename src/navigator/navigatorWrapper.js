@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
-import { BackAndroid } from 'react-native';
+import { BackHandler } from 'react-native';
 import { NavigationActions, addNavigationHelpers } from 'react-navigation';
 
 export default NavComponent => class extends Component {
 
   componentWillMount() {
-    BackAndroid.addEventListener('hardwareBackPress', this._handleBack);
+    BackHandler.addEventListener('hardwareBackPress', this._handleBack);
   }
 
   componentWillUnmount() {
-    BackAndroid.removeEventListener('hardwareBackPress', this._handleBack);
+    BackHandler.removeEventListener('hardwareBackPress', this._handleBack);
   }
 
   _handleBack = () => {

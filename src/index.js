@@ -4,15 +4,16 @@ import { AppContainer } from 'react-hot-loader';
 
 import App from './App';
 
+// TODO: figure out the source of this error
 if (__DEV__) {
-  // Some of these are fixed when migrating to React 16
-  console.ignoreYellowBox = ['Warning: BackAndroid is deprecated', 'Warning: Accessing createClass'];
 
   // Suppress some errors:
   const errs = [
-    'Warning: Unknown prop `endFillColor` on <div>',
-    'Warning: Unknown prop `accessibilityViewIsModal` on <div>',
+    'Warning: React does not recognize the `accessibilityViewIsModal`',
   ];
+  
+  console.ignoredYellowBox = errs;
+
   for (const type of ['error']) {
     const native = `native_${type}`;
     console[native] = console[type];
