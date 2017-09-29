@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import theme from '../utils/theme';
 import Container from '../components/Container';
-import headerWrapper from '../components/HeaderWrapper';
+import { genericHeader } from '../components/Header';
 
 const styles = StyleSheet.create({
   container: {
@@ -33,7 +33,7 @@ const styles = StyleSheet.create({
   },
 });
 
-const About = ({ plugin_array }) => (
+let About = ({ plugin_array }) => (
   <Container style={styles.container} adjust={600}>
     <View>
       <View style={styles.textGroup}>
@@ -62,6 +62,12 @@ const About = ({ plugin_array }) => (
   </Container>
 );
 
-export default headerWrapper(connect(state => ({
+About = connect(state => ({
   plugin_array: state.plugin_array,
-}))(About), 'About');
+}))(About);
+
+About.navigationOptions = {
+  header: genericHeader('About'),
+};
+
+export default About;

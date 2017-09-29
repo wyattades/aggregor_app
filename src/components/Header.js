@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, StyleSheet, View } from 'react-native';
+import { Text, StyleSheet, View, Platform } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 
 import Toolbar from './Toolbar';
@@ -9,10 +9,10 @@ import alert from '../utils/alert';
 import { deleteFeed, removePlugin, updateFeed } from '../actions/api';
 
 const styles = StyleSheet.create({
-  webContentHeader: {
+  editorHeader: {
     backgroundColor: theme.WHITE,
   },
-  webContentTitle: {
+  editorTitle: {
     color: theme.TEXT,
   },
 
@@ -34,14 +34,22 @@ const styles = StyleSheet.create({
   highlight: {
     borderBottomColor: theme.ACCENT,
   },
+  title: {
+    fontSize: 32,
+    lineHeight: 32,
+    fontWeight: 'bold',
+    marginRight: 20,
+  },
+
 
 });
 
-const HeaderTitle = ({ texts }) => (
+const HeaderTitle = ({ texts, color = theme.WHITE, showTitle }) => (
   <View style={styles.headerTextContainer}>
+    { showTitle ? <Text style={[ styles.title, { color } ]}>Aggregor</Text> : null }
     {texts.map(({ title, highlight }) => (
       <View key={title} style={[styles.headerTextBorder, highlight ? styles.highlight : null]}>
-        <Text numberOfLines={1} style={styles.headerText}>{title}</Text>
+        <Text numberOfLines={1} style={[styles.headerText, { color }]}>{title}</Text>
       </View>
     ))}
   </View>
@@ -83,7 +91,7 @@ const handleFeedOptionsPress = (navigation, selectedFeed) => ({ index }) => {
 
 const goToFeedEdit = (navigation, selectedFeed) => () => navigation.navigate('FeedEdit', { selectedFeed });
 
-const openDrawer = navigation => () => navigation.navigate('DrawerOpen');
+const openDrawer = navigation => () => navigation.navigate('DrawerToggle');
 
 // NOTE: navigation.goBack() doesn't work for some reason
 const goBack = navigation => () => navigation.dispatch(NavigationActions.back());
@@ -96,12 +104,14 @@ export const DashboardHeader = ({ navigation, scene }) => {
     <Toolbar
       leftElement="menu"
       onLeftElementPress={openDrawer(navigation)}
-      centerElement={<HeaderTitle texts={[
-        {
-          title: selectedFeed,
-          highlight: true,
-        },
-      ]}/>}
+      centerElement={<HeaderTitle
+        showTitle={Platform.OS === 'web'}
+        texts={[
+          {
+            title: selectedFeed,
+            highlight: true,
+          },
+        ]}/>}
       rightElement="playlist-add"
       onRightElementPress={goToFeedEdit(navigation, selectedFeed)}/>
   ) : (
@@ -117,20 +127,24 @@ export const FeedEditHeader = ({ navigation, scene }) => {
     <Toolbar
       leftElement={selectedFeed ? 'arrow-back' : 'close'}
       onLeftElementPress={goBack(navigation)}
-      centerElement={<HeaderTitle texts={selectedFeed ? [
-        {
-          title: 'Edit',
-        }, {
-          title: selectedFeed,
-          highlight: true,
-        },
-      ] : [
-        {
-          title: 'Create Feed',
-        },
-      ]}/>}
+      centerElement={<HeaderTitle
+        color={theme.PRIMARY_DARK}
+        texts={selectedFeed ? [
+          {
+            title: 'Edit',
+          }, {
+            title: selectedFeed,
+            highlight: true,
+          },
+        ] : [
+          {
+            title: 'Create Feed',
+          },
+        ]}/>}
       rightElement={[ 'edit', 'delete' ]}
-      onRightElementPress={handleFeedOptionsPress(navigation, selectedFeed)}/>
+      onRightElementPress={handleFeedOptionsPress(navigation, selectedFeed)}
+      backgroundColor={theme.WHITE}
+      contentColor={theme.PRIMARY_DARK}/>
   );
 };
 
@@ -153,16 +167,20 @@ export const PluginEditHeader = ({ navigation, scene }) => {
     <Toolbar
       leftElement="arrow-back"
       onLeftElementPress={goBack(navigation)}
-      centerElement={<HeaderTitle texts={[
-        {
-          title: plugin ? 'Edit Plugin in' : 'Add Plugin to',
-        }, {
-          title: selectedFeed,
-          highlight: true,
-        },
-      ]}/>}
+      centerElement={<HeaderTitle
+        color={theme.PRIMARY_DARK}
+        texts={[
+          {
+            title: plugin ? 'Edit Plugin in' : 'Add Plugin to',
+          }, {
+            title: selectedFeed,
+            highlight: true,
+          },
+        ]}/>}
       rightElement={plugin ? 'delete' : undefined}
-      onRightElementPress={plugin ? handleDeletePlugin(navigation, selectedFeed, plugin) : null}/>
+      onRightElementPress={plugin ? handleDeletePlugin(navigation, selectedFeed, plugin) : null}
+      backgroundColor={theme.WHITE}
+      contentColor={theme.PRIMARY_DARK}/>
   );
 };
 
@@ -170,5 +188,7 @@ export const MainHeader = ({ navigation, title }) => (
   <Toolbar
     leftElement="menu"
     onLeftElementPress={openDrawer(navigation)}
-    centerElement={<HeaderTitle texts={[{ title }]}/>}/>
+    centerElement={<HeaderTitle showTitle={Platform.OS === 'web'} texts={[{ title }]}/>}/>
 );
+
+export const genericHeader = title => ({ navigation }) => <MainHeader navigation={navigation} title={title}/>;

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { ScrollView, View, Text, StyleSheet } from 'react-native';
+import { ScrollView, View, Text, StyleSheet, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { NavigationActions } from 'react-navigation';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -160,8 +160,8 @@ let Drawer = ({ feeds, navigation, dispatch }) => {
 
   return (
     <ScrollView style={styles.container} endFillColor="#444">
-      <Billboard/>
-      <View style={styles.divider}/>
+      { Platform.OS === 'web' ? null : <Billboard/> }
+      { Platform.OS === 'web' ? null : <View style={styles.divider}/> }
       <Label title="My Feeds"/>
       {feeds.map(feed => (
         <NavItem

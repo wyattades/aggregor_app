@@ -10,7 +10,7 @@ import alert from '../utils/alert';
 import { SubmitButton } from '../components/Form';
 import Touchable from '../components/Touchable';
 import Container from '../components/Container';
-import headerWrapper from '../components/HeaderWrapper';
+import { genericHeader } from '../components/Header';
 
 const styles = StyleSheet.create({
   container: {
@@ -76,7 +76,7 @@ const handleChangePassword = dispatch => () => {
   }));
 };
 
-const Account = ({ user, dispatch }) => (
+let Account = ({ user, dispatch }) => (
   <Container style={styles.container} adjust={600}>
     <View>
       <View style={styles.textGroup}>
@@ -106,11 +106,17 @@ const Account = ({ user, dispatch }) => (
   </Container>
 );
 
+Account = connect(state => ({
+  user: state.user,
+}))(Account);
+
 Account.propTypes = {
   dispatch: PropTypes.func.isRequired,
   user: PropTypes.object.isRequired,
 };
 
-export default headerWrapper(connect(state => ({
-  user: state.user,
-}))(Account), 'Account');
+Account.navigationOptions = {
+  header: genericHeader('Account'),
+};
+
+export default Account;

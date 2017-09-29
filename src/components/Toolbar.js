@@ -17,7 +17,6 @@ const styles = StyleSheet.create({
 
   container: {
     height: HEIGHT,
-    backgroundColor: theme.PRIMARY_DARK,
     paddingHorizontal: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -32,35 +31,22 @@ const styles = StyleSheet.create({
   iconMargin: {
     marginLeft: 16,
   },
-
-  title: {
-    color: theme.WHITE,
-    fontSize: 32,
-    lineHeight: 32,
-    fontWeight: 'bold',
-    marginRight: 20,
-  },
-
-  titleView: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
   iconArray: {
     flexDirection: 'row',
     width: 24 + 16 + 24,
   },
 });
 
-const TouchIcon = ({ name, onPress, style }) => (
+const TouchIcon = ({ name, onPress, style, color }) => (
   <Touchable onPress={onPress} feedback="uncontained" style={style || {}}>
-    <Icon name={name} color={theme.WHITE} size={ICON_SIZE}/>
+    <Icon name={name} color={color} size={ICON_SIZE}/>
   </Touchable>
 );
 
-const iconFactory = (element, onPress, flex) => {
+const iconFactory = (element, onPress, color, flex) => {
   if (typeof element === 'string') {
     element = (
-      <TouchIcon name={element} onPress={onPress}/>
+      <TouchIcon name={element} onPress={onPress} color={color}/>
     );
   } else if (Array.isArray(element)) {
     element = element.map((icon, index) => (
@@ -68,6 +54,7 @@ const iconFactory = (element, onPress, flex) => {
         key={index}
         style={index > 0 && styles.iconMargin}
         name={icon}
+        color={color}
         onPress={() => onPress({ index, icon })}/>
     ));
   } else if (!React.isValidElement(element)) {
@@ -96,21 +83,20 @@ const Toolbar = ({
   centerElement,
   rightElement,
   onRightElementPress,
+  contentColor = theme.WHITE,
+  backgroundColor = theme.PRIMARY_DARK,
 }) => {
 
-  leftElement = iconFactory(leftElement, onLeftElementPress, 'start');
-  centerElement = textFactory(centerElement);
-  rightElement = iconFactory(rightElement, onRightElementPress, 'end');
+  leftElement = iconFactory(leftElement, onLeftElementPress, contentColor, 'start');
+  centerElement = textFactory(centerElement, contentColor);
+  rightElement = iconFactory(rightElement, onRightElementPress, contentColor, 'end');
 
   return (
-    <View>
+    <View style={{ zIndex: 2 }}>
       { Platform.OS !== 'web' ? <View style={styles.statusBar}/> : null }
-      <View style={styles.container}>
+      <View style={[styles.container, { backgroundColor }]}>
         {leftElement}
-        <View style={styles.titleView}>
-          { Platform.OS === 'web' ? <Text style={styles.title}>Aggregor</Text> : null }
-          {centerElement}
-        </View>
+        {centerElement}
         {rightElement}
       </View>
     </View>

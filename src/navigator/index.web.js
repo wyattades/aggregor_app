@@ -1,6 +1,8 @@
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { StackNavigator, DrawerNavigator } from 'react-navigation';
+import StackNavigator from 'react-navigation/lib/navigators/StackNavigator';
+
+import MyNavigator from './DrawerNavigator';
 
 import Dashboard from '../containers/Dashboard';
 import Login from '../containers/Login';
@@ -37,7 +39,7 @@ const HomeNavigator = new StackNavigator({
   initialRouteName: 'Dashboard',
 });
 
-const MainNavigator = new DrawerNavigator({
+const MainNavigator = new MyNavigator({
   Home: {
     screen: HomeNavigator,
     path: 'feed',
@@ -52,7 +54,7 @@ const MainNavigator = new DrawerNavigator({
   },
 }, {
   initialRouteName: 'Home',
-  contentComponent: Drawer,
+  // contentComponent: Drawer,
 });
 
 export const AppNavigator = new StackNavigator({

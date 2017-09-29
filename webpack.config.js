@@ -27,8 +27,6 @@ const baseConfig = {
       'react-native$': 'react-native-web',
       'react-native-vector-icons/FontAwesome': 'react-native-vector-icons/dist/FontAwesome',
       'react-native-vector-icons/MaterialIcons': 'react-native-vector-icons/dist/MaterialIcons',
-      'react-navigation/StackNavigator': 'react-navigation/lib/navigators/StackNavigator',
-      'react-navigation/DrawerNavigator': 'react-navigation/lib/navigators/DrawerNavigator',
     },
     // Enable platform specific extensions
     extensions: [ '.web.js', '.js' ],
