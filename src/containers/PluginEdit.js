@@ -8,6 +8,7 @@ import { PickerField, TextField, SliderField, SubmitButton, FormError } from '..
 import { PluginEditHeader } from '../components/Header';
 import { savePlugin } from '../actions/api';
 import { PluginRecord } from '../utils/records';
+import { goBack } from '../actions/navActions';
 
 const styles = StyleSheet.create({
   container: {
@@ -17,7 +18,7 @@ const styles = StyleSheet.create({
 
 class PluginEdit extends Component {
   _onSubmit = values => {
-    const { selectedFeed, dispatch, id, navigation } = this.props;
+    const { selectedFeed, dispatch, id } = this.props;
 
     const keys = Object.keys(values.data);
     for (let i = 0; i < keys.length; i++) {
@@ -29,7 +30,7 @@ class PluginEdit extends Component {
     }
 
     return dispatch(savePlugin(selectedFeed, values, id)).then(
-      () => navigation.goBack(),
+      () => dispatch(goBack()),
       err => {
         throw new SubmissionError({ _error: err.data });
       },
@@ -99,7 +100,8 @@ PluginEdit = reduxForm({
 const selector = formValueSelector('pluginEdit');
 
 PluginEdit = connect((state, ownProps) => {
-  const { plugin: id, selectedFeed } = ownProps.navigation.state.params;
+
+  const { plugin: id, selectedFeed } = ownProps.match.params;
 
   let newPlugin = false,
       plugin = state.feeds.getIn([ selectedFeed, 'plugins', id ]);
@@ -108,6 +110,8 @@ PluginEdit = connect((state, ownProps) => {
     plugin = new PluginRecord({});
     newPlugin = true;
   }
+
+  plugin = plugin.toJS();
 
   const type = selector(state, 'type') || plugin.type;
   const plg = state.plugin_types[type];
@@ -134,19 +138,10 @@ PluginEdit = connect((state, ownProps) => {
   };
 })(PluginEdit);
 
-PluginEdit.navigationOptions = {
-  header: PluginEditHeader,
-};
+PluginEdit.header = PluginEditHeader;
 
 PluginEdit.propTypes = {
-  navigation: PropTypes.shape({
-    state: PropTypes.shape({
-      params: PropTypes.shape({
-        selectedFeed: PropTypes.string.isRequired,
-        plugin: PropTypes.string.isRequired,
-      }).isRequired,
-    }).isRequired,
-  }).isRequired,
+  match: PropTypes.object.isRequired,
 };
 
 export default PluginEdit;

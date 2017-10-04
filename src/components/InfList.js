@@ -1,1 +1,3 @@
-export { default as FlatList } from 'react-native';
+import { FlatList } from 'react-native';
+
+export default FlatList;

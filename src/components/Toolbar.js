@@ -8,24 +8,23 @@ import theme from '../utils/theme';
 const HEIGHT = 56,
       ICON_SIZE = 24;
 
+const paddingTop = Platform.OS === 'web' ? 0 : StatusBar.currentHeight;
+
 const styles = StyleSheet.create({
-  
-  statusBar: {
-    height: StatusBar.currentHeight,
-    backgroundColor: theme.PRIMARY_DARK,
-  },
 
   container: {
-    height: HEIGHT,
+    paddingTop,
+    height: HEIGHT + paddingTop,
     paddingHorizontal: 16,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    
     // equivalent to: boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.3)',
     shadowColor: '#000000',
-    shadowOpacity: 0.3,
+    shadowOpacity: 0.2,
     shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
+    shadowRadius: 3,
     elevation: 5,
   },
   iconMargin: {
@@ -92,13 +91,10 @@ const Toolbar = ({
   rightElement = iconFactory(rightElement, onRightElementPress, contentColor, 'end');
 
   return (
-    <View style={{ zIndex: 2 }}>
-      { Platform.OS !== 'web' ? <View style={styles.statusBar}/> : null }
-      <View style={[styles.container, { backgroundColor }]}>
-        {leftElement}
-        {centerElement}
-        {rightElement}
-      </View>
+    <View style={[styles.container, { backgroundColor }]}>
+      {leftElement}
+      {centerElement}
+      {rightElement}
     </View>
   );
 };

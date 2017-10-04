@@ -1,13 +1,11 @@
 import React from 'react';
-import { StyleSheet, Platform, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import Touchable from './Touchable';
 import theme from '../utils/theme';
 
-const [ BUTTON_SIZE, ICON_SIZE, OFFSET ] = Platform.OS === 'web' ?
-  [ 70, 32, 40 ] :
-  [ 56, 24, 20 ];
+const [ BUTTON_SIZE, ICON_SIZE, OFFSET ] = [ 56, 24, 20 ];
 
 const styles = StyleSheet.create({
   container: {

@@ -49,9 +49,9 @@ const styles = StyleSheet.create({
   },
 });
 
-const goToLogin = navigation => () => navigation.goBack();
+const goToLogin = history => () => history.push('/login');
 
-const RegisterForm = ({ handleSubmit, submitting, submitSucceeded, error, navigation }) =>
+const RegisterForm = ({ handleSubmit, submitting, submitSucceeded, error, history }) =>
   (<View style={styles.background}>
     <Container style={styles.container}>
       <View>
@@ -71,7 +71,7 @@ const RegisterForm = ({ handleSubmit, submitting, submitSucceeded, error, naviga
           submitSucceeded={submitSucceeded}
         />
       </KeyboardAvoidingView>
-      <FormLink title="Sign in to Aggregor" onPress={goToLogin(navigation)} />
+      <FormLink title="Sign in to Aggregor" onPress={goToLogin(history)}/>
     </Container>
   </View>);
 
@@ -104,7 +104,7 @@ const Register = reduxForm({
 })(RegisterForm);
 
 Register.propTypes = {
-  navigation: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
 export default Register;

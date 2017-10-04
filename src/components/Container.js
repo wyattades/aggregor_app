@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Dimensions, View, StyleSheet, TextStyle } from 'react-native';
+import { Dimensions, View, StyleSheet } from 'react-native';
 
 const styles = StyleSheet.create({
   outer: {
@@ -41,6 +41,7 @@ class Container extends Component {
       } else {
         inner = {
           width: adjust,
+          maxWidth: adjust,
         };
       }
     } else {

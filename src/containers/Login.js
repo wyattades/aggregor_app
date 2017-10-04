@@ -20,7 +20,7 @@ const KeyboardAvoidingView = Platform.OS === 'web' ?
   ({ children }) => <View>{children}</View> :
   NativeKeyboardAvoidingView;
 
-const onSubmit = (values, dispatch) =>
+const onSubmit = history => (values, dispatch) =>
   dispatch(login(values))
   .catch(err => {
     if (err.code === 401) {
@@ -62,14 +62,14 @@ const animation = {
   },
 };
 
-const goToRegister = navigation => () => navigation.navigate('Register');
+const goToRegister = history => () => history.push('/register');
 
 class Login extends Component {
 
   constructor(props) {
     super(props);
 
-    const init = props.navigation.state.params && props.navigation.state.params.init;
+    const init = false; // props.history.state.params && props.history.state.params.init;
     this.state = {
       show: !init,
     };
@@ -87,7 +87,7 @@ class Login extends Component {
   }
 
   render() {
-    const { handleSubmit, submitting, submitSucceeded, error, navigation } = this.props;
+    const { handleSubmit, submitting, submitSucceeded, error, history } = this.props;
 
     const animated = !this.state.show && {
       height: 0,
@@ -105,13 +105,13 @@ class Login extends Component {
               <Field label="Password" secureTextEntry name="password" component={AnimatedTextField}/>
               <SubmitButton
                 title="SIGN IN"
-                onPress={handleSubmit(onSubmit)}
+                onPress={handleSubmit(onSubmit(history))}
                 submitting={submitting}
                 submitSucceeded={submitSucceeded}/>
             </KeyboardAvoidingView>
           </View>
           <View style={animated}>
-            <FormLink title="Sign up for Aggregor" onPress={goToRegister(navigation)}/>
+            <FormLink title="Sign up for Aggregor" onPress={goToRegister(history)}/>
           </View>
         </Container>
       </View>
@@ -120,7 +120,7 @@ class Login extends Component {
 }
 
 Login.propTypes = {
-  navigation: PropTypes.object.isRequired,
+  history: PropTypes.object.isRequired,
 };
 
 export default reduxForm({

@@ -5,7 +5,7 @@ export const plugin_types = (state = {}, action) => {
   return state;
 };
 
-export const plugin_array = (state = {}, action) => {
+export const plugin_array = (state = [], action) => {
   if (action.type === 'SET_PLUGIN_DATA') {
     return action.plugin_array;
   }

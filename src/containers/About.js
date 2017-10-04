@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
 });
 
 let About = ({ plugin_array }) => (
-  <Container style={styles.container} adjust={600}>
+  <Container style={styles.container} adjust={900}>
     <View>
       <View style={styles.textGroup}>
         <Text style={styles.title}>The Idea:</Text>
@@ -66,8 +66,6 @@ About = connect(state => ({
   plugin_array: state.plugin_array,
 }))(About);
 
-About.navigationOptions = {
-  header: genericHeader('About'),
-};
+About.header = genericHeader('About');
 
 export default About;

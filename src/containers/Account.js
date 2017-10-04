@@ -77,7 +77,7 @@ const handleChangePassword = dispatch => () => {
 };
 
 let Account = ({ user, dispatch }) => (
-  <Container style={styles.container} adjust={600}>
+  <Container style={styles.container} adjust={700}>
     <View>
       <View style={styles.textGroup}>
         <Text style={styles.label}>Username:</Text>
@@ -110,13 +110,6 @@ Account = connect(state => ({
   user: state.user,
 }))(Account);
 
-Account.propTypes = {
-  dispatch: PropTypes.func.isRequired,
-  user: PropTypes.object.isRequired,
-};
-
-Account.navigationOptions = {
-  header: genericHeader('Account'),
-};
+Account.header = genericHeader('Account');
 
 export default Account;

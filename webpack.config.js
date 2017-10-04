@@ -21,12 +21,16 @@ PATHS.index = './index';
 
 const baseConfig = {
 
+  context: __dirname,
+
   resolve: {
     // Maps react-native imports for react-native-web
     alias: {
       'react-native$': 'react-native-web',
       'react-native-vector-icons/FontAwesome': 'react-native-vector-icons/dist/FontAwesome',
       'react-native-vector-icons/MaterialIcons': 'react-native-vector-icons/dist/MaterialIcons',
+      'history/createMemoryHistory': 'history/createBrowserHistory',
+      'react-router-native': 'react-router-dom',
     },
     // Enable platform specific extensions
     extensions: [ '.web.js', '.js' ],
@@ -104,7 +108,7 @@ if (process.env.NODE_ENV === 'production') {
     output: {
       path: PATHS.dist,
       filename: '[name].[chunkhash].js',
-      publicPath: './',
+      publicPath: '/',
     },
 
     plugins: [
@@ -149,13 +153,16 @@ if (process.env.NODE_ENV === 'production') {
   baseConfig.module.rules[0].use.unshift({ loader: 'react-hot-loader/webpack' });
 
   module.exports = Object.assign({ // DEVELOPMENT CONFIG
-    devtool: 'eval-source-map',
+    devtool: 'cheap-module-source-map',
     entry: [
       'react-hot-loader/patch',
       'webpack-dev-server/client?http://localhost:8080',
       'webpack/hot/only-dev-server',
       PATHS.index,
     ],
+    output: {
+      publicPath: '/',
+    },
     plugins: [
 
       ...sharedPlugins,

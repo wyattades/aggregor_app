@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { StyleSheet, View, Text, ActivityIndicator, Platform } from 'react-native';
 import { connect } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
+import { Switch, Route } from 'react-router-native';
 
 import { fetchFeed } from '../actions/api';
 import { goHome } from '../actions/navActions';
@@ -12,12 +13,30 @@ import InfList from '../components/InfList';
 import Touchable from '../components/Touchable';
 import theme from '../utils/theme';
 
+import FeedEdit from './FeedEdit';
+import PluginEdit from './PluginEdit';
+
 // TODO: don't allow viewing of NoFeeds???
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: theme.WHITE,
+  },
+
+  editor: {
+    width: 400,
+    maxWidth: 400,
+    flex: 1,
+    // equivalent to: boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.3)',
+    shadowColor: '#000000',
+    shadowOpacity: 0.3,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 5,
+
+    flexDirection: 'column-reverse',
+    justifyContent: 'flex-end',
   },
 
   message: {
@@ -68,14 +87,14 @@ const styles = StyleSheet.create({
   },
 });
 
-const NoFeeds = () => (
+export const NoFeeds = () => (
   <View style={styles.messageView}>
     <Text style={styles.message}>You don't have any feeds yet!</Text>
     <Text style={styles.message}>You can manage your feeds in the drawer menu at the top left.</Text>
   </View>
 );
 
-const NoPlugins = () => (
+export const NoPlugins = () => (
   <View style={styles.messageView}>
     <Text style={styles.message}>You don't have any sources in this feed.</Text>
     <Text style={styles.message}>Click the edit button above to add some!</Text>
@@ -174,7 +193,17 @@ class NonemptyDashboard extends Component {
   }
 }
 
-let Dashboard = ({ feeds, selectedFeed, plugin_types, dispatch, navigation }) => {
+const editorView = (Content, dispatch) => props => {
+  const Header = Content.header;
+  return (
+    <View style={styles.editor}>
+      <Content {...props}/>
+      { Header ? <Header dispatch={dispatch} match={props.match}/> : null }
+    </View>
+  );
+};
+
+let Dashboard = ({ feeds, selectedFeed, plugin_types, mobile, dispatch, match }) => {
   const feed = feeds.get(selectedFeed);
 
   if (feed) {
@@ -182,7 +211,7 @@ let Dashboard = ({ feeds, selectedFeed, plugin_types, dispatch, navigation }) =>
           plugins = feed.get('plugins'),
           errors = plugins.count(plugin => plugin.error !== undefined);
 
-    return plugins.size === 0 ? (
+    const content = plugins.size === 0 ? (
       <NoPlugins/>
     ) : (
       <NonemptyDashboard
@@ -191,28 +220,34 @@ let Dashboard = ({ feeds, selectedFeed, plugin_types, dispatch, navigation }) =>
         errors={errors}
         loading={errors !== plugins.size}
         dispatch={dispatch}
-        navigation={navigation}
         selectedFeed={selectedFeed}/>
     );
+
+    return mobile ? content : (
+      <View style={{ flex: 1, flexDirection: 'row' }}>
+        {content}
+        <Switch>
+          <Route path={`${match.path}/edit/:plugin`} component={editorView(PluginEdit, dispatch)}/>
+          <Route path={`${match.path}/edit`} component={editorView(FeedEdit, dispatch)}/>
+        </Switch>
+      </View>
+    );
+
+  } else {
+    return <NoFeeds/>;
   }
-  return (
-    <NoFeeds/>
-  );
-  
 };
 
-Dashboard = connect(({ feeds, plugin_types }, { navigation }) => ({
+Dashboard = connect(({ feeds, plugin_types }, { match }) => ({
   feeds,
-  selectedFeed: navigation.state.params && navigation.state.params.selectedFeed,
+  selectedFeed: match.params && match.params.selectedFeed,
   plugin_types,
 }))(Dashboard);
 
-Dashboard.navigationOptions = {
-  header: DashboardHeader,
-};
+Dashboard.header = DashboardHeader;
 
 Dashboard.propTypes = {
-  navigation: PropTypes.object.isRequired,
+  match: PropTypes.object.isRequired,
 };
 
 export default Dashboard;

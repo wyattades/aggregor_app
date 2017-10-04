@@ -16,9 +16,7 @@ new WebpackDevServer(webpack(config), {
     chunkModules: false,
     modules: false,
   },
-  historyApiFallback: {
-    index: 'index.html',
-  },
+  historyApiFallback: true,
 }).listen(8080, '0.0.0.0', (err) => {
   if (err) {
     console.log(err);

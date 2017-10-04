@@ -210,7 +210,7 @@ class SliderField extends PureComponent {
             step={step}
             style={styles.slider}
             onValueChange={this._onValueChange}/>
-          <Text style={styles.sliderValue}>{value.toFixed(1)}</Text>
+          <Text style={styles.sliderValue}>{parseFloat(value).toFixed(1)}</Text>
         </View>
       </View>
     );

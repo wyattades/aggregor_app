@@ -9,7 +9,7 @@ if (__DEV__) {
 
   // Suppress some errors:
   const errs = [
-    'Warning: React does not recognize the `accessibilityViewIsModal`',
+    // 'Warning: React does not recognize the `accessibilityViewIsModal`',
   ];
   
   console.ignoredYellowBox = errs;

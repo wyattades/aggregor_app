@@ -3,8 +3,6 @@ import { View, Text, StyleSheet, ActivityIndicator } from 'react-native';
 
 import theme from '../utils/theme';
 
-// TODO: remove loading container, just use login?
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

@@ -12,6 +12,8 @@
     "import/prefer-default-export": 0,
     "arrow-parens": 0,
     "react/no-array-index-key": 0,
+    "react/jsx-first-prop-new-line": 0,
+    "react/jsx-max-props-per-line": 0,
     "react/prop-types": 0,
     "react/jsx-filename-extension": 0,
     "react/jsx-tag-spacing": 0,

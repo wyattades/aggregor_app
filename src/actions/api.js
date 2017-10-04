@@ -1,6 +1,7 @@
 import Config from 'react-native-config';
 
-import { setFeed } from './navActions';
+import { setFeed, goLogin } from './navActions';
+import alert from '../utils/alert';
 
 // TODO: many actions do not handle errors correctly, 
 // TODO: set max timeout for api calls
@@ -48,32 +49,16 @@ const request = (dispatch, method, route, token, data) => fetch(ADDRESS + route,
       err,
     });
   } else if (errorType === 0) {
-    dispatch({
-      type: 'NETWORK_ERROR',
-      err,
-    });
+    alert('Failed to connect to Aggregor server. Please try again later.');
   }
 
   throw err;
 });
 
-export const login = data => (dispatch) => request(dispatch, 'POST', '/session', undefined, data).then(
-  ({ token }) => dispatch({ type: 'SET_USER', username: data.username, token }),
-);
-
-export const logout = () => (dispatch, getState) => request(dispatch, 'DELETE', '/session', getState().user.token).then(
-  () => dispatch({ type: 'UNSET_USER' }),
-);
-
-// data: username, password, first_name, last_name, email
-export const createUser = data => dispatch => request(dispatch, 'POST', '/user', undefined, data).then(
-  ({ token }) => dispatch({ type: 'SET_USER', username: data.username, token }),
-);
-
 export const deleteUser = password => (dispatch, getState) => {
   const user = getState().user;
   return request(dispatch, 'DELETE', `/user/${user.username}`, user.token, { username: user.username, password }).then(
-    () => dispatch({ type: 'UNSET_USER' }),
+    () => dispatch(goLogin()),
   );
 };
 
@@ -101,7 +86,8 @@ export const fetchFeeds = () => (dispatch, getState) => {
   return request(dispatch, 'GET', `/user/${user.username}/feed`, user.token).then(
     ({ feedNames }) => {
       dispatch({ type: 'SET_FEEDS', feedNames });
-      return Promise.resolve();
+
+      return Promise.resolve(feedNames);
     },
   );
 };
@@ -111,6 +97,7 @@ export const createFeed = feed => (dispatch, getState) => {
   return request(dispatch, 'POST', `/user/${user.username}/feed`, user.token, { name: feed }).then(
     () => {
       dispatch({ type: 'ADD_FEED', feed });
+      dispatch(setFeed(feed, true));
       return Promise.resolve();
     },
   );
@@ -212,5 +199,63 @@ export const fetchAvailablePlugins = () => (dispatch) => request(dispatch, 'GET'
       plugin_types: plugins,
       plugin_array: Object.keys(plugins).map(key => plugins[key]),
     });
+  },
+);
+
+export const loadInit = (isLoggedIn, path) => dispatch =>
+  dispatch(fetchAvailablePlugins())
+  .then(() => isLoggedIn ?
+    dispatch(fetchUser())
+    .then(() => dispatch(fetchFeeds()))
+    .then(feedNames => {
+
+      let feed,
+          goToEdit;
+
+      if (path) {
+        const match = path.split('/');
+        match.shift();
+        if (match[0] === 'feed' && match[1]) {
+          feed = match[1];
+          if (match[2] === 'edit') {
+            goToEdit = true;
+            if (match[3]) {
+              goToEdit = match[3];
+            }
+          }
+        }
+      }
+
+      if (!feed) {
+        feed = (Array.isArray(feedNames) && feedNames[0]) || null;
+      }
+
+      return dispatch(setFeed(feed, goToEdit));
+    })
+    :
+    Promise.resolve(),
+  )
+  .catch(err => {
+    if (err.code === 401 || err.code === 0) {
+      dispatch(goLogin());
+    }
+  });
+
+export const login = data => dispatch => request(dispatch, 'POST', '/session', undefined, data).then(
+  ({ token }) => {
+    dispatch({ type: 'SET_USER', username: data.username, token });
+    dispatch(loadInit(true));
+  },
+);
+
+export const logout = () => (dispatch, getState) => request(dispatch, 'DELETE', '/session', getState().user.token).then(
+  () => dispatch(goLogin()),
+);
+
+// data: username, password, first_name, last_name, email
+export const createUser = data => dispatch => request(dispatch, 'POST', '/user', undefined, data).then(
+  ({ token }) => {
+    dispatch({ type: 'SET_USER', username: data.username, token });
+    dispatch(loadInit(true));
   },
 );

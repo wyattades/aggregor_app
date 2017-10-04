@@ -42,15 +42,16 @@ const getError = params => {
   }
 };
 
-const ErrorPage = ({ navigation }) => {
+const ErrorPage = ({ history, err }) => {
 
-  const params = (navigation.state && navigation.state.params) || {
+  const params = err || {
     code: 0,
   };
 
+  // TODO: try <Link to="/login" component={Touchable}/>
   return (
     <View style={styles.container}>
-      <Touchable onPress={() => navigation.navigate('Login')}>
+      <Touchable onPress={() => history.push('/login')}>
         <Text style={styles.title}>Aggregor</Text>
       </Touchable>
       
@@ -59,7 +60,7 @@ const ErrorPage = ({ navigation }) => {
         <Text style={styles.subtext}>{getError(params)}</Text>
       </View>
 
-      <Touchable onPress={() => navigation.navigate('Login')}>
+      <Touchable onPress={() => history.push('/login')}>
         <Text style={styles.subtext}>&larr; Go back</Text>
       </Touchable>
     </View>

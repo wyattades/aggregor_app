@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { View, Text, StyleSheet, Image, Linking, Platform } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
@@ -136,7 +136,7 @@ const pressLink = url => () => {
   });
 };
 
-class Entry extends PureComponent {
+class Entry extends Component {
 
   shouldComponentUpdate(nextProps) {
     return nextProps.id !== this.props.id;

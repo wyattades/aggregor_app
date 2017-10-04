@@ -1,12 +1,12 @@
 import React from 'react';
-import { Text, StyleSheet, View, Platform } from 'react-native';
-import { NavigationActions } from 'react-navigation';
+import { Text, StyleSheet, View } from 'react-native';
 
 import Toolbar from './Toolbar';
 import theme from '../utils/theme';
 import prompt from '../utils/prompt';
 import alert from '../utils/alert';
 import { deleteFeed, removePlugin, updateFeed } from '../actions/api';
+import { goBack, goHome, pushHome } from '../actions/navActions';
 
 const styles = StyleSheet.create({
   editorHeader: {
@@ -47,8 +47,8 @@ const styles = StyleSheet.create({
 const HeaderTitle = ({ texts, color = theme.WHITE, showTitle }) => (
   <View style={styles.headerTextContainer}>
     { showTitle ? <Text style={[ styles.title, { color } ]}>Aggregor</Text> : null }
-    {texts.map(({ title, highlight }) => (
-      <View key={title} style={[styles.headerTextBorder, highlight ? styles.highlight : null]}>
+    {texts.map(({ title, highlight }, i) => (
+      <View key={i} style={[styles.headerTextBorder, highlight ? styles.highlight : null]}>
         <Text numberOfLines={1} style={[styles.headerText, { color }]}>{title}</Text>
       </View>
     ))}
@@ -76,9 +76,7 @@ const promptRename = (oldName, dispatch) => dispatch(prompt({
   },
 }));
 
-const handleFeedOptionsPress = (navigation, selectedFeed) => ({ index }) => {
-  const dispatch = navigation.dispatch;
-
+const handleFeedOptionsPress = (dispatch, selectedFeed) => ({ index }) => {
   if (index === 0) {
     promptRename(selectedFeed, dispatch);
   } else if (index === 1) {
@@ -89,23 +87,27 @@ const handleFeedOptionsPress = (navigation, selectedFeed) => ({ index }) => {
   }
 };
 
-const goToFeedEdit = (navigation, selectedFeed) => () => navigation.navigate('FeedEdit', { selectedFeed });
+const goToFeedEdit = (dispatch, path, selectedFeed) => () => {
+  const inEditor = path.includes('/edit');
+  if (inEditor) {
+    dispatch(goHome(selectedFeed));
+  } else {
+    dispatch(pushHome(selectedFeed));
+  }
+};
 
-const openDrawer = navigation => () => navigation.navigate('DrawerToggle');
+const handleBack = dispatch => () => dispatch(goBack());
 
-// NOTE: navigation.goBack() doesn't work for some reason
-const goBack = navigation => () => navigation.dispatch(NavigationActions.back());
-
-export const DashboardHeader = ({ navigation, scene }) => {
-  const params = scene.route.params,
-        selectedFeed = params && params.selectedFeed;
+// TODO: avoid passing path
+export const DashboardHeader = ({ dispatch, path, match, toggleDrawer, mobile }) => {
+  const selectedFeed = match.params && match.params.selectedFeed;
 
   return selectedFeed ? (
     <Toolbar
       leftElement="menu"
-      onLeftElementPress={openDrawer(navigation)}
+      onLeftElementPress={toggleDrawer}
       centerElement={<HeaderTitle
-        showTitle={Platform.OS === 'web'}
+        showTitle={!mobile}
         texts={[
           {
             title: selectedFeed,
@@ -113,20 +115,19 @@ export const DashboardHeader = ({ navigation, scene }) => {
           },
         ]}/>}
       rightElement="playlist-add"
-      onRightElementPress={goToFeedEdit(navigation, selectedFeed)}/>
+      onRightElementPress={goToFeedEdit(dispatch, path, selectedFeed)}/>
   ) : (
-    <MainHeader navigation={navigation} title="Home"/>
+    <MainHeader toggleDrawer={toggleDrawer} title="Home"/>
   );
 };
 
-export const FeedEditHeader = ({ navigation, scene }) => {
-  const params = scene.route.params,
-        selectedFeed = params && params.selectedFeed;
+export const FeedEditHeader = ({ dispatch, match }) => {
+  const selectedFeed = match.params && match.params.selectedFeed;
 
   return (
     <Toolbar
-      leftElement={selectedFeed ? 'arrow-back' : 'close'}
-      onLeftElementPress={goBack(navigation)}
+      leftElement="close"
+      onLeftElementPress={handleBack(dispatch)}
       centerElement={<HeaderTitle
         color={theme.PRIMARY_DARK}
         texts={selectedFeed ? [
@@ -142,31 +143,29 @@ export const FeedEditHeader = ({ navigation, scene }) => {
           },
         ]}/>}
       rightElement={[ 'edit', 'delete' ]}
-      onRightElementPress={handleFeedOptionsPress(navigation, selectedFeed)}
+      onRightElementPress={handleFeedOptionsPress(dispatch, selectedFeed)}
       backgroundColor={theme.WHITE}
       contentColor={theme.PRIMARY_DARK}/>
   );
 };
 
-const handleDeletePlugin = (navigation, selectedFeed, id) => () => {
-  const dispatch = navigation.dispatch;
-  
+const handleDeletePlugin = (dispatch, selectedFeed, id) => () =>
   dispatch(removePlugin(selectedFeed, id))
   .then(() => {
-    dispatch(NavigationActions.back());
+    dispatch(goBack());
     alert('Plugin succesfully deleted');
   });
-};
 
-export const PluginEditHeader = ({ navigation, scene }) => {
-  const params = scene.route.params,
-        selectedFeed = params && params.selectedFeed,
-        plugin = params && params.plugin !== 'new' && params.plugin;
+export const PluginEditHeader = ({ dispatch, match }) => {
+
+  const params = match.params || {};
+  const selectedFeed = params.selectedFeed;
+  const plugin = params.plugin !== 'new' && params.plugin;
 
   return (
     <Toolbar
       leftElement="arrow-back"
-      onLeftElementPress={goBack(navigation)}
+      onLeftElementPress={handleBack(dispatch)}
       centerElement={<HeaderTitle
         color={theme.PRIMARY_DARK}
         texts={[
@@ -178,17 +177,17 @@ export const PluginEditHeader = ({ navigation, scene }) => {
           },
         ]}/>}
       rightElement={plugin ? 'delete' : undefined}
-      onRightElementPress={plugin ? handleDeletePlugin(navigation, selectedFeed, plugin) : null}
+      onRightElementPress={plugin ? handleDeletePlugin(dispatch, selectedFeed, plugin) : null}
       backgroundColor={theme.WHITE}
       contentColor={theme.PRIMARY_DARK}/>
   );
 };
 
-export const MainHeader = ({ navigation, title }) => (
+export const MainHeader = ({ toggleDrawer, title, mobile }) => (
   <Toolbar
     leftElement="menu"
-    onLeftElementPress={openDrawer(navigation)}
-    centerElement={<HeaderTitle showTitle={Platform.OS === 'web'} texts={[{ title }]}/>}/>
+    onLeftElementPress={toggleDrawer}
+    centerElement={<HeaderTitle showTitle={!mobile} texts={[{ title }]}/>}/>
 );
 
-export const genericHeader = title => ({ navigation }) => <MainHeader navigation={navigation} title={title}/>;
+export const genericHeader = title => props => <MainHeader {...props} title={title}/>;

@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 
 import theme from '../utils/theme';
 import { formatPluginTitle, formatPluginSubtitle } from '../utils/format';
+import { pushHome } from '../actions/navActions';
+
 import PluginIcon from '../components/PluginIcon';
 import { Message, MessageView } from '../components/Message';
 import { FeedEditHeader } from '../components/Header';
@@ -59,7 +61,7 @@ class FeedEdit extends Component {
           subtitle = formatPluginSubtitle(item);
 
     return (
-      <Touchable key={item.id} onPress={this._editPlugin(item)} style={styles.item}>
+      <Touchable key={item.id} onPress={this._pluginEdit(item.id)} style={styles.item}>
         <PluginIcon plugin={plg} size={ICON_SIZE}/>
         <View style={styles.textView}>
           <Text style={[styles.title]} numberOfLines={1}>{title}</Text>
@@ -69,15 +71,10 @@ class FeedEdit extends Component {
     );
   }
 
-  _addPlugin = () => this.props.navigation.navigate('PluginEdit', {
-    selectedFeed: this.props.selectedFeed,
-    plugin: 'new',
-  });
-
-  _editPlugin = plugin => () => this.props.navigation.navigate('PluginEdit', {
-    plugin: plugin.id,
-    selectedFeed: this.props.selectedFeed,
-  });
+  _pluginEdit = plugin => () => {
+    const { dispatch, selectedFeed } = this.props;
+    dispatch(pushHome(selectedFeed, plugin));
+  }
 
   render() {
     const { plugins } = this.props;
@@ -94,15 +91,18 @@ class FeedEdit extends Component {
         )}
         <ActionButton
           style={styles.button}
-          onPress={this._addPlugin}/>
+          onPress={this._pluginEdit('new')}/>
       </View>
     );
   }
 }
 
-FeedEdit = connect(({ feeds, plugin_types }, { navigation }) => {
-  const selectedFeed = navigation.state.params && navigation.state.params.selectedFeed;
+FeedEdit = connect(({ feeds, plugin_types }, { match }) => {
+  
+  const params = match.params;
+  const selectedFeed = params && params.selectedFeed;
   const feed = feeds.get(selectedFeed);
+
   return {
     selectedFeed,
     plugin_types,
@@ -110,18 +110,10 @@ FeedEdit = connect(({ feeds, plugin_types }, { navigation }) => {
   };
 })(FeedEdit);
 
-FeedEdit.navigationOptions = {
-  header: FeedEditHeader,
-};
+FeedEdit.header = FeedEditHeader;
 
 FeedEdit.propTypes = {
-  navigation: PropTypes.shape({
-    state: PropTypes.shape({
-      params: PropTypes.shape({
-        selectedFeed: PropTypes.string.isRequired,
-      }).isRequired,
-    }).isRequired,
-  }).isRequired,
+  match: PropTypes.object.isRequired,
 };
 
 export default FeedEdit;
