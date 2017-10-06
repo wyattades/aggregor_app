@@ -21,13 +21,13 @@ const styles = StyleSheet.create({
   },
 
   item: {
-    height: 72,
+    padding: 16,
     backgroundColor: theme.WHITE,
-    paddingHorizontal: 15,
     borderBottomWidth: 1,
     borderBottomColor: theme.SUPPORT,
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 16,
   },
   title: {
     color: theme.TEXT,
@@ -39,9 +39,6 @@ const styles = StyleSheet.create({
   },
   error: {
     color: theme.ERROR,
-  },
-  pluginIcon: {
-    marginRight: 16,
   },
   textView: {
     marginLeft: 16,

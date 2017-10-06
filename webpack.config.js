@@ -10,7 +10,6 @@ const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
 const PATHS = {};
 PATHS.rnvi_fonts = path.resolve(__dirname, 'node_modules/react-native-vector-icons/Fonts');
-PATHS.rn_uncompiled = path.resolve(__dirname, 'node_modules/react-native-uncompiled');
 PATHS.dist = path.resolve(__dirname, 'web');
 PATHS.src = path.resolve(__dirname, 'src');
 PATHS.images = path.resolve(PATHS.src, 'images');
@@ -19,6 +18,12 @@ PATHS.fontName = 'fonts/[name].[ext]';
 PATHS.imageName = 'images/[name].[ext]';
 PATHS.index = './index';
 
+const parsedDependencies = [
+  // 'react-native-vector-icons',
+  'react-native-drawer',
+  'react-native-uncompiled',
+];
+
 const baseConfig = {
 
   context: __dirname,
@@ -26,7 +31,7 @@ const baseConfig = {
   resolve: {
     // Maps react-native imports for react-native-web
     alias: {
-      'react-native$': 'react-native-web',
+      'react-native$': 'react-native-web', // Necessary for 'react-native-vector-icons'
       'react-native-vector-icons/FontAwesome': 'react-native-vector-icons/dist/FontAwesome',
       'react-native-vector-icons/MaterialIcons': 'react-native-vector-icons/dist/MaterialIcons',
       'history/createMemoryHistory': 'history/createBrowserHistory',
@@ -51,7 +56,7 @@ const baseConfig = {
         }],
         include: [
           PATHS.src,
-          PATHS.rn_uncompiled,
+          ...parsedDependencies.map(name => path.resolve(__dirname, `node_modules/${name}`)),
         ],
       }, {
         test: /\.s?css$/,

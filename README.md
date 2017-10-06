@@ -17,8 +17,11 @@
 - ```npm run android-prod```
 ## TODO
 
-- Let client handle all url paths with custom Cloudfront error handler: 404 -> index.html
-- Prettify empty feed/plugin messages
+- Prettify empty feed/plugin messages	
+- Animations between routes
+- Placeholder entries for infinite loader
+- Use web fonts instead of react-native-vector-icons
+- Don't call setFeed in loadInit (404 never gets used!)
 
 #1	file:///home/wyatt/Github/aggregor_app/src/containers/Dashboard.js#19
 	TODO: don't allow viewing of NoFeeds???

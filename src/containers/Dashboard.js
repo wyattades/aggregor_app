@@ -24,16 +24,24 @@ const styles = StyleSheet.create({
     backgroundColor: theme.WHITE,
   },
 
+  editorContainer: {
+    flex: 1,
+    flexDirection: 'row-reverse',
+    justifyContent: 'flex-end',
+  },
+
   editor: {
     width: 400,
     maxWidth: 400,
     flex: 1,
     // equivalent to: boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.3)',
-    shadowColor: '#000000',
-    shadowOpacity: 0.3,
-    shadowOffset: { width: 0, height: 2 },
-    shadowRadius: 4,
-    elevation: 5,
+    // shadowColor: '#000000',
+    // shadowOpacity: 0.3,
+    // shadowOffset: { width: 0, height: 2 },
+    // shadowRadius: 4,
+    // elevation: 5,
+    borderLeftWidth: 1,
+    borderLeftColor: theme.SUPPORT,
 
     flexDirection: 'column-reverse',
     justifyContent: 'flex-end',
@@ -224,12 +232,12 @@ let Dashboard = ({ feeds, selectedFeed, plugin_types, mobile, dispatch, match })
     );
 
     return mobile ? content : (
-      <View style={{ flex: 1, flexDirection: 'row' }}>
-        {content}
+      <View style={styles.editorContainer}>
         <Switch>
           <Route path={`${match.path}/edit/:plugin`} component={editorView(PluginEdit, dispatch)}/>
           <Route path={`${match.path}/edit`} component={editorView(FeedEdit, dispatch)}/>
         </Switch>
+        {content}        
       </View>
     );
 

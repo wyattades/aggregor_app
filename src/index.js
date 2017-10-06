@@ -35,7 +35,7 @@ if (Platform.OS === 'web') {
   const render = (name, RootComponent) => {
     AppRegistry.registerComponent(name, () => () => (
       <AppContainer>
-        <RootComponent />
+        <RootComponent/>
       </AppContainer>
     ));
 
