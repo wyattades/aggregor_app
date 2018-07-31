@@ -37,13 +37,12 @@ const styles = StyleSheet.create({
 
 const getError = params => {
   switch (params.code) {
-    case 404: return `Page "${params.path}" not found`;
+    case 404: return 'Page not found';
     default: return 'Unknown error';
   }
 };
 
 const ErrorPage = ({ history, err }) => {
-
   const params = err || {
     code: 0,
   };

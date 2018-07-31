@@ -12,7 +12,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
-const __DEV__ = process.env.NODE === 'development';
+const __DEV__ = process.env.NODE_ENV === 'development';
 
 const PATHS = {};
 PATHS.rnvi_fonts = path.resolve(__dirname, 'node_modules/react-native-vector-icons');
@@ -175,6 +175,7 @@ if (!__DEV__) {
       port: 8080,
       contentBase: PATHS.dist,
       hot: true,
+      historyApiFallback: true,
     },
 
     plugins: [

@@ -37,7 +37,7 @@ const configureStore = (initialState = {}) => {
     // Enable hot module replacement for reducers
     module.hot.accept(() => {
       // eslint-disable-next-line global-require
-      const _reducers = require('./reducers/index').default;
+      const _reducers = require('./reducers/index');
       store.replaceReducer(_reducers);
     });
   }
