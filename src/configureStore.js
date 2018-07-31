@@ -1,6 +1,6 @@
 import { createStore, applyMiddleware, compose } from 'redux';
 import thunk from 'redux-thunk';
-import { persistStore, autoRehydrate } from 'redux-persist';
+import { persistStore, persistReducer } from 'redux-persist';
 import { routerMiddleware } from 'react-router-redux';
 import { AsyncStorage } from 'react-native';
 
@@ -23,9 +23,15 @@ if (__DEV__ && window && window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__) {
 
 const configureStore = (initialState = {}) => {
 
-  const enhancer = composeEnhancers(applyMiddleware(thunk, routerMiddleware(history)), autoRehydrate());
+  const enhancer = composeEnhancers(applyMiddleware(thunk, routerMiddleware(history)));
 
-  const store = createStore(reducers, initialState, enhancer);
+  const persistedReducer = persistReducer({
+    key: 'root',
+    whitelist: [ 'user' ],
+    storage: AsyncStorage,
+  }, reducers);
+
+  const store = createStore(persistedReducer, initialState, enhancer);
 
   if (module.hot) {
     // Enable hot module replacement for reducers
@@ -37,14 +43,11 @@ const configureStore = (initialState = {}) => {
   }
 
   // Persist user state
-  persistStore(store, {
-    whitelist: [ 'user' ],
-    storage: AsyncStorage,
-  }, () => {
+  const persistor = persistStore(store, null, () => {
     console.log('Rehydration complete');
   });
 
-  return store;
+  return { store, persistor };
 };
 
 export default configureStore;

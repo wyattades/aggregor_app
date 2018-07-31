@@ -1,15 +1,21 @@
 require('dotenv').config();
 
+if (!(process.env.NODE_ENV in { production: 0, development: 0 })) {
+  throw new Error('Must set valid NODE_ENV environment variable');
+}
+
 const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const CleanWebpackPlugin = require('clean-webpack-plugin');
-const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
+const __DEV__ = process.env.NODE === 'development';
+
 const PATHS = {};
-PATHS.rnvi_fonts = path.resolve(__dirname, 'node_modules/react-native-vector-icons/Fonts');
+PATHS.rnvi_fonts = path.resolve(__dirname, 'node_modules/react-native-vector-icons');
 PATHS.dist = path.resolve(__dirname, 'web');
 PATHS.src = path.resolve(__dirname, 'src');
 PATHS.images = path.resolve(PATHS.src, 'images');
@@ -25,6 +31,8 @@ const parsedDependencies = [
 ];
 
 const baseConfig = {
+
+  mode: process.env.NODE_ENV,
 
   context: __dirname,
 
@@ -50,7 +58,7 @@ const baseConfig = {
           options: {
             babelrc: false,
             cacheDirectory: true,
-            plugins: [ 'react-native-web/babel' ],
+            plugins: [ 'react-native-web' ],
             presets: [ 'react-native' ],
           },
         }],
@@ -60,7 +68,11 @@ const baseConfig = {
         ],
       }, {
         test: /\.s?css$/,
-        loaders: ExtractTextPlugin.extract({ fallback: 'style-loader', use: ['css-loader', 'sass-loader'] }),
+        use: [
+          __DEV__ ? 'style-loader' : MiniCssExtractPlugin.loader,
+          'css-loader',
+          'sass-loader',
+        ],
         include: PATHS.css,
       }, {
         test: /\.(gif|jpe?g|png|svg)$/,
@@ -94,26 +106,29 @@ const sharedPlugins = [
     inject: 'body',
   }),
 
-  new ExtractTextPlugin({
-    filename: '[contenthash].css',
+  new MiniCssExtractPlugin({
+    filename: __DEV__ ? '[name].css' : '[name].[hash].css',
     allChunks: true,
-    disable: process.env.NODE_ENV !== 'production',
   }),
 
 ];
 
-if (process.env.NODE_ENV === 'production') {
+if (!__DEV__) {
 
   module.exports = Object.assign({ // PRODUCTION CONFIG
     
-    entry: [
-      PATHS.index,
-    ],
+    entry: PATHS.index,
 
     output: {
       path: PATHS.dist,
       filename: '[name].[chunkhash].js',
       publicPath: '/',
+    },
+
+    optimization: {
+      splitChunks: {
+        chunks: 'all',
+      },
     },
 
     plugins: [
@@ -125,16 +140,6 @@ if (process.env.NODE_ENV === 'production') {
 
       new UglifyJsPlugin({
         parallel: true,
-      }),
-
-      // CommonsChunkPlugin: vendor must come before runtime
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'vendor',
-        minChunks: ({ resource }) => /node_modules/.test(resource),
-      }),
-      
-      new webpack.optimize.CommonsChunkPlugin({
-        name: 'runtime',
       }),
 
       new OptimizeCssAssetsPlugin({
@@ -154,20 +159,24 @@ if (process.env.NODE_ENV === 'production') {
 
 } else {
 
-  // Add react-hot-loader to development
-  baseConfig.module.rules[0].use.unshift({ loader: 'react-hot-loader/webpack' });
-
   module.exports = Object.assign({ // DEVELOPMENT CONFIG
+
     devtool: 'cheap-module-source-map',
+
     entry: [
-      'react-hot-loader/patch',
-      'webpack-dev-server/client?http://localhost:8080',
-      'webpack/hot/only-dev-server',
       PATHS.index,
     ],
+
     output: {
       publicPath: '/',
     },
+
+    devServer: {
+      port: 8080,
+      contentBase: PATHS.dist,
+      hot: true,
+    },
+
     plugins: [
 
       ...sharedPlugins,

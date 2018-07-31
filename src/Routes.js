@@ -120,7 +120,7 @@ class Routes extends Component {
   })
 
   _updateOptions = options => this.setState(options, () => {
-
+    
     if (Platform.OS === 'web') {
       const { title, match } = this.state;
       document.title = typeof title === 'function' ? title(match.params || {}) : title;

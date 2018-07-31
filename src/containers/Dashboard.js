@@ -34,12 +34,6 @@ const styles = StyleSheet.create({
     width: 400,
     maxWidth: 400,
     flex: 1,
-    // equivalent to: boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.3)',
-    // shadowColor: '#000000',
-    // shadowOpacity: 0.3,
-    // shadowOffset: { width: 0, height: 2 },
-    // shadowRadius: 4,
-    // elevation: 5,
     borderLeftWidth: 1,
     borderLeftColor: theme.SUPPORT,
 
@@ -101,6 +95,7 @@ export const NoFeeds = () => (
     <Text style={styles.message}>You can manage your feeds in the drawer menu at the top left.</Text>
   </View>
 );
+NoFeeds.header = DashboardHeader;
 
 export const NoPlugins = () => (
   <View style={styles.messageView}>

@@ -4,6 +4,7 @@ import { View, StyleSheet } from 'react-native';
 import List from 'react-infinite';
 import { getRowHeight } from './Entry';
 
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -20,10 +21,13 @@ class InfList extends Component {
     height: 1,
   }
 
+  containerRef = React.createRef();
+
   componentDidMount() {
-    // eslint-disable-next-line react/no-did-mount-set-state
-    this.setState({
-      height: document.getElementById('InfListWeb').clientHeight,
+    this.containerRef.current.measure((x, y, w, h) => {
+      this.setState({
+        height: h,
+      });
     });
   }
 
@@ -34,7 +38,7 @@ class InfList extends Component {
       onEndReached, ListFooterComponent, keyExtractor } = this.props;
 
     return (
-      <View id="InfListWeb" style={styles.container}>
+      <View ref={this.containerRef} style={styles.container}>
         <List
           elementHeight={data.map(item => getRowHeight(item))}
           infiniteLoadBeginEdgeOffset={onEndThreshold * 130}
