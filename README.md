@@ -7,7 +7,7 @@ This project mainly served as a learning experience and proof of concept for a f
 See the Aggregor server [source](https://github.com/wyattades/aggregor_server)
 
 ![](https://i.imgur.com/aGfc6o1.gif)  
-Visit the web app: [aggregor.com](https://aggregor.com/)  
+Visit the web app: [aggregor.now.sh](https://aggregor.now.sh/)  
 
 ### Initiate Development Environment
 1. Install ```node``` v8.x.x
