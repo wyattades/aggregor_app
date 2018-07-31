@@ -2,7 +2,7 @@
 
 Aggregor combines other news and social feeds into one infinite-scrolling page. The user can view and manage multiple personal news feeds.
 
-This project mainly served as a learning experience and proof of concept for a fully cross-platform react app i.e. the same code-base is used on web, android, and ios.
+This project mainly served as a learning experience and proof of concept for a fully cross-platform react app i.e. the same code-base is used on the desktop browser, mobile browser, android, and ios.
 
 See the Aggregor server [source](https://github.com/wyattades/aggregor_server)
 
