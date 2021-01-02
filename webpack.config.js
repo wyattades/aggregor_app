@@ -4,7 +4,6 @@ const webpack = require('webpack');
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-const CleanWebpackPlugin = require('clean-webpack-plugin');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 
@@ -113,8 +112,6 @@ if (process.env.NODE_ENV === 'production') {
 
     plugins: [
       ...sharedPlugins,
-
-      new CleanWebpackPlugin([ 'web' ]),
       
       new webpack.optimize.OccurrenceOrderPlugin(),
 
