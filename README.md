@@ -1,54 +1,44 @@
-# Aggregor App
-## Setup
-### Setup development environment:
-- install the following on your system:
-  - node v8.x.x
-  - npm v5.x.x
-  - adb (comes with Android Studio)
-	- yarn
-- clone aggregor_app github repo to wherever you like
-- ```npm install```
-### Start Developing:
-- start android emulator or plug in android device
-- ```npm run android```
-- if another command prompt doesn't open automatically: ```npm start```
-- reload development environment
-### Build Producton App to Connected Device:
-- ```npm run android-prod```
-## TODO
+# Aggregor
 
-- Let client handle all url paths with custom Cloudfront error handler: 404 -> index.html
-- Prettify empty feed/plugin messages
+Aggregor combines other news and social feeds into one infinite-scrolling page. The user can view and manage multiple personal news feeds.
 
-#1	file:///home/wyatt/Github/aggregor_app/src/containers/Dashboard.js#19
-	TODO: don't allow viewing of NoFeeds???
+This project mainly served as a learning experience and proof of concept for a fully cross-platform react app i.e. the same code-base is used on the desktop browser, mobile browser, android, and ios.
 
-#2	file:///home/wyatt/Github/aggregor_app/src/containers/Login.js#18
-	TODO: figure out better keyboardAvoiding
+See the Aggregor server [source](https://github.com/wyattades/aggregor_server)
 
-#3	file:///home/wyatt/Github/aggregor_app/src/containers/ErrorPage.js#51
-	TODO: try <Link to="/login" component={Touchable}/>
+![](https://i.imgur.com/aGfc6o1.gif)  
+Visit the web app: [aggregor.now.sh](https://aggregor.now.sh/)  
 
-#4	file:///home/wyatt/Github/aggregor_app/src/index.js#7
-	TODO: figure out the source of this error
+### Initiate Development Environment
+1. Install ```node``` v8.x.x
+2. Install ```adb``` (comes with Android Studio)
+3. ```$ git clone https://github.com/wyattades/aggregor_app.git```
+4. ```$ cd aggregor_app```
+5. ```$ npm install```
 
-#5	file:///home/wyatt/Github/aggregor_app/src/utils/prompt.js#47
-	TODO: initial value isn't working. Need to reset form???
+### Start Developing
+#### Android:
+1. Start android emulator or plug in android device
+2. ```$ npm run android```
+3. If another command prompt doesn't open automatically: ```$ npm start```
+4. Reload development environment  
+#### Web:
+1. ```$ npm run dev```
+2. Open ```localhost:8080``` in your web browser
 
-#6	file:///home/wyatt/Github/aggregor_app/src/Routes.js#57
-	TODO: use location.state instead of query?
+### Build Producton App:
+- Android: ```npm run android-prod```
+- Web: ```npm run build```
 
-#7	file:///home/wyatt/Github/aggregor_app/src/reducers/feeds.js#5
-	TODO: flatten reducers... maybe in my next lifetime
+### Editor Config
+- If you want to lint the javascript while editing, install an ```eslint``` plugin
+- A ```babel``` parser may be required for es6 syntax
 
-#8	file:///home/wyatt/Github/aggregor_app/src/actions/api.js#6
-	TODO: many actions do not handle errors correctly, 
-
-#9	file:///home/wyatt/Github/aggregor_app/src/actions/api.js#7
-	TODO: set max timeout for api calls
-
-#10	file:///home/wyatt/Github/aggregor_app/src/components/Header.js#97
-	TODO: avoid passing path
-
-#11	file:///home/wyatt/Github/aggregor_app/src/components/StaticDrawer.js#9
-	TODO: width is redundant property (should use flex-basis?)
+### Technologies
+- [React Native](https://facebook.github.io/react-native/) and [React Native Web](http://necolas.github.io/react-native-web/storybook/): allowed for cross-platform React code
+- [React Router](https://reacttraining.com/react-router/): IMO all-around best navigator for React on any platform 
+- [Redux](https://redux.js.org/): app state manager  
+- [Immutable.js](http://facebook.github.io/immutable-js/docs/#/): used allongside Redux to make state immutable  
+- [Sass](http://sass-lang.com/documentation/file.SASS_REFERENCE.html) (.scss): Css but with variables, nested classes, and more
+- [ejs](http://ejs.co/) (.ejs): simple HTML templating language
+- [webpack](https://webpack.js.org/): asset and code bundler for the web

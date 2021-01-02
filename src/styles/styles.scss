@@ -1,3 +1,16 @@
+// @import '~react-native-vector-icons/Fonts/FontAwesome.ttf';
+// @import '~react-native-vector-icons/Fonts/MaterialIcons.ttf';
+
+// @mixin import-font($name, $url) {
+//   @font-face {
+//     src: url($url);
+//     font-family: $name;
+//   }
+// }
+
+// @include import-font('MaterialIcons', 'fonts/MaterialIcons.ttf');
+// @include import-font('Font Awesome', 'fonts/FontAwesome.ttf');
+
 html, body, body * {
   // clear padding and margins
   margin: 0;
@@ -6,7 +19,7 @@ html, body, body * {
 
 // Force this element to fill page (NOTE: verbose)
 #react-root > div > div > div {
-  height: 100%;
+  height: 100vh;
   overflow-y: auto;
 
   // Prevent horizontal scrollbar
@@ -33,5 +46,5 @@ select {
 @import 'range.scss';
 
 html {
-  font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Ubuntu,Helvetica Neue,sans-serif;
+  font-family: -apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Ubuntu,'Helvetica Neue',sans-serif;
 }

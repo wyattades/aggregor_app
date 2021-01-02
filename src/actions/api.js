@@ -1,17 +1,16 @@
-import Config from 'react-native-config';
-
 import { setFeed, goLogin } from './navActions';
 import alert from '../utils/alert';
 
 // TODO: many actions do not handle errors correctly, 
 // TODO: set max timeout for api calls
 
-// Must keep in this format to satisfy react-native-config
-const API_KEY = process.env.API_KEY || Config.API_KEY;
-const API_URL = process.env.API_URL || Config.API_URL;
+let ADDRESS,
+    TOKEN;
 
-const ADDRESS = __DEV__ ? 'http://localhost:3000' : API_URL,
-      TOKEN = API_KEY;
+export const init = (url, key) => {
+  ADDRESS = __DEV__ ? 'http://localhost:3000' : url;
+  TOKEN = key;
+};
 
 const request = (dispatch, method, route, token, data) => fetch(ADDRESS + route, {
   method,

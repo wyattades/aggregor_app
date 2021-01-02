@@ -3,11 +3,14 @@ import { UIManager, View, StatusBar, Platform, StyleSheet, BackHandler } from 'r
 import { Provider } from 'react-redux';
 import { Router } from 'react-router-native';
 import createHistory from 'history/createMemoryHistory';
+import { PersistGate } from 'redux-persist/integration/react';
+import { hot } from 'react-hot-loader';
 
 import { PromptView } from './utils/prompt';
 import { AlertView } from './utils/alert';
 import configureStore from './configureStore';
 import Routes from './Routes';
+
 
 const styles = StyleSheet.create({
   container: {
@@ -18,7 +21,8 @@ const styles = StyleSheet.create({
 
 export const history = createHistory();
 
-export const store = configureStore();
+const { store: _store, persistor } = configureStore();
+export const store = _store;
 
 class App extends Component {
 
@@ -54,16 +58,18 @@ class App extends Component {
   render() {
     return (
       <Provider store={store}>
-        <View style={styles.container}>
-          <Router history={history}>
-            <Routes/>
-          </Router>
-          <PromptView/>
-          <AlertView/>
-        </View>
+        <PersistGate persistor={persistor}>
+          <View style={styles.container}>
+            <Router history={history}>
+              <Routes/>
+            </Router>
+            <PromptView/>
+            <AlertView/>
+          </View>
+        </PersistGate>
       </Provider>
     );
   }
 }
 
-export default App;
+export default hot(module)(App);
