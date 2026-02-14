@@ -70,7 +70,7 @@
     "mini-css-extract-plugin": "^0.4.1",
     "node-sass": "^4.9.2",
     "optimize-css-assets-webpack-plugin": "^5.0.0",
-    "prettier-eslint": "^8.8.2",
+    "prettier-eslint": "^16.4.2",
     "react-test-renderer": "^16.4.1",
     "remote-redux-devtools": "0.5.12",
     "sass-loader": "^7.0.3",
